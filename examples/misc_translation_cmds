@@ -1,0 +1,10 @@
+
+JDK_Java2Demo (Win32): jcgo java2d.Java2Demo @$~\sunawt\stdp_win.in java2d\demos\Arcs_Curves\* java2d\demos\Clipping\* java2d\demos\Colors\* java2d\demos\Composite\* java2d\demos\Fonts\* java2d\demos\Images\* java2d\demos\Lines\* java2d\demos\Mix\* java2d\demos\Paint\* java2d\demos\Paths\* java2d\demos\Transforms\*
+
+JDK_JavaSound (Win32): jcgo -src $~\sunawt\fix_snd -src src JavaSound @$~\sunawt\stdp_win.in gnu.java.net.protocol.http.Handler
+
+JDK_SwingSet2 (Win32): jcgo -src $~\sunawt\fix_snd -src src SwingSet2 @$~\sunawt\stdp_win.in gnu.java.net.protocol.jar.Handler
+JDK_SwingSet2 (Linux): jcgo -src $~/sunawt/fix_snd -src src SwingSet2 @$~/sunawt/stdp_x11.in gnu.java.net.protocol.jar.Handler com.sun.media.sound.DirectAudioDeviceProvider
+JDK_SwingSet2 (Solaris): jcgo -src $~/sunawt/fix_snd -src src SwingSet2 @$~/sunawt/stdp_x11.in gnu.java.net.protocol.jar.Handler
+
+d3caster (Win32): jcgo -src $~\sunawt\fix_snd sun.applet.Main @$~\sunawt\stdp_win.in stahlforce.d3caster

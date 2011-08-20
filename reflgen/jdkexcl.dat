@@ -1,0 +1,31 @@
+# @(#) $(JCGO)/reflgen/jdkexcl.dat --
+# JNI method/field reflection dependency standard non-AWT exclusions
+# (input data file for JCGO "TraceJni" utility).
+##
+# Project: JCGO (http://www.ivmaisoft.com/jcgo/)
+# Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+# Use is subject to license terms. No warranties. All rights reserved.
+##
+
+java.io.*
+java.net.*
+java.nio.*
+java.security.*
+java.security.cert.*
+java.text.*
+java.util.concurrent.atomic.*
+java.util.concurrent.locks.*
+java.util.prefs.*
+java.util.zip.*
+
+sun.io.*
+sun.misc.*
+sun.net.www.protocol.http.*
+sun.nio.ch.*
+sun.nio.cs.*
+sun.reflect.*
+sun.reflect.misc.*
+sun.security.jca.*
+sun.security.pkcs11.wrapper.*
+sun.security.util.*
+sun.security.x509.*

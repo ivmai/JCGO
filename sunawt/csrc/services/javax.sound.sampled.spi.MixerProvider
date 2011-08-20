@@ -1,0 +1,10 @@
+# Providers for sound mixers
+
+com.sun.media.sound.PortMixerProvider
+com.sun.media.sound.SimpleInputDeviceProvider
+
+# used on Linux only (ignored if not present)
+com.sun.media.sound.DirectAudioDeviceProvider
+
+# last mixer is default mixer
+com.sun.media.sound.HeadspaceMixerProvider

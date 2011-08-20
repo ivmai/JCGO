@@ -1,0 +1,107 @@
+diff -ru ./java/lang/Class.java ../patched_for_TraceJni/java/lang/Class.java
+--- ./java/lang/Class.java	2009-03-21 00:06:42.000000000 +0300
++++ ../patched_for_TraceJni/java/lang/Class.java	2009-03-26 10:36:22.000000000 +0300
+@@ -319,6 +319,7 @@
+     public T newInstance()
+         throws InstantiationException, IllegalAccessException
+     {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_newInstance(this);
+         if (System.getSecurityManager() != null) {
+             checkMemberAccess(Member.PUBLIC, ClassLoader.getCallerClassLoader());
+         }
+@@ -1366,6 +1367,7 @@
+      * @since JDK1.1
+      */
+     public Field[] getFields() throws SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getFields(false, this);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1417,6 +1419,7 @@
+      * @since JDK1.1
+      */
+     public Method[] getMethods() throws SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethods(false, this);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1466,6 +1469,7 @@
+      * @since JDK1.1
+      */
+     public Constructor<?>[] getConstructors() throws SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructors(false, this);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1525,6 +1529,7 @@
+      */
+     public Field getField(String name)
+         throws NoSuchFieldException, SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getField(false, this, name);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1610,6 +1615,7 @@
+      */
+     public Method getMethod(String name, Class<?>... parameterTypes)
+         throws NoSuchMethodException, SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethod(false, this, name, parameterTypes);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1664,6 +1670,7 @@
+      */
+     public Constructor<T> getConstructor(Class<?>... parameterTypes)
+         throws NoSuchMethodException, SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructor(false, this, parameterTypes);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1750,6 +1757,7 @@
+      * @since JDK1.1
+      */
+     public Field[] getDeclaredFields() throws SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getFields(true, this);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1798,6 +1806,7 @@
+      * @since JDK1.1
+      */
+     public Method[] getDeclaredMethods() throws SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethods(true, this);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1843,6 +1852,7 @@
+      * @since JDK1.1
+      */
+     public Constructor<?>[] getDeclaredConstructors() throws SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructors(true, this);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1887,6 +1897,7 @@
+      */
+     public Field getDeclaredField(String name)
+         throws NoSuchFieldException, SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getField(true, this, name);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1942,6 +1953,7 @@
+      */
+     public Method getDeclaredMethod(String name, Class<?>... parameterTypes)
+         throws NoSuchMethodException, SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethod(true, this, name, parameterTypes);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess
+@@ -1992,6 +2004,7 @@
+      */
+     public Constructor<T> getDeclaredConstructor(Class<?>... parameterTypes)
+         throws NoSuchMethodException, SecurityException {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructor(true, this, parameterTypes);
+         // be very careful not to change the stack depth of this
+         // checkMemberAccess call for security reasons
+         // see java.lang.SecurityManager.checkMemberAccess

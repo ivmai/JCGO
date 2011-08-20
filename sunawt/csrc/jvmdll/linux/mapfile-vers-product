@@ -1,0 +1,21 @@
+##
+# This file is modified by Ivan Maidanski <ivmai@ivmaisoft.com>
+# Project name: JCGO-SUNAWT (http://www.ivmaisoft.com/jcgo/)
+##
+# Comment: contains Linux-specific fixes.
+#
+
+#
+# @(#)mapfile-vers-product
+#
+
+# Define public interface.
+
+SUNWprivate_1.1 {
+        global:
+                #JVM_GetClassName;
+                JVM_RaiseSignal;
+                JVM_Sleep;
+        local:
+                *;
+};

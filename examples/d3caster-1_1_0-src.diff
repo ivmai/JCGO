@@ -1,0 +1,49 @@
+diff -ruN original/d3caster/gamelocal.html modified/d3caster/gamelocal.html
+--- original/d3caster/gamelocal.html	2004-10-25 18:49:22.000000000 +0400
++++ modified/d3caster/gamelocal.html	2009-07-17 15:15:04.000000000 +0400
+@@ -5,21 +5,22 @@
+ <!--
+    for running the game via AppletViewer by
+ 
+-         do-run-local.bat
++         ..\bin\d3caster gamelocal.html
+ 
+-   To allow loading of sound and images,
+-   this requires some file access rights,
+-   supplied by javapol.txt.
++   Tip: adjust 'width' and 'height' parameters as needed.
++
++   Click into the applet to get the focus,
++   otherwise you can't move.
+ -->
+ 
+ <applet 
+    code     = "stahlforce.d3caster.class" 
+    archive  = "aa.jar"
+    name     = "ArtAttack"
+-   width    = "620"
+-   height   = "300"
++   width    = "1270"
++   height   = "950"
+ >
+-<param name="urlbase" value="file:/./">
++<param name="urlbase" value="file:./">
+ <param name="local" value="true">
+ </applet>
+ 
+diff -ruN original/d3caster/stahlforce/d3caster.java modified/d3caster/stahlforce/d3caster.java
+--- original/d3caster/stahlforce/d3caster.java	2004-11-14 20:40:28.000000000 +0400
++++ modified/d3caster/stahlforce/d3caster.java	2009-07-10 16:53:58.000000000 +0400
+@@ -2547,7 +2547,11 @@
+    }
+ 
+    void cleanup() {
+-      closeSound();
++// This is commented out to prevent InterruptedException thrown
++// inside JDK JSound MixerClip.nClose() (and to prevent checked
++// JNI warning "JNI call made with exception pending") when the
++// applet "Close" menu item is selected.
++      /* closeSound(); */
+    }
+ 
+    // ============= walking bot support =====================

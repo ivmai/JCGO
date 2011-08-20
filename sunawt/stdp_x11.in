@@ -1,0 +1,61 @@
+##
+# @(#) $(JCGO)/sunawt/stdp_x11.in --
+# response file containing the source paths (for the "JCGO" translator)
+# to create a GUI app based on Sun J2SE AWT/JSound/SQL front-ends (Motif/X11).
+##
+
+## Standard usage (JCGO translator invocation) without sound support:
+# jcgo -d <OutputDir> <AppMainClass> @$~/sunawt/stdp_x11.in
+#
+## Standard usage with J2SE sound support:
+# jcgo <AppMainClass> -src $~/sunawt/fix_snd @$~/sunawt/stdp_x11.in
+#
+
+#-src $~/sunawt/fix_snd
+
+# The next line may be commented out (but not recommended).
+-src $~/goclsp/vm_str
+
+-src $~/goclsp/vm
+-src $~/sunawt/fix_x11
+-src $~/sunawt/fix
+
+-src $~/sawt_out/rflg_out
+-src $~/sawt_out/rflg_snd
+
+-src $~/j2sdk1.4.2_19_src/$%java.awt
+-src $~/j2sdk1.4.2_19_src/$%javax.imageio
+-src $~/j2sdk1.4.2_19_src/$%javax.print
+-src $~/j2sdk1.4.2_19_src/$%javax.swing
+
+-src $~/sawt_out/rflg_com
+
+-src $~/sunawt/fix_sql
+
+-src $~/goclsp/clsp_ldr
+-src $~/goclsp/clsp_fix
+-src $~/goclsp/clsp_res
+-src $~/miscsrc/jpropjav
+-src $~/rflg_out
+
+-src $~/classpath-0.93
+-src $~/classpath-0.93/external/relaxngDatatype
+-src $~/classpath-0.93/external/sax
+-src $~/classpath-0.93/external/w3c_dom
+
+-src $~/j2sdk1.4.2_19_src
+-src $~/j2sdk-1_4_2-src-scsl/j2se/src/solaris/classes
+-src $~/j2sdk-1_4_2-src-scsl/j2se/src/share/classes
+
+#gnu.java.net.protocol.ftp.Handler
+#gnu.java.net.protocol.http.Handler
+#gnu.java.net.protocol.jar.Handler
+#sun.jdbc.odbc.JdbcOdbcDriver
+
+#com.sun.java.swing.plaf.motif.MotifLookAndFeel
+#com.sun.java.swing.plaf.windows.WindowsLookAndFeel
+
+#com.sun.media.sound.DirectAudioDeviceProvider
+
+#com.sun.comm.LinuxDriver
+#com.sun.comm.SolarisDriver

@@ -1,0 +1,79 @@
+##
+# This file is modified by Ivan Maidanski <ivmai@ivmaisoft.com>
+# Project name: JCGO-SUNAWT (http://www.ivmaisoft.com/jcgo/)
+##
+# Comment: contains Linux-specific fixes.
+#
+
+#
+#ident  "@(#)mapfile-vers       1.51    03/01/29 SMI"
+#
+# Copyright 2000 Sun Microsystems, Inc. All rights reserved.
+#
+# This software is the proprietary information of Sun Microsystems, Inc.
+# Use is subject to license terms.
+#
+
+# Define public interface.
+
+SUNWprivate_1.1 {
+        global:
+                #JNI_OnLoad;
+                JNU_ThrowNoSuchMethodException;
+                JNU_CallStaticMethodByName;
+                JNU_CallMethodByName;
+                JNU_CallMethodByNameV;
+                JNU_ClassClass;
+                JNU_ClassObject;
+                JNU_ClassString;
+                JNU_ClassThrowable;
+                JNU_CopyObjectArray;
+                JNU_Equals;
+                JNU_GetEnv;
+                JNU_GetFieldByName;
+                JNU_GetStaticFieldByName;
+                JNU_GetStringPlatformChars;
+                JNU_IsInstanceOfByName;
+                JNU_MonitorWait;
+                JNU_NewObjectByName;
+                JNU_NewStringPlatform;
+                JNU_Notify;
+                JNU_NotifyAll;
+                JNU_PrintClass;
+                JNU_PrintString;
+                JNU_ReleaseStringPlatformChars;
+                JNU_SetFieldByName;
+                JNU_SetStaticFieldByName;
+                JNU_ThrowArrayIndexOutOfBoundsException;
+                JNU_ThrowByName;
+                JNU_ThrowByNameWithLastError;
+                JNU_ThrowClassNotFoundException;
+                JNU_ThrowIllegalAccessError;
+                JNU_ThrowIllegalAccessException;
+                JNU_ThrowIllegalArgumentException;
+                JNU_ThrowInstantiationException;
+                JNU_ThrowInternalError;
+                JNU_ThrowIOException;
+                JNU_ThrowIOExceptionWithLastError;
+                JNU_ThrowNoSuchFieldError;
+                JNU_ThrowNoSuchFieldException;
+                JNU_ThrowNoSuchMethodError;
+                JNU_ThrowNullPointerException;
+                JNU_ThrowNumberFormatException;
+                JNU_ThrowOutOfMemoryError;
+                JNU_ThrowStringIndexOutOfBoundsException;
+                JNU_ToString;
+
+                NewStringPlatform;
+                GetStringPlatformChars;
+                Canonicalize;
+
+                #getEncodingFromLangID;
+                #getJavaIDFromLangID;
+
+                jio_fprintf;
+                jio_snprintf;
+
+        local:
+                *;
+};

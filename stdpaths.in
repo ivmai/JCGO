@@ -1,0 +1,39 @@
+##
+# @(#) $(JCGO)/stdpaths.in --
+# response file containing "core" source paths for the "JCGO" translator.
+##
+
+## Standard usage (JCGO translator invocation):
+# jcgo -d <OutputDir> <YourAppMainClass> @$~/stdpaths.in
+#
+## For small ASCII/Latin1/UTF8-only applications, use "clsp_asc":
+# jcgo <YourAppMainClass> -src $~/goclsp/clsp_asc @$~/stdpaths.in
+#
+
+## Notes:
+# "-src" is an alias for "-sourcepath";
+# the order (of paths) is significant.
+
+#-src $~/goclsp/clsp_asc
+
+-src $~/goclsp/clsp_fix
+-src $~/goclsp/clsp_ldr
+
+#-src $~/goclsp/clsp_pgk
+#-src $~/goclsp/clsp_pqt
+
+-src $~/goclsp/clsp_res
+
+#-src $~/goclsp/fpvm
+
+-src $~/goclsp/vm
+
+-src $~/goclsp/vm_str
+-src $~/miscsrc/jpropjav
+-src $~/rflg_out
+
+-src $~/classpath-0.93
+
+-src $~/classpath-0.93/external/relaxngDatatype
+-src $~/classpath-0.93/external/sax
+-src $~/classpath-0.93/external/w3c_dom

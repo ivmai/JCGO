@@ -1,0 +1,19 @@
+
+# names list of the Sun J2SE v1.4.2 AWT properties resource classes
+# (response file for "JPropJav" utility).
+
+com.sun.accessibility.internal.resources.accessibility
+
+com.sun.inputmethods.internal.indicim.resources.DisplayNames
+com.sun.inputmethods.internal.thaiim.resources.DisplayNames
+
+com.sun.swing.internal.plaf.basic.resources.basic
+com.sun.swing.internal.plaf.metal.resources.metal
+
+sun.awt.print.resources.pdialog
+sun.awt.print.resources.printcontrol
+
+sun.awt.resources.awt
+sun.awt.windows.awtLocalization
+
+sun.print.resources.serviceui

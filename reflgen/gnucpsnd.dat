@@ -1,0 +1,37 @@
+# @(#) $(JCGO)/reflgen/gnucpsnd.dat --
+# JNI method/field reflection dependency for "GNU Classpath v0.93 Sound"
+# (data file for JCGO "GenRefl" utility).
+##
+# Project: JCGO (http://www.ivmaisoft.com/jcgo/)
+# Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+# Use is subject to license terms. No warranties. All rights reserved.
+##
+
+# Note 1: gnu.javax.sound.sampled.wce.* is from Mysaifu JVM v0.4.7.
+
+gnu.javax.sound.midi.alsa.AlsaMidiDeviceProvider.getInputDeviceInfo_(*):gnu.javax.sound.midi.alsa.AlsaMidiDeviceProvider$AlsaInputPortInfo.<init>(Ljava/lang/String;Ljava/lang/String;JJ)
+gnu.javax.sound.midi.alsa.AlsaMidiDeviceProvider.getOutputDeviceInfo_(*):gnu.javax.sound.midi.alsa.AlsaMidiDeviceProvider$AlsaOutputPortInfo.<init>(Ljava/lang/String;Ljava/lang/String;JJ)
+gnu.javax.sound.midi.alsa.AlsaPortDevice.run_receiver_thread_(*):javax.sound.midi.Receiver.send(Ljavax/sound/midi/MidiMessage;J)
+gnu.javax.sound.midi.alsa.AlsaPortDevice.run_receiver_thread_(*):javax.sound.midi.ShortMessage.<init>([B)
+
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):gnu.javax.sound.sampled.wce.WCEEventQueue.postEvent(Ljavax/sound/sampled/Line;Ljavax/sound/sampled/LineEvent$Type;J)
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):javax.sound.sampled.LineEvent$Type.CLOSE
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):javax.sound.sampled.LineEvent$Type.OPEN
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):javax.sound.sampled.LineEvent$Type.START
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):javax.sound.sampled.LineEvent$Type.STOP
+gnu.javax.sound.sampled.wce.WCECallbackWindowThread.messageLoop(*):javax.sound.sampled.LineUnavailableException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCEMidiOutputPort.openNative(*):java.lang.Error.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCEMidiOutputPort.startNativeMidiFile(*):java.lang.IllegalArgumentException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.drainNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.flushNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.nativeClose(*):javax.sound.sampled.LineUnavailableException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.openNative(*):javax.sound.sampled.LineUnavailableException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.startNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.stopNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCESourceDataLine.writeNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCETargetDataLine.closeNative(*):javax.sound.sampled.LineUnavailableException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCETargetDataLine.drainNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCETargetDataLine.openNative(*):javax.sound.sampled.LineUnavailableException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCETargetDataLine.readNative(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.javax.sound.sampled.wce.WCETargetDataLine.readNative(*):javax.sound.sampled.LineUnavailableException.<init>(Ljava/lang/String;)

@@ -1,0 +1,73 @@
+
+# Contents of "J2SE v1.4.2 SunOS X11 AWT for JCGO" binary redistributive pack.
+
+# 'executable' mode flag is on
+bin/libJdbcOdbc.so
+bin/libawt.so
+bin/libcmm.so
+bin/libdcpr.so
+bin/libfontmanager.so
+bin/libjawt.so
+bin/libjpeg.so
+bin/libjsound.so
+bin/libmlib_image.so
+bin/libsunwjdga.so
+
+# this file is motif21-specific
+# 'executable' mode flag is on
+bin/libmawt.so
+
+# these files are JCGO-specific
+# 'executable' mode flag is on
+bin/libgc.so
+bin/libjava.so
+bin/libjcgoawtl.so
+bin/libjcgon.so
+bin/libjvm.so
+
+lib/audio/soundbank.gm
+
+lib/cmm/CIEXYZ.pf
+lib/cmm/GRAY.pf
+lib/cmm/LINEAR_RGB.pf
+lib/cmm/PYCC.pf
+lib/cmm/sRGB.pf
+
+lib/fonts/LucidaBrightDemiBold.ttf
+lib/fonts/LucidaBrightDemiItalic.ttf
+lib/fonts/LucidaBrightItalic.ttf
+lib/fonts/LucidaBrightRegular.ttf
+lib/fonts/LucidaSansDemiBold.ttf
+lib/fonts/LucidaSansRegular.ttf
+lib/fonts/LucidaTypewriterBold.ttf
+lib/fonts/LucidaTypewriterRegular.ttf
+lib/fonts/fonts.dir
+
+# 'executable' mode flag is on
+lib/i386/awt_robot
+
+lib/images/cursors/cursors.properties
+lib/images/cursors/invalid32x32.gif
+lib/images/cursors/motif_CopyDrop32x32.gif
+lib/images/cursors/motif_CopyNoDrop32x32.gif
+lib/images/cursors/motif_LinkDrop32x32.gif
+lib/images/cursors/motif_LinkNoDrop32x32.gif
+lib/images/cursors/motif_MoveDrop32x32.gif
+lib/images/cursors/motif_MoveNoDrop32x32.gif
+
+lib/flavormap.properties
+lib/font.properties
+lib/psfontj2d.properties
+
+lib/font.properties.Cp1251
+lib/font.properties.ISO8859_13
+lib/font.properties.ISO8859_15
+lib/font.properties.ISO8859_2
+lib/font.properties.ISO8859_4
+lib/font.properties.ISO8859_5
+lib/font.properties.ISO8859_7
+lib/font.properties.ISO8859_9
+lib/font.properties.UTF8
+
+# this file is JCGO-specific
+lib/rt.jar

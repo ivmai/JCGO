@@ -1,0 +1,73 @@
+# @(#) $(JCGO)/reflgen/gnucpmsc.dat --
+# JNI method/field reflection dependency for "GNU Classpath v0.93"
+# local sockets, iconv and gconf (data file for JCGO "GenRefl" utility).
+##
+# Project: JCGO (http://www.ivmaisoft.com/jcgo/)
+# Copyright (C) 2001-2007 Ivan Maidanski <ivmai@ivmaisoft.com>
+# Use is subject to license terms. No warranties. All rights reserved.
+##
+
+# File per-line format:
+# [package.]CallerClass.callerMethod(*):[[package.]Class.]field
+# [package.]CallerClass.callerMethod(*):[[package.]Class.]method(signature)
+
+gnu.java.net.local.LocalSocketImpl.accept(*):gnu.java.net.local.LocalSocketAddress.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.accept(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.accept(*):local
+gnu.java.net.local.LocalSocketImpl.accept(*):remote
+gnu.java.net.local.LocalSocketImpl.accept(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.available(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.close(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.close(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.create(*):created
+gnu.java.net.local.LocalSocketImpl.create(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.create(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.listen(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.listen(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.localBind(*):gnu.java.net.local.LocalSocketAddress.getPath()
+gnu.java.net.local.LocalSocketImpl.localBind(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.localBind(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.localConnect(*):gnu.java.net.local.LocalSocketAddress.getPath()
+gnu.java.net.local.LocalSocketImpl.localConnect(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.localConnect(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.read(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.shutdownInput(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.shutdownInput(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.shutdownOutput(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.shutdownOutput(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.unlink(*):gnu.java.net.local.LocalSocketAddress.getPath()
+gnu.java.net.local.LocalSocketImpl.unlink(*):java.io.IOException.<init>(Ljava/lang/String;)
+gnu.java.net.local.LocalSocketImpl.unlink(*):local
+gnu.java.net.local.LocalSocketImpl.unlink(*):socket_fd
+gnu.java.net.local.LocalSocketImpl.write(*):java.io.IOException.<init>(Ljava/lang/String;)
+
+gnu.java.nio.charset.iconv.IconvDecoder.closeIconv(*):data
+gnu.java.nio.charset.iconv.IconvDecoder.decode(*):data
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):data
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):gnu.classpath.Pointer32.<init>(I)
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):gnu.classpath.Pointer32.data
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):gnu.classpath.Pointer64.<init>(J)
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):gnu.classpath.Pointer64.data
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):inremaining
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):java.lang.IllegalArgumentException.<init>(Ljava/lang/String;)
+gnu.java.nio.charset.iconv.IconvDecoder.openIconv(*):outremaining
+gnu.java.nio.charset.iconv.IconvEncoder.closeIconv(*):data
+gnu.java.nio.charset.iconv.IconvEncoder.encode(*):data
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):data
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):gnu.classpath.Pointer32.<init>(I)
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):gnu.classpath.Pointer32.data
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):gnu.classpath.Pointer64.<init>(J)
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):gnu.classpath.Pointer64.data
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):inremaining
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):java.lang.IllegalArgumentException.<init>(Ljava/lang/String;)
+gnu.java.nio.charset.iconv.IconvEncoder.openIconv(*):outremaining
+
+gnu.java.util.prefs.gconf.GConfNativePeer.gconf_client_all_keys(*):java.util.prefs.BackingStoreException.<init>(Ljava/lang/String;)
+gnu.java.util.prefs.gconf.GConfNativePeer.gconf_client_all_nodes(*):java.util.prefs.BackingStoreException.<init>(Ljava/lang/String;)
+gnu.java.util.prefs.gconf.GConfNativePeer.gconf_client_suggest_sync(*):java.util.prefs.BackingStoreException.<init>(Ljava/lang/String;)
+gnu.java.util.prefs.gconf.GConfNativePeer.init_class(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.java.util.prefs.gconf.GConfNativePeer.init_class(*):java.util.ArrayList.<init>()
+gnu.java.util.prefs.gconf.GConfNativePeer.init_class(*):java.util.ArrayList.add(Ljava/lang/Object;)
+gnu.java.util.prefs.gconf.GConfNativePeer.init_id_cache(*):java.lang.RuntimeException.<init>(Ljava/lang/String;)
+gnu.java.util.prefs.gconf.GConfNativePeer.init_id_cache(*):java.util.ArrayList.<init>()
+gnu.java.util.prefs.gconf.GConfNativePeer.init_id_cache(*):java.util.ArrayList.add(Ljava/lang/Object;)

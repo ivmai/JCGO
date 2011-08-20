@@ -1,0 +1,47 @@
+diff -ruN original/java2d/DemoImages.java modified/java2d/DemoImages.java
+--- original/java2d/DemoImages.java	2008-11-10 00:17:46.000000000 +0400
++++ modified/java2d/DemoImages.java	2009-07-11 23:52:16.000000000 +0400
+@@ -82,8 +82,8 @@
+             }
+         }
+ 
+-	URLClassLoader urlLoader = (URLClassLoader)cmp.getClass().getClassLoader();
+-	URL fileLoc = urlLoader.findResource("images/" + name);
++	ClassLoader urlLoader = (ClassLoader)cmp.getClass().getClassLoader();
++	URL fileLoc = urlLoader.getResource("images/" + name);
+ 	img = cmp.getToolkit().createImage(fileLoc);
+ 
+         MediaTracker tracker = new MediaTracker(cmp);
+diff -ruN original/java2d/Intro.java modified/java2d/Intro.java
+--- original/java2d/Intro.java	2008-11-10 00:17:46.000000000 +0400
++++ modified/java2d/Intro.java	2009-07-11 23:50:00.000000000 +0400
+@@ -1135,6 +1135,7 @@
+ 
+ 
+             public void render(int w, int h, Graphics2D g2) {
++                if (big == null) return;
+                 big.setColor(black); 
+ 
+                 for (int k = 0; k <= (ending - beginning); k++) {
+diff -ruN original/java2d/MemoryMonitor.java modified/java2d/MemoryMonitor.java
+--- original/java2d/MemoryMonitor.java	2008-11-10 23:32:06.000000000 +0400
++++ modified/java2d/MemoryMonitor.java	2009-07-11 23:50:38.000000000 +0400
+@@ -237,6 +237,7 @@
+                 System.arraycopy(tmp, 0, pts, 0, tmp.length);
+             } else {
+                 big.setColor(Color.yellow);
++                if (pts.length <= ptNum) return;
+                 pts[ptNum] = (int)(graphY+graphH*(freeMemory/totalMemory));
+                 for (int j=graphX+graphW-ptNum, k=0;k < ptNum; k++, j++) {
+                     if (k != 0) {
+diff -ruN original/java2d/Tools.java modified/java2d/Tools.java
+--- original/java2d/Tools.java	2008-11-10 23:32:08.000000000 +0400
++++ modified/java2d/Tools.java	2009-07-11 23:51:18.000000000 +0400
+@@ -357,6 +357,7 @@
+             if (pDialogState) {
+                 printJob.print(aset);
+             }
++        } catch (java.awt.print.PrinterException e) {
+         } catch (java.security.AccessControlException ace) {
+             String errmsg = "Applet access control exception; to allow " +
+                             "access to printer, run policytool and set\n" +

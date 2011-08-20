@@ -1,0 +1,107 @@
+diff -ru ./java/lang/Class.java ../patched_for_TraceJni/java/lang/Class.java
+--- ./java/lang/Class.java	2006-04-28 18:43:02.000000000 +0400
++++ ../patched_for_TraceJni/java/lang/Class.java	2009-03-26 10:22:28.000000000 +0300
+@@ -328,6 +328,7 @@
+    */
+   public Constructor getConstructor(Class[] types) throws NoSuchMethodException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructor(false, this, types);
+     memberAccessCheck(Member.PUBLIC);
+     Constructor[] constructors = getDeclaredConstructors(true);
+     for (int i = 0; i < constructors.length; i++)
+@@ -353,6 +354,7 @@
+    */
+   public Constructor[] getConstructors()
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructors(false, this);
+     memberAccessCheck(Member.PUBLIC);
+     return getDeclaredConstructors(true);
+   }
+@@ -374,6 +376,7 @@
+   public Constructor getDeclaredConstructor(Class[] types)
+     throws NoSuchMethodException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructor(true, this, types);
+     memberAccessCheck(Member.DECLARED);
+     Constructor[] constructors = getDeclaredConstructors(false);
+     for (int i = 0; i < constructors.length; i++)
+@@ -422,6 +425,7 @@
+    */
+   public Constructor[] getDeclaredConstructors()
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getConstructors(true, this);
+     memberAccessCheck(Member.DECLARED);
+     return getDeclaredConstructors(false);
+   }
+@@ -446,6 +450,7 @@
+    */
+   public Field getDeclaredField(String name) throws NoSuchFieldException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getField(true, this, name);
+     memberAccessCheck(Member.DECLARED);
+     Field[] fields = getDeclaredFields(false);
+     for (int i = 0; i < fields.length; i++)
+@@ -470,6 +475,7 @@
+    */
+   public Field[] getDeclaredFields()
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getFields(true, this);
+     memberAccessCheck(Member.DECLARED);
+     return getDeclaredFields(false);
+   }
+@@ -503,6 +509,7 @@
+   public Method getDeclaredMethod(String methodName, Class[] types)
+     throws NoSuchMethodException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethod(true, this, methodName, types);
+     memberAccessCheck(Member.DECLARED);
+     Method match = matchMethod(getDeclaredMethods(false), methodName, types);
+     if (match == null)
+@@ -528,6 +535,7 @@
+    */
+   public Method[] getDeclaredMethods()
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethods(true, this);
+     memberAccessCheck(Member.DECLARED);
+     return getDeclaredMethods(false);
+   }
+@@ -567,6 +575,7 @@
+   public Field getField(String fieldName)
+     throws NoSuchFieldException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getField(false, this, fieldName);
+     memberAccessCheck(Member.PUBLIC);
+     Field field = internalGetField(fieldName);
+     if (field == null)
+@@ -588,6 +597,7 @@
+    */
+   public Field[] getFields()
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getFields(false, this);
+     memberAccessCheck(Member.PUBLIC);
+     return internalGetFields();
+   }
+@@ -707,6 +717,7 @@
+   public Method getMethod(String methodName, Class[] types)
+     throws NoSuchMethodException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethod(false, this, methodName, types);
+     memberAccessCheck(Member.PUBLIC);
+     Method method = internalGetMethod(methodName, types);
+     if (method == null)
+@@ -808,6 +819,7 @@
+    */
+   public Method[] getMethods()
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_getMethods(false, this);
+     memberAccessCheck(Member.PUBLIC);
+     // NOTE the API docs claim that no methods are returned for arrays,
+     // but Sun's implementation *does* return the public methods of Object
+@@ -1106,6 +1118,7 @@
+   public Object newInstance()
+     throws InstantiationException, IllegalAccessException
+   {
++com.ivmaisoft.jcgorefl.TraceJni.intercept_newInstance(this);
+     memberAccessCheck(Member.PUBLIC);
+     Constructor constructor;
+     synchronized(this)

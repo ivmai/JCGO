@@ -1,0 +1,50 @@
+diff -ruN original/BezierAnimationPanel.java modified/BezierAnimationPanel.java
+--- original/BezierAnimationPanel.java	2008-11-10 23:32:10.000000000 +0400
++++ modified/BezierAnimationPanel.java	2009-07-12 00:03:06.000000000 +0400
+@@ -93,6 +93,8 @@
+ 
+     Thread anim;
+ 
++    private final Object lock = new Object();
++
+     /**
+      * BezierAnimationPanel Constructor
+      */
+@@ -280,6 +282,7 @@
+ 	    }
+ 	    gp.closePath();
+ 
++	   synchronized (lock) {
+ 	    g2d.setComposite(set);
+ 	    g2d.setBackground(backgroundColor);
+ 	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+@@ -311,6 +314,7 @@
+ 					 gradientColorB, true);
+ 	    g2d.setComposite(blend);
+ 	    g2d.fill(gp);
++	   }
+ 
+ 	    if (g2d == BufferG2D) {
+ 		repaint();
+@@ -324,8 +328,9 @@
+     }
+ 
+     public void paint(Graphics g) {
+-	synchronized (this) {
++	synchronized (lock) {
+ 	   Graphics2D g2d = (Graphics2D) g;
++	   BufferedImage img = this.img;
+ 	   if (img != null) {
+ 	       int imgw = img.getWidth();
+ 	       int imgh = img.getHeight();
+diff -ruN original/SwingSet2.java modified/SwingSet2.java
+--- original/SwingSet2.java	2008-11-10 23:32:10.000000000 +0400
++++ modified/SwingSet2.java	2009-07-12 00:05:14.000000000 +0400
+@@ -935,6 +935,7 @@
+     public void setLookAndFeel(String laf) {
+ 	if(currentLookAndFeel != laf) {
+ 	    currentLookAndFeel = laf;
++	  if(themesMenu != null)
+ 	    themesMenu.setEnabled(laf == metal);
+ 	    updateLookAndFeel();
+ 	}

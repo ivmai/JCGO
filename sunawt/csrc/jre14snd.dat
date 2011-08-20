@@ -1,0 +1,74 @@
+# @(#) jre14snd.dat --
+# JNI method/field reflection dependency for "Sun J2SE v1.4.2 JSound"
+# (data file for JCGO "GenRefl" utility).
+##
+# Project: JCGO-SUNAWT (http://www.ivmaisoft.com/jcgo/)
+# Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+# Use is subject to license terms. No warranties. All rights reserved.
+##
+
+# Output base folder: $(JCGO)/sawt_out/rflg_snd
+
+# File per-line format:
+# [package.]CallerClass.callerMethod(*):[[package.]Class.]field
+# [package.]CallerClass.callerMethod(*):[[package.]Class.]method(signature)
+
+com.sun.media.sound.AbstractPlayer.nClose(*):java.lang.Thread.sleep(J)
+com.sun.media.sound.DirectAudioDevice.nGetFormats(*):addFormat(Ljava/util/Vector;IIIFIZZ)
+com.sun.media.sound.DirectAudioDeviceProvider.nNewDirectAudioDeviceInfo(*):com.sun.media.sound.DirectAudioDeviceProvider$DirectAudioDeviceInfo.<init>(IIILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)
+com.sun.media.sound.HeadspaceMixer.nResume(*):com.sun.media.sound.MixerThread.getExistingThreadObject(I)
+com.sun.media.sound.HeadspaceMixer.nResume(*):com.sun.media.sound.MixerThread.getExistingThreadObject(J)
+com.sun.media.sound.HeadspaceMixer.nResume(*):com.sun.media.sound.MixerThread.getNewThreadObject(I)
+com.sun.media.sound.HeadspaceMixer.nResume(*):com.sun.media.sound.MixerThread.getNewThreadObject(J)
+com.sun.media.sound.HeadspaceMixer.nResume(*):com.sun.media.sound.MixerThread.unpause()
+com.sun.media.sound.HeadspaceMixer.nResume(*):java.lang.Thread.sleep(J)
+com.sun.media.sound.HeadspaceMixer.nResume(*):java.lang.Thread.start()
+com.sun.media.sound.HeadspaceSoundbank.nGetInstruments(*):com.sun.media.sound.HeadspaceInstrument.<init>(Lcom/sun/media/sound/HeadspaceSoundbank;Ljava/lang/String;II)
+com.sun.media.sound.HeadspaceSoundbank.nGetInstruments(*):java.util.Vector.addElement(Ljava/lang/Object;)
+com.sun.media.sound.HeadspaceSoundbank.nGetSamples(*):com.sun.media.sound.HeadspaceSample.<init>(Lcom/sun/media/sound/HeadspaceSoundbank;Ljava/lang/String;III)
+com.sun.media.sound.HeadspaceSoundbank.nGetSamples(*):java.util.Vector.addElement(Ljava/lang/Object;)
+com.sun.media.sound.MidiInDevice.nGetMessages(*):callbackLongMessage([BJ)
+com.sun.media.sound.MidiInDevice.nGetMessages(*):callbackShortMessage(IIIJ)
+com.sun.media.sound.MidiInDevice.nGetMessages(*):callbackShortMessage(IJ)
+com.sun.media.sound.MidiInDevice.nOpen(*):javax.sound.midi.MidiUnavailableException.<init>(Ljava/lang/String;)
+com.sun.media.sound.MidiInDevice.nStart(*):javax.sound.midi.MidiUnavailableException.<init>(Ljava/lang/String;)
+com.sun.media.sound.MixerClip.nClose(*):java.lang.Thread.sleep(J)
+com.sun.media.sound.MixerClip.nOpen(*):callbackSampleEnd()
+com.sun.media.sound.MixerClip.nOpen(*):callbackSampleLoop()
+com.sun.media.sound.MixerSequencer.nOpenMidiSequencer(*):callbackControllerEvent(IIII)
+com.sun.media.sound.MixerSequencer.nOpenMidiSequencer(*):callbackMetaEvent(III[B)
+com.sun.media.sound.MixerSequencer.nOpenMidiSequencer(*):callbackSongEnd()
+com.sun.media.sound.MixerSequencer.nOpenRmfSequencer(*):callbackControllerEvent(IIII)
+com.sun.media.sound.MixerSequencer.nOpenRmfSequencer(*):callbackMetaEvent(III[B)
+com.sun.media.sound.MixerSequencer.nOpenRmfSequencer(*):callbackSongEnd()
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamActive()
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamDestroy()
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamEOM()
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamGetData([BI)
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamInactive()
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamStart()
+com.sun.media.sound.MixerSourceLine.nOpen(*):callbackStreamStop()
+com.sun.media.sound.MixerSourceLine.nOpen(*):dataBuffer
+com.sun.media.sound.MixerThread.runNative(*):getExistingThreadObject(I)
+com.sun.media.sound.MixerThread.runNative(*):getExistingThreadObject(J)
+com.sun.media.sound.MixerThread.runNative(*):getNewThreadObject(I)
+com.sun.media.sound.MixerThread.runNative(*):getNewThreadObject(J)
+com.sun.media.sound.MixerThread.runNative(*):java.lang.Thread.sleep(J)
+com.sun.media.sound.MixerThread.runNative(*):java.lang.Thread.start()
+com.sun.media.sound.MixerThread.runNative(*):unpause()
+com.sun.media.sound.PortMixer.nGetControls(*):com.sun.media.sound.PortMixer$BoolCtrl.<init>(JLjava/lang/String;)
+com.sun.media.sound.PortMixer.nGetControls(*):com.sun.media.sound.PortMixer$CompCtrl.<init>(Ljava/lang/String;[Ljavax/sound/sampled/Control;)
+com.sun.media.sound.PortMixer.nGetControls(*):com.sun.media.sound.PortMixer$FloatCtrl.<init>(JIFFFLjava/lang/String;)
+com.sun.media.sound.PortMixer.nGetControls(*):com.sun.media.sound.PortMixer$FloatCtrl.<init>(JLjava/lang/String;FFFLjava/lang/String;)
+com.sun.media.sound.PortMixer.nGetControls(*):java.util.Vector.addElement(Ljava/lang/Object;)
+com.sun.media.sound.PortMixerProvider.nNewPortMixerInfo(*):com.sun.media.sound.PortMixerProvider$PortMixerInfo.<init>(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)
+com.sun.media.sound.SimpleInputDevice.nClose(*):java.lang.Thread.sleep(J)
+com.sun.media.sound.SimpleInputDevice.nGetFormats(*):java.util.Vector.addElement(Ljava/lang/Object;)
+com.sun.media.sound.SimpleInputDevice.nGetFormats(*):javax.sound.sampled.AudioFormat.<init>(Ljavax/sound/sampled/AudioFormat$Encoding;FIIIFZ)
+com.sun.media.sound.SimpleInputDevice.nOpen(*):callbackCaptureStreamDestroy()
+com.sun.media.sound.SimpleInputDevice.nOpen(*):callbackStreamPutData([BI)
+com.sun.media.sound.SimpleInputDevice.nStart(*):com.sun.media.sound.MixerThread.getExistingThreadObject(J)
+com.sun.media.sound.SimpleInputDevice.nStart(*):com.sun.media.sound.MixerThread.getNewThreadObject(J)
+com.sun.media.sound.SimpleInputDevice.nStart(*):com.sun.media.sound.MixerThread.unpause()
+com.sun.media.sound.SimpleInputDevice.nStart(*):java.lang.Thread.sleep(J)
+com.sun.media.sound.SimpleInputDevice.nStart(*):java.lang.Thread.start()
