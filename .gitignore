@@ -1,0 +1,26 @@
+# Files to be ignored by Git.
+
+*.class
+
+/core
+/jcgo
+/jcgo.exe
+/jcgo.jar
+
+/auxbin/
+/bin/
+/dlls/
+/libs/
+/rflg_out/
+/sawt_out/
+
+/classpath-0.93
+/j2sdk-1_4_2-src-scsl
+/j2sdk1.4.2_19_src
+
+/bdwgc
+/gc7.*
+/jcgo-sunawt-linux-x86*
+/jcgo-sunawt-solaris-x86*
+/jcgo-sunawt-win32-x86*
+/libatomic_ops*
