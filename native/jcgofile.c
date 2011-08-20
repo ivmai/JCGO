@@ -3,15 +3,15 @@
  * a part of the JCGO native layer library (file I/O impl).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
 /*
- * Used control macros: JCGO_ERRSTDOUT, JCGO_ERRTOLOG, JCGO_JNIUSCORE,
- * JCGO_NOCWDIR, JCGO_NOFILES, JCGO_NOTIME, JCGO_NOUTIMBUF, JCGO_ONEROOTFS,
- * JCGO_SYSDUALW, JCGO_SYSWCHAR, JCGO_UNIFSYS, JCGO_WIN32, JCGO_WINFILE,
- * JCGO_WMAIN.
+ * Used control macros: JCGO_CLOCKGETTM, JCGO_ERRSTDOUT, JCGO_ERRTOLOG,
+ * JCGO_JNIUSCORE, JCGO_NOCWDIR, JCGO_NOFILES, JCGO_NOTIME, JCGO_NOUTIMBUF,
+ * JCGO_ONEROOTFS, JCGO_SYSDUALW, JCGO_SYSWCHAR, JCGO_UNIFSYS, JCGO_WIN32,
+ * JCGO_WINFILE, JCGO_WMAIN.
  * Macros for tuning: STATIC, STATICDATA.
  */
 
@@ -1242,6 +1242,17 @@ Java_java_io_VMFile_currentTime0)( JNIEnv *pJniEnv, jclass This, jint isNano )
          (jlong)((((LONGLONG)fileTime.dwHighDateTime << (sizeof(DWORD) * 8)) |
          fileTime.dwLowDateTime) / 10000L - JCGO_WINEPOCH_MILLIS);
 #else
+#ifdef JCGO_CLOCKGETTM
+#ifdef _POSIX_MONOTONIC_CLOCK
+ if ((int)isNano)
+ {
+  struct timespec ts;
+  if (!clock_gettime(CLOCK_MONOTONIC, &ts))
+   return (jlong)ts.tv_sec * ((jlong)1000L * (jlong)1000L * (jlong)1000L) +
+           (jlong)ts.tv_nsec;
+ }
+#endif
+#endif
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
  JGCO_CURTIME_GET(&curt);
  JCGO_FILEIOCALL_END(pJniEnv)

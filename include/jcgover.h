@@ -46,5 +46,5 @@
 #endif
 
 #ifdef JCGO_100 /* translator version */
-#define JCGO_VER 101 /* 1.01 - runtime/source version */
+#define JCGO_VER 102 /* 1.02 - runtime/source version */
 #endif

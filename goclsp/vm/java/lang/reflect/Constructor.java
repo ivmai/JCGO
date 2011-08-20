@@ -3,7 +3,7 @@
  * VM specific Java "Constructor" implementation.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2008 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  **
  * Class specification origin: GNU Classpath v0.93 vm/reference
@@ -88,7 +88,7 @@ public final class Constructor extends AccessibleObject
 { /* VM class */
 
  private static final int CONSTRUCTOR_MODIFIERS =
-  Modifier.PUBLIC | Modifier.PRIVATE | Modifier.PROTECTED;
+  Modifier.PUBLIC | Modifier.PRIVATE | Modifier.PROTECTED | Modifier.STRICT;
 
  private final Class clazz;
 

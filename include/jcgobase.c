@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -701,7 +701,9 @@ EXTRASTATIC void *CFASTCALL jcgo_mainSehJmpBuf( void )
 EXTRASTATIC void **CFASTCALL jcgo_tinitialize( JCGO_MAIN_TCHAR **targv )
 {
 #ifndef JCGO_MAIN_OMITSETROOTS
+#ifndef JCGO_NOGC
  void *pDataFirstSym = jcgo_pDataFirstSym;
+#endif
 #endif
  if (!jcgo_initialized)
  {

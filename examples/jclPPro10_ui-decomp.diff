@@ -1,0 +1,325 @@
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/appletviewer/AppletViewer.java fixed_decomp/com/ibm/oti/appletviewer/AppletViewer.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/appletviewer/AppletViewer.java	2004-06-01 13:21:14.000000000 +0300
++++ fixed_decomp/com/ibm/oti/appletviewer/AppletViewer.java	2009-11-27 13:07:16.000000000 +0300
+@@ -411,13 +411,13 @@
+     }
+    }
+ 
+-   public ViewerThreadGroup()
++   public ViewerThreadGroup(String name)
+    {
+     super(name);
+    }
+   }
+ 
+-  ViewerThreadGroup catcher = viewer. new ViewerThreadGroup();
++  ViewerThreadGroup catcher = new ViewerThreadGroup("appletviewer");
+   Runnable runnable = new Runnable() {
+ 
+    public void run()
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/StopWatch.java fixed_decomp/com/ibm/oti/awt/StopWatch.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/StopWatch.java	2004-06-01 13:21:14.000000000 +0300
++++ fixed_decomp/com/ibm/oti/awt/StopWatch.java	2009-11-26 17:19:08.000000000 +0300
+@@ -59,7 +59,7 @@
+  private String right(int value, int length)
+  {
+   String result;
+-  for (result = value; result.length() < length; result = " " + result);
++  for (result = "" + value; result.length() < length; result = " " + result);
+   return result.substring(0, length);
+  }
+ 
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/image/GraphicsHandler.java fixed_decomp/com/ibm/oti/awt/image/GraphicsHandler.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/image/GraphicsHandler.java	2004-06-01 13:21:14.000000000 +0300
++++ fixed_decomp/com/ibm/oti/awt/image/GraphicsHandler.java	2009-11-26 20:25:40.000000000 +0300
+@@ -24,7 +24,7 @@
+ 
+  public static void setGraphicsFactory(IGraphicsFactory gGraphicsFactory)
+  {
+-  gGraphicsFactory = gGraphicsFactory;
++  GraphicsHandler.gGraphicsFactory = gGraphicsFactory;
+  }
+ 
+  public static Graphics createGraphics(Component component)
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/BBGraphics.java fixed_decomp/java/awt/BBGraphics.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/BBGraphics.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/BBGraphics.java	2009-11-26 20:25:20.000000000 +0300
+@@ -1003,7 +1003,7 @@
+    if (clip != null)
+     gc.setClipping(clip.x, clip.y, clip.width >= 0 ? clip.width : 0, clip.height >= 0 ? clip.height : 0);
+    else
+-    gc.setClipping(null);
++    gc.setClipping((Rectangle)null);
+   }
+   catch (NullPointerException npe)
+   {
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/BBGraphicsDebug.java fixed_decomp/java/awt/BBGraphicsDebug.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/BBGraphicsDebug.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/BBGraphicsDebug.java	2009-11-26 16:47:42.000000000 +0300
+@@ -105,28 +105,28 @@
+  public boolean drawImage(Image image, int x, int y, Color background, ImageObserver imageObserver)
+  {
+   boolean result = super.drawImage(image, x, y, background, imageObserver);
+-  log("drawImage", "image," + x + "," + y + "," + toString(background) + "," + "imageObserver", result);
++  log("drawImage", "image," + x + "," + y + "," + toString(background) + "," + "imageObserver", "" + result);
+   return result;
+  }
+ 
+  public boolean drawImage(Image image, int x, int y, ImageObserver imageObserver)
+  {
+   boolean result = super.drawImage(image, x, y, imageObserver);
+-  log("drawImage", "image," + x + "," + y + "," + "imageObserver", result);
++  log("drawImage", "image," + x + "," + y + "," + "imageObserver", "" + result);
+   return result;
+  }
+ 
+  public boolean drawImage(Image image, int x, int y, int width, int height, Color background, ImageObserver imageObserver)
+  {
+   boolean result = super.drawImage(image, x, y, width, height, background, imageObserver);
+-  log("drawImage", "image," + x + "," + y + "," + width + "," + height + "," + toString(background) + "," + "imageObserver", result);
++  log("drawImage", "image," + x + "," + y + "," + width + "," + height + "," + toString(background) + "," + "imageObserver", "" + result);
+   return result;
+  }
+ 
+  public boolean drawImage(Image image, int x, int y, int width, int height, ImageObserver imageObserver)
+  {
+   boolean result = super.drawImage(image, x, y, width, height, imageObserver);
+-  log("drawImage", "image," + x + "," + y + "," + width + "," + height + "," + "imageObserver", result);
++  log("drawImage", "image," + x + "," + y + "," + width + "," + height + "," + "imageObserver", "" + result);
+   return result;
+  }
+ 
+@@ -134,7 +134,7 @@
+    int srcX2, int srcY2, Color background, ImageObserver imageObserver)
+  {
+   boolean result = super.drawImage(image, dstX1, dstY1, dstX2, dstY2, srcX1, srcY1, srcX2, srcY2, background, imageObserver);
+-  log("drawImage", "image," + dstX1 + "," + dstY1 + "," + dstX2 + "," + dstY2 + "," + srcX1 + "," + srcY1 + "," + srcX2 + "," + srcY2 + "," + toString(background) + "," + "imageObserver", result);
++  log("drawImage", "image," + dstX1 + "," + dstY1 + "," + dstX2 + "," + dstY2 + "," + srcX1 + "," + srcY1 + "," + srcX2 + "," + srcY2 + "," + toString(background) + "," + "imageObserver", "" + result);
+   return result;
+  }
+ 
+@@ -142,7 +142,7 @@
+    int srcX2, int srcY2, ImageObserver imageObserver)
+  {
+   boolean result = super.drawImage(image, dstX1, dstY1, dstX2, dstY2, srcX1, srcY1, srcX2, srcY2, imageObserver);
+-  log("drawImage", "image," + dstX1 + "," + dstY1 + "," + dstX2 + "," + dstY2 + "," + srcX1 + "," + srcY1 + "," + srcX2 + "," + srcY2 + "," + "imageObserver", result);
++  log("drawImage", "image," + dstX1 + "," + dstY1 + "," + dstX2 + "," + dstY2 + "," + srcX1 + "," + srcY1 + "," + srcX2 + "," + srcY2 + "," + "imageObserver", "" + result);
+   return result;
+  }
+ 
+@@ -257,7 +257,7 @@
+  public boolean hitClip(int x, int y, int width, int height)
+  {
+   boolean result = super.hitClip(x, y, width, height);
+-  log("hitClip", x + "," + y + "," + width + "," + height, result);
++  log("hitClip", x + "," + y + "," + width + "," + height, "" + result);
+   return result;
+  }
+ 
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/BBToolkit.java fixed_decomp/java/awt/BBToolkit.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/BBToolkit.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/BBToolkit.java	2009-11-27 13:34:32.000000000 +0300
+@@ -53,7 +53,7 @@
+     Util.initFontDPI(display);
+     notifyAll();
+    }
+-   start();
++   BBToolkit.this.start();
+   }
+ 
+  }
+@@ -89,26 +89,15 @@
+      public void run()
+      {
+       Util.disposeAllFrames();
+-      Util.syncExec(new _cls3());
+-     }
+-
+-
+-
+-     private class _cls3
+-      implements Runnable
+-     {
++      Util.syncExec(new Runnable() {
+ 
+       public void run()
+       {
+        shell.dispose();
+        display.dispose();
+       }
+-
+-      _cls3()
+-      {
+-      }
++      });
+      }
+-
+     }
+ );
+     return null;
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Color.java fixed_decomp/java/awt/Color.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Color.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/Color.java	2009-11-26 16:48:28.000000000 +0300
+@@ -349,7 +349,7 @@
+ 
+  public int getTransparency()
+  {
+-  int alpha;
++  float alpha;
+   if (valueAsPercentages != null)
+   {
+    alpha = valueAsPercentages[ALPHA];
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/EventQueue.java fixed_decomp/java/awt/EventQueue.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/EventQueue.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/EventQueue.java	2009-11-27 13:32:26.000000000 +0300
+@@ -89,8 +89,8 @@
+ 
+   public void dispatch()
+   {
+-   RunnableEvent runnableevent = this;
+-   JVM INSTR monitorenter ;
++   synchronized (this)
++   {
+    try
+    {
+     ((Runnable)getSource()).run();
+@@ -103,11 +103,7 @@
+    {
+     notifyAll();
+    }
+-     goto _L1
+-   runnableevent;
+-   JVM INSTR monitorexit ;
+-   throw ;
+-_L1:
++   }
+   }
+ 
+   public RunnableEvent(Runnable runnable)
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Font.java fixed_decomp/java/awt/Font.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Font.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/Font.java	2009-11-26 16:48:54.000000000 +0300
+@@ -63,7 +63,7 @@
+   String fontName = "dialog";
+   String styleString = "plain";
+   int points = Util.getDefaultFontSize();
+-  String pointsString = points;
++  String pointsString = "" + points;
+   if (font != null)
+   {
+    String delimiter = font.indexOf("-") != -1 || font.trim().equals("") ? "-" : " ";
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Menu.java fixed_decomp/java/awt/Menu.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Menu.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/Menu.java	2009-11-27 13:11:22.000000000 +0300
+@@ -92,7 +92,8 @@
+  {
+   synchronized (getTreeLock())
+   {
+-   java.awt.MenuItem menuItem = new java.awt.MenuItem(MenuItem.separatorLabel());
++   java.awt.MenuItem menuItem =
++    new java.awt.MenuItem(java.awt.MenuItem.separatorLabel());
+    menuItem.parent = this;
+    items.addElement(menuItem);
+    if (widget != null)
+@@ -212,7 +213,7 @@
+ 
+  public void insertSeparator(int index)
+  {
+-  insert(new java.awt.MenuItem(MenuItem.separatorLabel()), index);
++  insert(new java.awt.MenuItem(java.awt.MenuItem.separatorLabel()), index);
+  }
+ 
+  public boolean isTearOff()
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/MenuBar.java fixed_decomp/java/awt/MenuBar.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/MenuBar.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/MenuBar.java	2009-11-26 17:08:52.000000000 +0300
+@@ -53,7 +53,7 @@
+   {
+    if (!isDisplayThread())
+    {
+-    syncExec(new MenuComponent.AddNotifyRunnable(this));
++    syncExec(new MenuComponent.AddNotifyRunnable());
+     return;
+    }
+    _addNotify();
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/MenuItem.java fixed_decomp/java/awt/MenuItem.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/MenuItem.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/MenuItem.java	2009-11-26 17:09:00.000000000 +0300
+@@ -117,7 +117,7 @@
+   {
+    if (!isDisplayThread())
+    {
+-    syncExec(new MenuComponent.AddNotifyRunnable(this));
++    syncExec(new MenuComponent.AddNotifyRunnable());
+     return;
+    }
+    _addNotify();
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/PaintTimer.java fixed_decomp/java/awt/PaintTimer.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/PaintTimer.java	2004-06-01 13:21:16.000000000 +0300
++++ fixed_decomp/java/awt/PaintTimer.java	2009-11-27 13:29:52.000000000 +0300
+@@ -73,33 +73,12 @@
+ 
+    private void repaintAllOutstandingComponents()
+    {
+-    PaintTimer.class$0;
+-    if (PaintTimer.class$0 != null) goto _L2; else goto _L1
+-_L1:
+-    JVM INSTR pop ;
+-    PaintTimer.class$0 = Class.forName("java.awt.PaintTimer");
+-      goto _L2
+-    JVM INSTR new #98  <Class NoClassDefFoundError>;
+-    JVM INSTR dup_x1 ;
+-    JVM INSTR swap ;
+-    getMessage();
+-    NoClassDefFoundError();
+-    throw ;
+-_L2:
+-    JVM INSTR dup ;
+-    Class class2;
+-    class2;
+-    JVM INSTR monitorenter ;
+     Iterator it;
+-    it = PaintTimer.components.iterator();
+-    PaintTimer.components = new ArrayList();
+-    class2;
+-    JVM INSTR monitorexit ;
+-      goto _L3
+-    class2;
+-    JVM INSTR monitorexit ;
+-    throw ;
+-_L3:
++    synchronized (PaintTimer.class)
++    {
++     it = PaintTimer.components.iterator();
++     PaintTimer.components = new ArrayList();
++    }
+     Component component;
+     for (; it.hasNext(); component.repaintAll())
+      component = (Component)it.next();
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/event/InvocationEvent.java fixed_decomp/java/awt/event/InvocationEvent.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/event/InvocationEvent.java	2004-06-01 13:21:18.000000000 +0300
++++ fixed_decomp/java/awt/event/InvocationEvent.java	2009-11-27 13:27:34.000000000 +0300
+@@ -43,8 +43,8 @@
+  public void dispatch()
+  {
+   Object tempNotifier = notifier != null ? notifier : new Object();
+-  Object obj = tempNotifier;
+-  JVM INSTR monitorenter ;
++  synchronized (tempNotifier)
++  {
+   try
+   {
+    fException = null;
+@@ -82,11 +82,7 @@
+   {
+    tempNotifier.notifyAll();
+   }
+-    goto _L1
+-  obj;
+-  JVM INSTR monitorexit ;
+-  throw ;
+-_L1:
++  }
+  }
+ 
+  public Exception getException()

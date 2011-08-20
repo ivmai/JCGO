@@ -1,13 +1,13 @@
 # @(#) $(JCGO)/reflgen/swt.dat --
-# JNI method/field reflection dependency for "Eclipse SWT" GUI v3.5 .. v3.6M4
+# JNI method/field reflection dependency for "Eclipse SWT" GUI v3.5 .. v3.7M3
 # (data file for JCGO "GenRefl" utility).
 ##
 # Project: JCGO (http://www.ivmaisoft.com/jcgo/)
-# Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+# Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
 # Use is subject to license terms. No warranties. All rights reserved.
 ##
 
-# Revised for SWT version: 3.624
+# Revised for SWT version: 3.713
 
 # Note 1: supported SWT back-ends: Carbon, Cocoa, Gtk, Motif, Photon, Windows, WPF.
 
@@ -118,6 +118,36 @@ org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.Safari.eventPr
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.Safari.eventProc7(JJJJJJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.Voyager.webProc(III)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.Voyager.webProc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.JSObjectCallAsFunctionProc(IIIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.JSObjectCallAsFunctionProc(JJJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.JSObjectGetPropertyProc(IIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.JSObjectGetPropertyProc(JJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.JSObjectHasPropertyProc(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.JSObjectHasPropertyProc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(II)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(IIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(IIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(IIIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(JJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(JJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(JJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.Proc(JJJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(IIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(IIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(IIIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(IIIIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(JJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(JJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(JJJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.browserProc(JJJJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.eventProc3(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.eventProc3(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.eventProc7(IIIIIII)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.browser.WebKit.eventProc7(JJJJJJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.dnd.ClipboardProxy.XtConvertSelection(IIIIIII)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.dnd.ClipboardProxy.XtConvertSelection(JJJJJJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.dnd.ClipboardProxy.XtLoseSelection(II)
@@ -242,6 +272,8 @@ org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.graphics.TextLayout$Me
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.graphics.TextLayout$MetaFileEnumProc.metaFileEnumProc(JJJJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.graphics.TextLayout.metaFileEnumProc(IIIII)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.graphics.TextLayout.metaFileEnumProc(JJJJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.graphics.TextLayout.textLayoutProc(II)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.graphics.TextLayout.textLayoutProc(JJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.internal.BidiUtil.EnumSystemLanguageGroupsProc(IIIII)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.internal.BidiUtil.EnumSystemLanguageGroupsProc(JJJJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.internal.BidiUtil.windowProc(IIII)
@@ -766,6 +798,8 @@ org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.itemNo
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.itemNotificationProc(JJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.keyboardProc(III)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.keyboardProc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.launcherProc(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.launcherProc(JJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.menuPositionProc(IIIII)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.menuPositionProc(JJJJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.menuProc(III)
@@ -786,6 +820,8 @@ org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.observ
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.observerProc(JJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.pangoLayoutNewProc(III)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.pangoLayoutNewProc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.performKeyEquivalent(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.performKeyEquivalent(JJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.pollingProc(II)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.pollingProc(JJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.releaseDataProc(III)
@@ -802,6 +838,8 @@ org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.setDir
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.setDirectionProc(JJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.shellMapProc(III)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.shellMapProc(JJJ)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.signalProc(III)
+org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.signalProc(JJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.sizeAllocateProc(III)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.sizeAllocateProc(JJJ)
 org.eclipse.swt.internal.Callback.bind(*):org.eclipse.swt.widgets.Display.sizeRequestProc(III)
@@ -883,6 +921,8 @@ org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.intern
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkActionIface.get_n_actions
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkActionIface.get_name
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkActionIface.set_description
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkAttribute.name
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkAttribute.value
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkComponentIface.add_focus_handler
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkComponentIface.contains
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkComponentIface.get_extents
@@ -896,6 +936,13 @@ org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.intern
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkComponentIface.set_extents
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkComponentIface.set_position
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkComponentIface.set_size
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.copy_text
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.cut_text
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.delete_text
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.insert_text
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.paste_text
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.set_run_attributes
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkEditableTextIface.set_text_contents
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkHypertextIface.get_link
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkHypertextIface.get_link_index
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkHypertextIface.get_n_links
@@ -933,6 +980,42 @@ org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.intern
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkSelectionIface.remove_selection
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkSelectionIface.select_all_selection
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkSelectionIface.selection_changed
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.add_column_selection
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.add_row_selection
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.column_deleted
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.column_inserted
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.column_reordered
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_caption
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_column_at_index
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_column_description
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_column_extent_at
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_column_header
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_index_at
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_n_columns
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_n_rows
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_row_at_index
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_row_description
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_row_extent_at
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_row_header
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_selected_columns
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_selected_rows
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.get_summary
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.is_column_selected
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.is_row_selected
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.is_selected
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.model_changed
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.ref_at
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.remove_column_selection
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.remove_row_selection
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.row_deleted
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.row_inserted
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.row_reordered
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.set_caption
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.set_column_description
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.set_column_header
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.set_row_description
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.set_row_header
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTableIface.set_summary
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextIface.add_selection
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextIface.get_caret_offset
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextIface.get_character_at_offset
@@ -953,6 +1036,18 @@ org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.intern
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextIface.text_caret_moved
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextIface.text_changed
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextIface.text_selection_changed
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRange.bounds
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRange.content
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRange.end_offset
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRange.start_offset
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRectangle.height
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRectangle.width
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRectangle.x
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkTextRectangle.y
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkValueIface.get_current_value
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkValueIface.get_maximum_value
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkValueIface.get_minimum_value
+org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.AtkValueIface.set_current_value
 org.eclipse.swt.internal.accessibility.gtk.ATK.memmove(*):org.eclipse.swt.internal.accessibility.gtk.GtkAccessible.widget
 
 org.eclipse.swt.internal.cairo.Cairo._cairo_font_extents(*):org.eclipse.swt.internal.cairo.cairo_font_extents_t.ascent
@@ -986,6 +1081,8 @@ org.eclipse.swt.internal.carbon.OS.AEGetDescData(*):org.eclipse.swt.internal.car
 org.eclipse.swt.internal.carbon.OS.AEGetDescData(*):org.eclipse.swt.internal.carbon.AEDesc.descriptorType
 org.eclipse.swt.internal.carbon.OS.AEGetNthPtr(*):org.eclipse.swt.internal.carbon.AEDesc.dataHandle
 org.eclipse.swt.internal.carbon.OS.AEGetNthPtr(*):org.eclipse.swt.internal.carbon.AEDesc.descriptorType
+org.eclipse.swt.internal.carbon.OS.AEGetParamDesc(*):org.eclipse.swt.internal.carbon.AEDesc.dataHandle
+org.eclipse.swt.internal.carbon.OS.AEGetParamDesc(*):org.eclipse.swt.internal.carbon.AEDesc.descriptorType
 org.eclipse.swt.internal.carbon.OS.AEProcessAppleEvent(*):org.eclipse.swt.internal.carbon.EventRecord.message
 org.eclipse.swt.internal.carbon.OS.AEProcessAppleEvent(*):org.eclipse.swt.internal.carbon.EventRecord.modifiers
 org.eclipse.swt.internal.carbon.OS.AEProcessAppleEvent(*):org.eclipse.swt.internal.carbon.EventRecord.what
@@ -2560,6 +2657,12 @@ org.eclipse.swt.internal.cde.CDE._DtActionInvoke(*):java.lang.Throwable.printSta
 org.eclipse.swt.internal.cde.CDE._DtActionInvoke(*):org.eclipse.swt.internal.cde.DtActionArg.argClass
 org.eclipse.swt.internal.cde.CDE._DtActionInvoke(*):org.eclipse.swt.internal.cde.DtActionArg.name
 
+org.eclipse.swt.internal.cocoa.Cocoa.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSPoint.x
+org.eclipse.swt.internal.cocoa.Cocoa.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSPoint.y
+org.eclipse.swt.internal.cocoa.Cocoa.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.height
+org.eclipse.swt.internal.cocoa.Cocoa.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.width
+org.eclipse.swt.internal.cocoa.Cocoa.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.x
+org.eclipse.swt.internal.cocoa.Cocoa.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.y
 org.eclipse.swt.internal.cocoa.Cocoa.memcpy(*):org.eclipse.swt.internal.cocoa.NSRect.height
 org.eclipse.swt.internal.cocoa.Cocoa.memcpy(*):org.eclipse.swt.internal.cocoa.NSRect.width
 org.eclipse.swt.internal.cocoa.Cocoa.memcpy(*):org.eclipse.swt.internal.cocoa.NSRect.x
@@ -2574,10 +2677,18 @@ org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend(*):org.eclipse.swt.internal.co
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend(*):org.eclipse.swt.internal.cocoa.NSRect.y
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend(*):org.eclipse.swt.internal.cocoa.NSSize.height
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend(*):org.eclipse.swt.internal.cocoa.NSSize.width
+org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend_stret(*):org.eclipse.swt.internal.cocoa.NSPoint.x
+org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend_stret(*):org.eclipse.swt.internal.cocoa.NSPoint.y
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend_stret(*):org.eclipse.swt.internal.cocoa.NSRect.height
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend_stret(*):org.eclipse.swt.internal.cocoa.NSRect.width
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend_stret(*):org.eclipse.swt.internal.cocoa.NSRect.x
 org.eclipse.swt.internal.cocoa.Cocoa.objc_msgSend_stret(*):org.eclipse.swt.internal.cocoa.NSRect.y
+org.eclipse.swt.internal.cocoa.OS.CGContextBeginTransparencyLayerWithRect(*):org.eclipse.swt.internal.cocoa.CGPoint.x
+org.eclipse.swt.internal.cocoa.OS.CGContextBeginTransparencyLayerWithRect(*):org.eclipse.swt.internal.cocoa.CGPoint.y
+org.eclipse.swt.internal.cocoa.OS.CGContextBeginTransparencyLayerWithRect(*):org.eclipse.swt.internal.cocoa.CGRect.origin
+org.eclipse.swt.internal.cocoa.OS.CGContextBeginTransparencyLayerWithRect(*):org.eclipse.swt.internal.cocoa.CGRect.size
+org.eclipse.swt.internal.cocoa.OS.CGContextBeginTransparencyLayerWithRect(*):org.eclipse.swt.internal.cocoa.CGSize.height
+org.eclipse.swt.internal.cocoa.OS.CGContextBeginTransparencyLayerWithRect(*):org.eclipse.swt.internal.cocoa.CGSize.width
 org.eclipse.swt.internal.cocoa.OS.CGContextCopyWindowContentsToRect(*):org.eclipse.swt.internal.cocoa.CGPoint.x
 org.eclipse.swt.internal.cocoa.OS.CGContextCopyWindowContentsToRect(*):org.eclipse.swt.internal.cocoa.CGPoint.y
 org.eclipse.swt.internal.cocoa.OS.CGContextCopyWindowContentsToRect(*):org.eclipse.swt.internal.cocoa.CGRect.origin
@@ -2608,6 +2719,8 @@ org.eclipse.swt.internal.cocoa.OS.CGDisplayBounds(*):org.eclipse.swt.internal.co
 org.eclipse.swt.internal.cocoa.OS.CGDisplayBounds(*):org.eclipse.swt.internal.cocoa.CGRect.size
 org.eclipse.swt.internal.cocoa.OS.CGDisplayBounds(*):org.eclipse.swt.internal.cocoa.CGSize.height
 org.eclipse.swt.internal.cocoa.OS.CGDisplayBounds(*):org.eclipse.swt.internal.cocoa.CGSize.width
+org.eclipse.swt.internal.cocoa.OS.CGEventCreateMouseEvent(*):org.eclipse.swt.internal.cocoa.CGPoint.x
+org.eclipse.swt.internal.cocoa.OS.CGEventCreateMouseEvent(*):org.eclipse.swt.internal.cocoa.CGPoint.y
 org.eclipse.swt.internal.cocoa.OS.CGGetDisplaysWithRect(*):org.eclipse.swt.internal.cocoa.CGPoint.x
 org.eclipse.swt.internal.cocoa.OS.CGGetDisplaysWithRect(*):org.eclipse.swt.internal.cocoa.CGPoint.y
 org.eclipse.swt.internal.cocoa.OS.CGGetDisplaysWithRect(*):org.eclipse.swt.internal.cocoa.CGRect.origin
@@ -2652,6 +2765,14 @@ org.eclipse.swt.internal.cocoa.OS.NSPointInRect(*):org.eclipse.swt.internal.coco
 org.eclipse.swt.internal.cocoa.OS.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.width
 org.eclipse.swt.internal.cocoa.OS.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.x
 org.eclipse.swt.internal.cocoa.OS.NSPointInRect(*):org.eclipse.swt.internal.cocoa.NSRect.y
+org.eclipse.swt.internal.cocoa.OS.NSRectFillUsingOperation(*):org.eclipse.swt.internal.cocoa.NSRect.height
+org.eclipse.swt.internal.cocoa.OS.NSRectFillUsingOperation(*):org.eclipse.swt.internal.cocoa.NSRect.width
+org.eclipse.swt.internal.cocoa.OS.NSRectFillUsingOperation(*):org.eclipse.swt.internal.cocoa.NSRect.x
+org.eclipse.swt.internal.cocoa.OS.NSRectFillUsingOperation(*):org.eclipse.swt.internal.cocoa.NSRect.y
+org.eclipse.swt.internal.cocoa.OS.PMPrinterGetIndexedPrinterResolution(*):org.eclipse.swt.internal.cocoa.PMResolution.hRes
+org.eclipse.swt.internal.cocoa.OS.PMPrinterGetIndexedPrinterResolution(*):org.eclipse.swt.internal.cocoa.PMResolution.vRes
+org.eclipse.swt.internal.cocoa.OS.PMPrinterGetOutputResolution(*):org.eclipse.swt.internal.cocoa.PMResolution.hRes
+org.eclipse.swt.internal.cocoa.OS.PMPrinterGetOutputResolution(*):org.eclipse.swt.internal.cocoa.PMResolution.vRes
 org.eclipse.swt.internal.cocoa.OS.memmove(*):java.lang.Thread.dumpStack()
 org.eclipse.swt.internal.cocoa.OS.memmove(*):java.lang.Throwable.printStackTrace()
 org.eclipse.swt.internal.cocoa.OS.memmove(*):org.eclipse.swt.internal.cocoa.CFRange.length
@@ -2858,6 +2979,10 @@ org.eclipse.swt.internal.gtk.OS._g_object_set(*):org.eclipse.swt.internal.gtk.Gd
 org.eclipse.swt.internal.gtk.OS._g_object_set(*):org.eclipse.swt.internal.gtk.GdkColor.green
 org.eclipse.swt.internal.gtk.OS._g_object_set(*):org.eclipse.swt.internal.gtk.GdkColor.pixel
 org.eclipse.swt.internal.gtk.OS._g_object_set(*):org.eclipse.swt.internal.gtk.GdkColor.red
+org.eclipse.swt.internal.gtk.OS._g_signal_emit_by_name(*):org.eclipse.swt.internal.gtk.GdkRectangle.height
+org.eclipse.swt.internal.gtk.OS._g_signal_emit_by_name(*):org.eclipse.swt.internal.gtk.GdkRectangle.width
+org.eclipse.swt.internal.gtk.OS._g_signal_emit_by_name(*):org.eclipse.swt.internal.gtk.GdkRectangle.x
+org.eclipse.swt.internal.gtk.OS._g_signal_emit_by_name(*):org.eclipse.swt.internal.gtk.GdkRectangle.y
 org.eclipse.swt.internal.gtk.OS._gdk_cairo_set_source_color(*):org.eclipse.swt.internal.gtk.GdkColor.blue
 org.eclipse.swt.internal.gtk.OS._gdk_cairo_set_source_color(*):org.eclipse.swt.internal.gtk.GdkColor.green
 org.eclipse.swt.internal.gtk.OS._gdk_cairo_set_source_color(*):org.eclipse.swt.internal.gtk.GdkColor.pixel
@@ -3299,6 +3424,11 @@ org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEvent
 org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventMotion.x_root
 org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventMotion.y
 org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventMotion.y_root
+org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventProperty.atom
+org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventProperty.send_event
+org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventProperty.state
+org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventProperty.time
+org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventProperty.window
 org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventScroll.device
 org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventScroll.direction
 org.eclipse.swt.internal.gtk.OS.memmove(*):org.eclipse.swt.internal.gtk.GdkEventScroll.send_event
@@ -4993,6 +5123,24 @@ org.eclipse.swt.internal.photon.OS.uname(*):org.eclipse.swt.internal.photon.utsn
 org.eclipse.swt.internal.photon.OS.uname(*):org.eclipse.swt.internal.photon.utsname.sysname
 org.eclipse.swt.internal.photon.OS.uname(*):org.eclipse.swt.internal.photon.utsname.version
 
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.attributes
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.callAsConstructor
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.callAsFunction
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.className
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.convertToType
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.deleteProperty
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.finalize
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.getProperty
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.getPropertyNames
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.hasInstance
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.hasProperty
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.initialize
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.parentClass
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.setProperty
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.staticFunctions
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.staticValues
+org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.version
+
 org.eclipse.swt.internal.win32.OS.AdjustWindowRectEx(*):org.eclipse.swt.internal.win32.RECT.bottom
 org.eclipse.swt.internal.win32.OS.AdjustWindowRectEx(*):org.eclipse.swt.internal.win32.RECT.left
 org.eclipse.swt.internal.win32.OS.AdjustWindowRectEx(*):org.eclipse.swt.internal.win32.RECT.right
@@ -6582,6 +6730,8 @@ org.eclipse.swt.internal.win32.OS.OffsetRect(*):org.eclipse.swt.internal.win32.R
 org.eclipse.swt.internal.win32.OS.OffsetRect(*):org.eclipse.swt.internal.win32.RECT.top
 org.eclipse.swt.internal.win32.OS.POINTSTOPOINT(*):org.eclipse.swt.internal.win32.POINT.x
 org.eclipse.swt.internal.win32.OS.POINTSTOPOINT(*):org.eclipse.swt.internal.win32.POINT.y
+org.eclipse.swt.internal.win32.OS.PSPropertyKeyFromString(*):org.eclipse.swt.internal.win32.PROPERTYKEY.fmtid
+org.eclipse.swt.internal.win32.OS.PSPropertyKeyFromString(*):org.eclipse.swt.internal.win32.PROPERTYKEY.pid
 org.eclipse.swt.internal.win32.OS.PeekMessageA(*):org.eclipse.swt.internal.win32.MSG.hwnd
 org.eclipse.swt.internal.win32.OS.PeekMessageA(*):org.eclipse.swt.internal.win32.MSG.lParam
 org.eclipse.swt.internal.win32.OS.PeekMessageA(*):org.eclipse.swt.internal.win32.MSG.message
@@ -7576,6 +7726,8 @@ org.eclipse.swt.internal.win32.OS.ValidateRect(*):org.eclipse.swt.internal.win32
 org.eclipse.swt.internal.win32.OS.ValidateRect(*):org.eclipse.swt.internal.win32.RECT.left
 org.eclipse.swt.internal.win32.OS.ValidateRect(*):org.eclipse.swt.internal.win32.RECT.right
 org.eclipse.swt.internal.win32.OS.ValidateRect(*):org.eclipse.swt.internal.win32.RECT.top
+org.eclipse.swt.internal.win32.OS.VtblCall(*):org.eclipse.swt.internal.win32.PROPERTYKEY.fmtid
+org.eclipse.swt.internal.win32.OS.VtblCall(*):org.eclipse.swt.internal.win32.PROPERTYKEY.pid
 org.eclipse.swt.internal.win32.OS.VtblCall(*):org.eclipse.swt.internal.win32.TF_DA_COLOR.cr
 org.eclipse.swt.internal.win32.OS.VtblCall(*):org.eclipse.swt.internal.win32.TF_DA_COLOR.type
 org.eclipse.swt.internal.win32.OS.VtblCall(*):org.eclipse.swt.internal.win32.TF_DISPLAYATTRIBUTE.bAttr

@@ -3,7 +3,7 @@
  * VM specific Java "Class" implementation.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  **
  * Class specification origin: GNU Classpath v0.93
@@ -620,7 +620,8 @@ public final class Class /* hard-coded class name */ /* const data */
  {
   return VMClass.getModifiers(this, false) & (Modifier.PUBLIC |
           Modifier.PROTECTED | Modifier.PRIVATE | Modifier.FINAL |
-          Modifier.STATIC | Modifier.ABSTRACT | Modifier.INTERFACE);
+          Modifier.STATIC | Modifier.ABSTRACT | Modifier.INTERFACE |
+          ANNOTATION | ENUM);
  }
 
  public String getName() /* hard-coded method signature */

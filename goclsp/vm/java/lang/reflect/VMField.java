@@ -3,7 +3,7 @@
  * VM specific methods for Java "Field" implementation.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -531,7 +531,8 @@ final class VMField /* hard-coded class name */
   throws IllegalAccessException
  {
   checkAllowGet(field, obj, caller);
-  if ((getModifiersInternal(field) & Modifier.FINAL) != 0)
+  if ((getModifiersInternal(field) & Modifier.FINAL) != 0 &&
+      !field.isAccessible())
    throw new IllegalAccessException("cannot set final field: " +
               field.getDeclaringClass().getName() + "." + field.getName());
  }

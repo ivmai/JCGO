@@ -7,7 +7,7 @@
 
 /* SimpleDateFormat.java -- A class for parsing/formating simple
    date constructs
-   Copyright (C) 1998, 1999, 2000, 2001, 2003, 2004, 2005
+   Copyright (C) 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2010
    Free Software Foundation, Inc.
 
 This file is part of GNU Classpath.
@@ -68,6 +68,8 @@ import java.util.regex.Pattern;
 /**
  * SimpleDateFormat provides convenient methods for parsing and formatting
  * dates using Gregorian calendars (see java.util.GregorianCalendar).
+ * This class is not thread-safe; external synchronisation should be applied
+ * if an instance is to be accessed from multiple threads.
  */
 public class SimpleDateFormat extends DateFormat
 {
@@ -77,13 +79,13 @@ public class SimpleDateFormat extends DateFormat
    * ID, size, and character used are stored for each sequence
    * of pattern characters.
    */
-  private class CompiledField
+  private static final class CompiledField
   {
     /**
      * The ID of the field within the local pattern characters.
      * Package private for use in out class.
      */
-    int field;
+    final int field;
 
     /**
      * The size of the character sequence.
@@ -94,7 +96,7 @@ public class SimpleDateFormat extends DateFormat
     /**
      * The character used.
      */
-    private char character;
+    private final char character;
 
     /**
      * Constructs a compiled field using the
@@ -105,7 +107,7 @@ public class SimpleDateFormat extends DateFormat
      * @param s the size of the field.
      * @param c the character used.
      */
-    public CompiledField(int f, int s, char c)
+    CompiledField(int f, int s, char c)
     {
       field = f;
       size = s;
@@ -116,7 +118,7 @@ public class SimpleDateFormat extends DateFormat
      * Retrieves the ID of the field relative to
      * the local pattern characters.
      */
-    public int getField()
+    int getField()
     {
       return field;
     }
@@ -124,7 +126,7 @@ public class SimpleDateFormat extends DateFormat
     /**
      * Retrieves the size of the character sequence.
      */
-    public int getSize()
+    int getSize()
     {
       return size;
     }
@@ -132,7 +134,7 @@ public class SimpleDateFormat extends DateFormat
     /**
      * Retrieves the character used in the sequence.
      */
-    public char getCharacter()
+    char getCharacter()
     {
       return character;
     }
@@ -162,7 +164,7 @@ public class SimpleDateFormat extends DateFormat
   }
 
   /**
-   * A list of <code>CompiledField</code>s,
+   * A list of <code>CompiledField</code>s and {@code String}s
    * representing the compiled version of the pattern.
    *
    * @see CompiledField
@@ -238,10 +240,16 @@ public class SimpleDateFormat extends DateFormat
    */
   private static final long serialVersionUID = 4774881970558875024L;
 
-  // This string is specified in the root of the CLDR.  We set it here
-  // rather than doing a DateFormatSymbols(Locale.US).getLocalPatternChars()
-  // since someone could theoretically change those values (though unlikely).
-  private static final String standardChars = "GyMdkHmsSEDFwWahKzYeugAZ";
+  // This string is specified in the root of the CLDR.
+  private static final String standardChars = "GyMdkHmsSEDFwWahKzYeugAZvcL";
+
+  /**
+   * Represents the position of the RFC822 timezone pattern character
+   * in the array of localized pattern characters.  In the
+   * U.S. locale, this is 'Z'.  The value is the offset of the current
+   * time from GMT e.g. -0500 would be five hours prior to GMT.
+   */
+  private static final int RFC822_TIMEZONE_FIELD = 23;
 
   /**
    * Reads the serialized version of this object.
@@ -353,7 +361,7 @@ public class SimpleDateFormat extends DateFormat
             else
               {
                 // A special character
-                tokens.add(new Character(thisChar));
+                tokens.add(Character.valueOf(thisChar));
               }
           }
         else
@@ -521,7 +529,7 @@ public class SimpleDateFormat extends DateFormat
    */
   public void applyPattern(String pattern)
   {
-    tokens = new ArrayList();
+    tokens.clear();
     compileFormat(pattern);
     this.pattern = pattern;
   }
@@ -557,7 +565,7 @@ public class SimpleDateFormat extends DateFormat
    * @return a version of the pattern using the characters in
    *         <code>newChars</code>.
    */
-  private String translateLocalizedPattern(String pattern,
+  private static String translateLocalizedPattern(String pattern,
                                            String oldChars, String newChars)
   {
     int len = pattern.length();
@@ -694,7 +702,6 @@ public class SimpleDateFormat extends DateFormat
   private void formatWithAttribute(Date date, FormatBuffer buffer, FieldPosition pos)
   {
     String temp;
-    AttributedCharacterIterator.Attribute attribute;
     calendar.setTime(date);
 
     // go through vector, filling in fields where applicable, else toString
@@ -809,15 +816,11 @@ public class SimpleDateFormat extends DateFormat
                 buffer.append (zoneID);
                 break;
               case RFC822_TIMEZONE_FIELD:
-                buffer.setDefaultAttribute(DateFormat.Field.RFC822_TIME_ZONE);
+                buffer.setDefaultAttribute(DateFormat.Field.TIME_ZONE);
                 int pureMinutes = (calendar.get(Calendar.ZONE_OFFSET) +
                                    calendar.get(Calendar.DST_OFFSET)) / (1000 * 60);
-                String sign = "+";
-                if (pureMinutes < 0)
-                  {
-                    sign = "-";
-                    pureMinutes = -pureMinutes;
-                  }
+                String sign = (pureMinutes < 0) ? "-" : "+";
+                pureMinutes = Math.abs(pureMinutes);
                 int hours = pureMinutes / 60;
                 int minutes = pureMinutes % 60;
                 buffer.append(sign);
@@ -867,7 +870,8 @@ public class SimpleDateFormat extends DateFormat
                                        buf.getAttributes());
   }
 
-  private void withLeadingZeros(int value, int length, FormatBuffer buffer)
+  private static void withLeadingZeros(int value, int length,
+                                       FormatBuffer buffer)
   {
     String valStr = String.valueOf(value);
     for (length -= valStr.length(); length > 0; length--)
@@ -875,7 +879,7 @@ public class SimpleDateFormat extends DateFormat
     buffer.append(valStr);
   }
 
-  private boolean expect(String source, ParsePosition pos, char ch)
+  private static boolean expect(String source, ParsePosition pos, char ch)
   {
     int x = pos.getIndex();
     boolean r = x < source.length() && source.charAt(x) == ch;
@@ -911,7 +915,6 @@ public class SimpleDateFormat extends DateFormat
             char ch = pattern.charAt(fmt_index);
             if (ch == '\'')
               {
-                int index = pos.getIndex();
                 if (fmt_index < fmt_max - 1
                     && pattern.charAt(fmt_index + 1) == '\'')
                   {
@@ -1112,13 +1115,27 @@ public class SimpleDateFormat extends DateFormat
             if (is_numeric)
               {
                 numberFormat.setMinimumIntegerDigits(fmt_count);
-                if (limit_digits)
-                  numberFormat.setMaximumIntegerDigits(fmt_count);
                 if (maybe2DigitYear)
                   index = pos.getIndex();
-                Number n = numberFormat.parse(dateStr, pos);
-                if (pos == null || ! (n instanceof Long))
-                  return null;
+                Number n;
+                if (limit_digits
+                    && dateStr.length() > pos.getIndex() + fmt_count)
+                  {
+                    // numberFormat.setMaximumIntegerDigits(fmt_count) may
+                    // not work as expected. So we explicitly use substring
+                    // of dateStr.
+                    n = numberFormat.parse(dateStr.substring(0,
+                                            pos.getIndex() + fmt_count), pos);
+                  }
+                else
+                  n = numberFormat.parse(dateStr, pos);
+
+                if (!(n instanceof Long))
+                  {
+                    if (n != null) // set error index if not yet
+                      pos.setErrorIndex(pos.getIndex());
+                    return null;
+                  }
                 value = n.intValue() + offset;
               }
             else if (set1 != null)
@@ -1129,8 +1146,8 @@ public class SimpleDateFormat extends DateFormat
                 for (i = offset; i < set1.length; ++i)
                   {
                     if (set1[i] != null)
-                      if (dateStr.toUpperCase().startsWith(set1[i].toUpperCase(),
-                                                           index))
+                      if (dateStr.regionMatches(true, index, set1[i], 0,
+                                                set1[i].length()))
                         {
                           found = true;
                           pos.setIndex(index + set1[i].length());
@@ -1142,8 +1159,8 @@ public class SimpleDateFormat extends DateFormat
                     for (i = offset; i < set2.length; ++i)
                       {
                         if (set2[i] != null)
-                          if (dateStr.toUpperCase().startsWith(set2[i].toUpperCase(),
-                                                               index))
+                          if (dateStr.regionMatches(true, index, set2[i], 0,
+                                                set2[i].length()))
                             {
                               found = true;
                               pos.setIndex(index + set2[i].length());
@@ -1216,7 +1233,7 @@ public class SimpleDateFormat extends DateFormat
    * <code>String</code> representation.
    * </p>
    * <p>
-   * The supplied <code>String</code> must be a three
+   * The supplied <code>String</code> must start with a three
    * or four digit signed number, with an optional 'GMT'
    * prefix.  The first one or two digits represents the hours,
    * while the last two represent the minutes.  The
@@ -1247,59 +1264,60 @@ public class SimpleDateFormat extends DateFormat
    * @return the parsed offset, or null if parsing
    *         failed.
    */
-  private Integer computeOffset(String zoneString, ParsePosition pos)
+  private static Integer computeOffset(String zoneString, ParsePosition pos)
   {
+    // Parse according to "(GMT)?([+-])([012])?([0-9]):?([0-9]{2})" format
     int len = 0;
     if (zoneString.startsWith("GMT"))
-    {
-     zoneString = zoneString.substring(3);
-     len = 3;
-    }
+      {
+        zoneString = zoneString.substring(3);
+        len = 3;
+      }
     char sign;
-    if (zoneString.length() > 3 &&
-        ((sign = zoneString.charAt(0)) == '+' || sign == '-'))
-    {
-     zoneString = zoneString.substring(1);
-     int len2 = 6;
-     if (zoneString.charAt(2) != ':')
-     {
-      char ch;
-      if (zoneString.charAt(0) >= '3' || zoneString.charAt(1) == ':' ||
-          zoneString.charAt(2) >= '6' || zoneString.length() == 3 ||
-          (ch = zoneString.charAt(3)) < '0' || ch > '9')
+    if (zoneString.length() > 3
+        && ((sign = zoneString.charAt(0)) == '+' || sign == '-'))
       {
-       zoneString = "0" + zoneString;
-       len2--;
+        zoneString = zoneString.substring(1);
+        int len2 = 6;
+        if (zoneString.charAt(2) != ':')
+          {
+            char ch;
+            if (zoneString.charAt(0) > '2' || zoneString.charAt(1) == ':'
+                || zoneString.charAt(2) > '5' || zoneString.length() == 3
+                || (ch = zoneString.charAt(3)) < '0' || ch > '9')
+              {
+                zoneString = "0" + zoneString;
+                len2--;
+              }
+            if (zoneString.charAt(2) != ':')
+              {
+                zoneString = zoneString.substring(0, 2) + ":"
+                             + zoneString.substring(2);
+                len2--;
+              }
+          }
+        char c0, c1, c3, c4;
+        if (zoneString.length() > 4
+            && (c0 = zoneString.charAt(0)) >= '0' && c0 <= '2'
+            && (c1 = zoneString.charAt(1)) >= '0' && c1 <= '9'
+            && (c3 = zoneString.charAt(3)) >= '0' && c3 <= '5'
+            && (c4 = zoneString.charAt(4)) >= '0' && c4 <= '9')
+          {
+            int hour = (c0 - '0') * 10 + c1 - '0';
+            if (hour > 23)
+              return null;
+            int offset = hour * 60 + (c3 - '0') * 10 + c4 - '0';
+            if (sign == '-')
+              offset = -offset;
+            pos.setIndex(pos.getIndex() + len + len2);
+            return new Integer(offset * 60000);
+          }
       }
-      if (zoneString.charAt(2) != ':')
-      {
-       zoneString = zoneString.substring(0, 2) + ":" + zoneString.substring(2);
-       len2--;
-      }
-     }
-     char c0, c1, c3, c4;
-     if (zoneString.length() > 4 &&
-         (c0 = zoneString.charAt(0)) >= '0' && c0 <= '2' &&
-         (c1 = zoneString.charAt(1)) >= '0' && c1 <= '9' &&
-         (c3 = zoneString.charAt(3)) >= '0' && c3 <= '5' &&
-         (c4 = zoneString.charAt(4)) >= '0' && c4 <= '9')
-     {
-      int hour = (c0 - '0') * 10 + c1 - '0';
-      if (hour > 23)
-       return null;
-      int offset = hour * 60 + (c3 - '0') * 10 + c4 - '0';
-      if (sign == '-')
-       offset = -offset;
-      pos.setIndex(pos.getIndex() + len + len2);
-      return new Integer(offset * 60000);
-     }
-    }
     if (len > 0)
-    {
-     pos.setIndex(pos.getIndex() + len);
-     return new Integer(0);
-    }
-
+      {
+        pos.setIndex(pos.getIndex() + len);
+        return new Integer(0);
+      }
     return null;
   }
 

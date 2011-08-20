@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -13,8 +13,8 @@
  */
 
 /*
- * Used control macros: JCGO_BOOLINT, JCGO_INTFIT, JCGO_INTNN, JCGO_INVLL,
- * JCGO_LONGDBL, JCGO_NOFP, JCGO_NOJNI, JCGO_USELONG.
+ * Used control macros: HAVE_CONFIG_H, JCGO_BOOLINT, JCGO_INTFIT, JCGO_INTNN,
+ * JCGO_INVLL, JCGO_LONGDBL, JCGO_NOFP, JCGO_NOJNI, JCGO_USELONG.
  * Macros for tuning: CONST, JNICALL, JNIEXPORT, JNIIMPORT.
  */
 
@@ -48,6 +48,10 @@
  */
 
 #ifdef JCGO_VER
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #ifndef JCGO_NOJNI
 #ifndef va_arg

@@ -3,7 +3,7 @@
  * VM specific mapped byte buffer implementation.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2007 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  **
  * Class specification origin: GNU Classpath v0.93
@@ -84,7 +84,7 @@ import java.io.IOException;
 final class MappedByteBufferImpl extends MappedByteBuffer
 { /* VM class */
 
- boolean readOnly;
+ private final boolean readOnly;
 
  Pointer implPtr;
 

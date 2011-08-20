@@ -1,16 +1,12 @@
 /*
- * @(#) $(JCGO)/goclsp/clsp_res/gnu/classpath/Configuration.java --
- * Compile-time Java VM configuration constants.
- **
- * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
- * All rights reserved. Distributed under the Terms of GNU GPL.
- **
- * File content origin: GNU Classpath v0.93
+ * This file is modified by Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Project name: JCGO (http://www.ivmaisoft.com/jcgo/)
+ * Class root location: $(JCGO)/goclsp/clsp_fix
+ * Origin: GNU Classpath v0.93
  */
 
-/* Configuration.java.in --
-   Copyright (C) 1998, 2001, 2003, 2005  Free Software Foundation, Inc.
+/* MappedByteBuffer.java --
+   Copyright (C) 2002, 2004  Free Software Foundation, Inc.
 
 This file is part of GNU Classpath.
 
@@ -46,24 +42,68 @@ this exception to your version of the library, but you are not
 obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version. */
 
-package gnu.classpath;
 
-public interface Configuration
+package java.nio;
+
+import gnu.classpath.Pointer;
+
+/**
+ * @author Michael Koch (konqueror@gmx.de)
+ * @since 1.4
+ */
+public abstract class MappedByteBuffer extends ByteBuffer
 {
+  MappedByteBuffer (int capacity, int limit, int position, int mark,
+                    Pointer address)
+  {
+    super (capacity, limit, position, mark, address, null, 0);
+  }
 
- String CLASSPATH_VERSION = "0.93"; /* current Classpath version */
+  // For use by MappedByteBufferImpl only.
+  MappedByteBuffer (int capacity, int limit, int position, int mark)
+  {
+    this (capacity, limit, position, mark, null);
+  }
 
- String CLASSPATH_HOME = "/usr/local/classpath";
+  void forceImpl()
+  {
+  }
 
- String default_awt_peer_toolkit = ConfigAwtPeer.default_awt_peer_toolkit;
+  public final MappedByteBuffer force ()
+  {
+    forceImpl();
+    return this;
+  }
 
- boolean DEBUG = false;
+  boolean isLoadedImpl()
+  {
+    load();
+    return true;
+  }
 
- boolean INIT_LOAD_LIBRARY = false;
+  public final boolean isLoaded ()
+  {
+    return isLoadedImpl();
+  }
 
- boolean JAVA_LANG_SYSTEM_EXPLICIT_INITIALIZATION = false;
+  void loadImpl()
+  {
+  }
 
- String ECJ_JAR = "ecj.jar";
+  public final MappedByteBuffer load ()
+  {
+    loadImpl();
+    return this;
+  }
 
- boolean WANT_NATIVE_BIG_INTEGER = false;
+  void unmapImpl ()
+  {
+    forceImpl();
+  }
+
+  protected void finalize()
+    throws Throwable
+  {
+    unmapImpl();
+  }
 }
