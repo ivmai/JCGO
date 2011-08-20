@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/Super.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,68 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for super.
+ **
+ * Formats:
+ * SUPER
+ * Expression(QualifiedName) DOT SUPER
+ */
+
+final class Super extends This
+{
+
+ Super() {}
+
+ Super(Term a)
+ {
+  super(a);
+ }
+
+ void processPass1(Context c)
+ {
+  if (super.exprType() == null && terms[0].notEmpty())
+   terms[0] = new ClassOrIfaceType(new LexTerm(LexTerm.ID,
+               terms[0].dottedName()));
+  super.processPass1(c);
+ }
+
+ ExpressionType exprType()
+ {
+  ExpressionType classDefnExpr = super.exprType();
+  assertCond(classDefnExpr != null);
+  ClassDefinition classDefn = classDefnExpr.receiverClass();
+  ClassDefinition aclass = classDefn.superClass();
+  if (aclass == null)
+   aclass = classDefn;
+  return aclass;
+ }
+
+ ExpressionType actualExprType()
+ {
+  ExpressionType classDefnExpr = super.exprType();
+  assertCond(classDefnExpr != null);
+  ClassDefinition classDefn = classDefnExpr.receiverClass();
+  ClassDefinition aclass = classDefn.superClass();
+  if (aclass == null)
+   aclass = classDefn;
+  return aclass.asExactClassType();
+ }
+
+ boolean isSuper(boolean onlyEmpty)
+ {
+  return !onlyEmpty || !terms[0].notEmpty();
+ }
+
+ int tokenCount()
+ {
+  return 0;
+ }
+
+ ExpressionType traceClassInit()
+ {
+  return null;
+ }
+}

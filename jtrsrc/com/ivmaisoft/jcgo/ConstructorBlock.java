@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/ConstructorBlock.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,51 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for a constructor block.
+ */
+
+final class ConstructorBlock extends Block
+{
+
+ ConstructorBlock(Term b)
+ {
+  super(b);
+ }
+
+ void processPass1(Context c)
+ {
+  if (!analysisDone)
+  {
+   analysisDone = true;
+   assertCond(c.currentMethod != null);
+   c.currentMethod.setNeedsDummyRet();
+   terms[0].processPass1(c);
+   boolean oldHasConstructor = c.hasConstructor;
+   c.hasConstructor = false;
+   terms[1].processPass1(c);
+   if (!c.hasConstructor && c.currentClass.superClass() != null)
+   {
+    Term primary = Empty.newTerm();
+    if (c.currentClass.hasConstrSuperExpr())
+     primary = new Expression((new QualifiedName(
+                new LexTerm(LexTerm.ID, "this$00"))).setLineInfoFrom(this));
+    Term constr =
+     new ExprStatement((new ConstructorCall(primary,
+     (new Super()).setLineInfoFrom(this),
+     c.currentClass.constrMakeArgumentList())).setLineInfoFrom(this));
+    constr.processPass1(c);
+    terms[1] = new Seq(constr, terms[1]);
+   }
+   c.hasConstructor = oldHasConstructor;
+   terms[2].processPass1(c);
+  }
+ }
+
+ int tokenCount()
+ {
+  return terms[1].tokenCount() + 1;
+ }
+}

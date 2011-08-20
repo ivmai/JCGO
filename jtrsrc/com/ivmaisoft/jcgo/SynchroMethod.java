@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/SynchroMethod.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,50 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for a synchronized method.
+ */
+
+class SynchroMethod extends TryStatement
+{
+
+ SynchroMethod(Term b)
+ {
+  super(b, Empty.newTerm(), Empty.newTerm());
+ }
+
+ boolean allowInline(int tokenLimit)
+ {
+  return terms[0].allowInline(tokenLimit - 3);
+ }
+
+ void discoverObjLeaks()
+ {
+  terms[0].discoverObjLeaks();
+ }
+
+ final boolean isReturnAtEnd(boolean allowBreakThrow)
+ {
+  return terms[0].isReturnAtEnd(allowBreakThrow);
+ }
+
+ MethodDefinition superMethodCall()
+ {
+  return terms[0].superMethodCall();
+ }
+
+ final boolean outputFinallyCode(OutputContext oc)
+ {
+  oc.cPrint("JCGO_SYNC_JUMPLEAVE(0);");
+  return false;
+ }
+
+ void processOutput(OutputContext oc)
+ {
+  terms[0].processOutput(oc);
+  oc.cPrint(terms[0].isReturnAtEnd(true) ? "JCGO_SYNC_ENDUNREACH\010" :
+   "JCGO_SYNC_END\010");
+ }
+}

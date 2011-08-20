@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/Seq.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,45 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * A general grammar production with two terms.
+ */
+
+final class Seq extends LexNode
+{
+
+ Seq(Term a, Term b)
+ {
+  super(a, b);
+ }
+
+ BranchContext staticInitializerPass(BranchContext prevBranch,
+   boolean isStatic)
+ {
+  return terms[1].staticInitializerPass(terms[0].staticInitializerPass(
+          prevBranch, isStatic), isStatic);
+ }
+
+ void addFieldsTo(ClassDefinition cd)
+ {
+  terms[0].addFieldsTo(cd);
+  terms[1].addFieldsTo(cd);
+ }
+
+ int tokenCount()
+ {
+  return terms[0].tokenCount() + terms[1].tokenCount();
+ }
+
+ boolean hasTailReturnOrThrow()
+ {
+  return terms[1].hasTailReturnOrThrow();
+ }
+
+ boolean isReturnAtEnd(boolean allowBreakThrow)
+ {
+  return terms[1].isReturnAtEnd(allowBreakThrow);
+ }
+}

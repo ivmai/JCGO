@@ -1,0 +1,1259 @@
+/*
+ * @(#) $(JCGO)/jtrsrc/jcgo.atg --
+ * a part of JCGO translator (the Java grammar written in Coco/R ATG).
+ **
+ * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * All rights reserved.
+ */
+
+/*
+ * This is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ **
+ * This software is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License (GPL) for more details.
+ **
+ * Linking this library statically or dynamically with other modules is
+ * making a combined work based on this library. Thus, the terms and
+ * conditions of the GNU General Public License cover the whole
+ * combination.
+ **
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module. An independent module is a module which is not derived from
+ * or based on this library. If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ */
+
+/*
+ Replace "package comivmaisoftjcgo" with "package com.ivmaisoft.jcgo"
+ in ErrorStream, Scanner and Parser files.
+
+ Here are the patches that shall be applied to the generated (by the
+ Coco/R for Java V1.15 compiler) Scanner file:
+
+ 1) insert the following four lines just before
+ "} catch (IOException e) {" (in the body of 'Fill' function):
+   if (n > 0) { while (n < buf.length) {
+   int res = s.read(buf, n, buf.length - n);
+   if (res <= 0) break; else n += res; } }
+   s.close();
+
+ 2) insert the following one line just before "System.exit(0);" (in
+ the body of 'Fill' function):
+   if (bufLen >= 0) System.exit(1);
+
+ 3) insert the following one line just before
+ "if (position < 0) position = 0; else if (position >= bufLen)" (in the
+ body of 'Set' function):
+   if (position > 0) { pos = prevPrevPos; return; }
+
+ 4) insert the following two lines just before "static int read() {" (in
+ the body of Buffer class):
+   private static int prevPrevPos, prevPos;
+   private static boolean ignoreBackslash;
+
+ 5) insert the following 13 lines just before
+ "if (pos < bufLen) return (int) buf[pos++]; else return eof;" (in the body
+ of 'read' function):
+   prevPrevPos = prevPos; prevPos = pos;
+   int c; if (pos == 0) ignoreBackslash = false;
+   if (!ignoreBackslash) { if (bufLen - 5 > pos && buf[pos] == '\\') {
+   if (buf[pos + 1] == 'u') { int k = 2;
+   while (buf[pos + k] == 'u' && bufLen - pos > k + 4) k++;
+   if (buf[pos + k] == '0' && buf[pos + k + 1] == '0' &&
+   buf[pos + k + 2] >= '0' && buf[pos + k + 2] <= '7' &&
+   (((c = buf[pos + k + 3]) >= '0' && c <= '9') ||
+   ((c -= 'A' - '0' - 10) >= '0' + 10 && c <= '0' + 0xf) ||
+   ((c -= 'a' - 'A') >= '0' + 10 && c <= '0' + 0xf)) &&
+   (c = ((buf[pos + k + 2] - '0') << 4) | (c - '0')) != 0 && (c != '\\' ||
+   bufLen - pos == k + 4 || buf[pos + k + 4] != 'u')) { pos += k + 4;
+   return c; } } ignoreBackslash = true; } } else ignoreBackslash = false;
+
+ 6) insert the following two lines just before
+ "else if (ch == CR) {line++; lineStart = pos + 1;}" (in the body of
+ 'NextCh' function):
+   if (ch == '\t') lineStart += (pos - lineStart) % 8 - 7;
+   if (ch >= 0x7f && ch != 0xffff) { ch = 0x7f; return; }
+
+ 7) insert the following one line just before "if (ch == 10) {" (in
+ the body of 'Comment1' function):
+   if (ch == 13) { NextCh(); return true; }
+
+ 8) do not use BufferedReader.
+
+*/
+
+COMPILER comivmaisoftjcgo
+
+CHARACTERS
+
+tab = CHR(9) /* '\t' */.
+lf = CHR(10) /* '\n' */.
+ff = CHR(12) /* '\f' */.
+cr = CHR(13) /* '\r' */.
+ctrlz = CHR(26) /* '\u001a' */.
+backslash = CHR(92) /* '\\' */.
+
+letter = "$ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_".
+octlowdigit = "0123".
+octhighdigit = "4567".
+octaldigit = octlowdigit + octhighdigit.
+nonzerodigit = "123456789".
+digit = nonzerodigit + "0".
+hexdigit = digit + "ABCDEFabcdef".
+alphanumeric = digit + letter.
+fpsuffix = "DFdf".
+quote = '"'.
+escsym = quote + backslash + "btnfr'".
+strchar = ANY - lf - cr - quote - backslash - "'".
+
+TOKENS
+
+IDENTIFIER = (letter | backslash "u" {"u"}
+ hexdigit hexdigit hexdigit hexdigit) {alphanumeric |
+ backslash "u" {"u"} hexdigit hexdigit hexdigit hexdigit}.
+
+INTEGERLITERAL = ("0" [octaldigit {octaldigit} |
+ ("X" | "x") hexdigit {hexdigit}] | nonzerodigit {digit}) ["L" | "l"].
+
+FLOATLITERAL = digit {digit} (fpsuffix |
+ ("." {digit} [("E" | "e") ["+" | "-"] digit {digit}] |
+ ("E" | "e") ["+" | "-"] digit {digit}) [fpsuffix]) |
+ "." digit {digit} [("E" | "e") ["+" | "-"] digit {digit}] [fpsuffix].
+
+CHARLITERAL = "'" (backslash (escsym | octlowdigit [octaldigit [octaldigit]] |
+ octhighdigit [octaldigit] | "u" {"u"} hexdigit hexdigit hexdigit hexdigit) |
+ quote | strchar) "'".
+
+STRINGLITERAL = quote {backslash (escsym |
+ octlowdigit [octaldigit [octaldigit]] | octhighdigit [octaldigit] |
+ "u" {"u"} hexdigit hexdigit hexdigit hexdigit) | "'" | strchar} quote.
+
+SUBEOF = ctrlz.
+
+COMMENTS FROM "//" TO lf
+COMMENTS FROM "/*" TO "*/"
+
+IGNORE tab + ff + lf + cr
+
+PRODUCTIONS
+
+/* LL(1) warnings in PostfixOptUnaryExpr shall be ignored */
+/* LL(1) warnings in UnaryWithPara shall be ignored */
+/* LL(1) warning in IfThenOptElseStatement shall be ignored */
+/* LL(1) warning in JavaStatement shall be ignored */
+/* LL(1) warning in Annotation shall be ignored */
+
+comivmaisoftjcgo (. Term a = Empty.term, b = Empty.term, c; .) =
+ [PackageSpecifier<^a>]
+ [ImportDeclarationSeq<^b>]
+ TypeDeclarationSeq<^c>
+ [SUBEOF]
+ EOF (. new CompilationUnit(a, b, c); .).
+
+Identifier<^Term z> (. z = Empty.term; .) =
+ "assert" (. z = new LexTerm(LexTerm.ID, token.val); .)
+ | IDENTIFIER (. z = new LexTerm(LexTerm.ID, token.val); .).
+
+PackageSpecifier<^Term z> (. Term b; .) =
+ "package"
+ QualifiedIdentifier<^b>
+ ";" (. z = new PackageDeclaration(b); .).
+
+AnnotationGroup =
+ Annotation
+ [AnnotationGroup].
+
+Annotation (. Term b; .) =
+ "@"
+ QualifiedIdentifier<^b>
+ ["(" QualifiedIdentifierOrString<^b> ")"].
+
+QualifiedIdentifierOrString<^Term z> (. z = Empty.term; .) =
+ STRINGLITERAL (. z = new StringLiteral(token.val); .)
+ | QualifiedIdentifier<^z>.
+
+QualifiedIdentifier<^Term z> (. Term a, c = Empty.term; .) =
+ Identifier<^a>
+ ["." QualifiedIdentifier<^c>] (. z = new QualifiedName(a, c); .).
+
+ImportDeclarationSeq<^Term z> (. Term a, b = null; .) =
+ ImportDeclaration<^a>
+ [ImportDeclarationSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+ImportDeclaration<^Term z> (. Term b; .) =
+ "import"
+ IdentOptImportDeclSpec<^b>
+ ";" (. z = new ImportDeclaration(b); .).
+
+IdentOptImportDeclSpec<^Term z> (. Term a, c = Empty.term; .) =
+ Identifier<^a>
+ ["." StarOrIdentOptImportDeclSpec<^c>] (. z = new QualifiedName(a, c); .).
+
+StarOrIdentOptImportDeclSpec<^Term z> (. z = Empty.term; .) =
+ "*" (. z = new LexTerm(LexTerm.TIMES, token.val); .)
+ | IdentOptImportDeclSpec<^z>.
+
+TypeDeclarationSeq<^Term z> (. Term a, b = null; .) =
+ TypeDeclaration<^a>
+ [TypeDeclarationSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+TypeDeclaration<^Term z> (. z = Empty.term; .) =
+ ";"
+ | ClassInterfaceDeclaration<^z>.
+
+ClassInterfaceDeclaration<^Term z> (. Term a = Empty.term, b; .) =
+ [ClassModifierSeq<^a>]
+ ClassDeclOrInterfaceDecl<^b> (. z = new TypeDeclaration(a, b); .).
+
+ClassModifierSeq<^Term z> (. Term a, b = null; .) =
+ ClassModifier<^a>
+ [ClassModifierSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+ClassModifier<^Term z> (. z = Empty.term; .) =
+ "public" (. z = new AccModifier(AccModifier.PUBLIC); .)
+ | "private" (. z = new AccModifier(AccModifier.PRIVATE); .)
+ | "protected" (. z = new AccModifier(AccModifier.PROTECTED); .)
+ | "static" (. z = new AccModifier(AccModifier.STATIC); .)
+ | "final" (. z = new AccModifier(AccModifier.FINAL); .)
+ | "abstract" (. z = new AccModifier(AccModifier.ABSTRACT); .)
+ | "strictfp" (. z = new AccModifier(AccModifier.STRICT); .)
+ | Annotation.
+
+ClassDeclOrInterfaceDecl<^Term z> (. z = Empty.term; .) =
+ "class" ClassDeclaration<^z>
+ | "interface" InterfaceDeclaration<^z>.
+
+ClassDeclaration<^Term z> (. Term b, c = Empty.term, d = Empty.term, e; .) =
+ Identifier<^b>
+ [ExtendsType<^c>]
+ [ImplementsTypes<^d>]
+ ClassBody<^e> (. z = new ClassDeclaration(b, c, d, e); .).
+
+ExtendsType<^Term z> (. Term b; .) =
+ "extends"
+ QualifiedIdentifier<^b> (. z = new ClassOrIfaceType(b); .).
+
+ImplementsTypes<^Term z> =
+ "implements"
+ ClassTypeList<^z>.
+
+ClassTypeList<^Term z> (. Term a, c = null; .) =
+ QualifiedIdentifier<^a>
+ ["," ClassTypeList<^c>]
+  (.
+   z = c != null ? (Term) (new Seq(new ClassOrIfaceType(a), c)) :
+        new ClassOrIfaceType(a);
+  .).
+
+ClassBody<^Term z> (. Term b = Empty.term; .) =
+ "{"
+ [SemiOrClassBodyDeclSeq<^b>]
+ "}" (. z = new Seq(b, Empty.term); .).
+
+SemiOrClassBodyDeclSeq<^Term z> (. Term a, b = null; .) =
+ SemiOrClassBodyDecl<^a>
+ [SemiOrClassBodyDeclSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+SemiOrClassBodyDecl<^Term z> (. z = Empty.term; .) =
+ ";"
+ | ClassBodyDecl<^z>.
+
+ClassBodyDecl<^Term z> (. Term a = Empty.term, b; .) =
+ [ModifierSeq<^a>]
+ MemberDecl<^b> (. z = new TypeDeclaration(a, b); .).
+
+ModifierSeq<^Term z> (. Term a, b = null; .) =
+ AccModifier<^a>
+ [ModifierSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+AccModifier<^Term z> (. z = Empty.term; .) =
+ "public" (. z = new AccModifier(AccModifier.PUBLIC); .)
+ | "private" (. z = new AccModifier(AccModifier.PRIVATE); .)
+ | "protected" (. z = new AccModifier(AccModifier.PROTECTED); .)
+ | "static" (. z = new AccModifier(AccModifier.STATIC); .)
+ | "final" (. z = new AccModifier(AccModifier.FINAL); .)
+ | "synchronized" (. z = new AccModifier(AccModifier.SYNCHRONIZED); .)
+ | "volatile" (. z = new AccModifier(AccModifier.VOLATILE); .)
+ | "transient" (. z = new AccModifier(AccModifier.TRANSIENT); .)
+ | "native" (. z = new AccModifier(AccModifier.NATIVE); .)
+ | "abstract" (. z = new AccModifier(AccModifier.ABSTRACT); .)
+ | "strictfp" (. z = new AccModifier(AccModifier.STRICT); .)
+ | Annotation.
+
+MemberDecl<^Term z> (. z = Empty.term; Term a; .) =
+ JavaBlock<^a> (. z = new StaticInitializer(a); .)
+ | "class" ClassDeclaration<^z>
+ | "interface" InterfaceDeclaration<^z>
+ | "void" VoidMethodDecl<^z>
+ | ConstrMethodFieldDecl<^z>
+ | PrimitiveMethodFieldDecl<^z>.
+
+JavaBlock<^Term z> (. Term b = Empty.term; .) =
+ "{"
+ [BlockStatementSeq<^b>]
+ "}" (. z = new Block(b); .).
+
+BlockStatementSeq<^Term z> (. Term a, b = null; .) =
+ BlockStatement<^a>
+ [BlockStatementSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+InterfaceDeclaration<^Term z> (. Term b, c = Empty.term, d; .) =
+ Identifier<^b>
+ [ExtendsInterfaceTypes<^c>]
+ ClassBody<^d> (. z = new IfaceDeclaration(b, c, d); .).
+
+ExtendsInterfaceTypes<^Term z> =
+ "extends"
+ ClassTypeList<^z>.
+
+VoidMethodDecl<^Term z> (. Term b, d = Empty.term, f = Empty.term, g; .) =
+ Identifier<^b>
+ "("
+ [FormalParamList<^d>]
+ ")"
+ [ThrowsDeclaration<^f>]
+ SemiOrBlock<^g>
+  (.
+   z = new MethodDeclaration(new PrimitiveType(Type.VOID), b, d, f, g);
+  .).
+
+FormalParamList<^Term z> (. Term a, c = null; .) =
+ FormalParam<^a>
+ ["," FormalParamList<^c>]
+  (.
+   z = c != null ? new FormalParamList(a, c) : a;
+  .).
+
+FormalParam<^Term z>
+  (.
+   Term a = Empty.term, b, c = Empty.term, d, e = Empty.term;
+  .) =
+ [FinalModifier<^a>]
+ [AnnotationGroup]
+ SimpleType<^b>
+ [DimSpecSeq<^c>]
+ Identifier<^d>
+ [DimSpecSeq<^e>]
+  (.
+   z = new FormalParameter(a, b, c, new VariableIdentifier(d), e);
+  .).
+
+FinalModifier<^Term z> =
+ "final" (. z = new AccModifier(AccModifier.FINAL); .).
+
+SimpleType<^Term z> (. z = Empty.term; Term a; .) =
+ QualifiedIdentifier<^a> (. z = new ClassOrIfaceType(a); .)
+ | PrimitiveType<^z>.
+
+PrimitiveType<^Term z> (. z = Empty.term; .) =
+ "boolean" (. z = new PrimitiveType(Type.BOOLEAN); .)
+ | "byte" (. z = new PrimitiveType(Type.BYTE); .)
+ | "char" (. z = new PrimitiveType(Type.CHAR); .)
+ | "short" (. z = new PrimitiveType(Type.SHORT); .)
+ | "int" (. z = new PrimitiveType(Type.INT); .)
+ | "long" (. z = new PrimitiveType(Type.LONG); .)
+ | "float" (. z = new PrimitiveType(Type.FLOAT); .)
+ | "double" (. z = new PrimitiveType(Type.DOUBLE); .).
+
+DimSpecSeq<^Term z> (. Term c = Empty.term; .) =
+ "["
+ "]"
+ [DimSpecSeq<^c>] (. z = new DimSpec(c); .).
+
+ThrowsDeclaration<^Term z> =
+ "throws"
+ ClassTypeList<^z>.
+
+SemiOrBlock<^Term z> (. z = Empty.term; .) =
+ ";" (. z = new Block(); .)
+ | JavaBlock<^z>.
+
+ConstrMethodFieldDecl<^Term z> (. Term a; .) =
+ Identifier<^a>
+ ConstrOrMethodOrFieldDeclBody<^z, a>.
+
+ConstrOrMethodOrFieldDeclBody<^Term z, Term a> (. z = Empty.term; .) =
+ ConstructorDeclBody<^z, a>
+ | MethodDeclOrFieldDeclBody<^z, a>.
+
+ConstructorDeclBody<^Term z, Term a>
+  (.
+   Term c = Empty.term, e = Empty.term, g = Empty.term;
+  .) =
+ "("
+ [FormalParamList<^c>]
+ ")"
+ [ThrowsDeclaration<^e>]
+ "{"
+ [BlockStatementSeq<^g>]
+ "}" (. z = new ConstrDeclaration(a, c, e, g); .).
+
+MethodDeclOrFieldDeclBody<^Term z, Term a>
+  (.
+   Term a2 = Empty.term, b = Empty.term, c;
+  .) =
+ ["." QualifiedIdentifier<^a2>]
+ [DimSpecSeq<^b>]
+ Identifier<^c>
+ MethodDeclOrFieldDeclTail<^z,
+  new ClassOrIfaceType(new QualifiedName(a, a2)), b, c>.
+
+MethodDeclOrFieldDeclTail<^Term z, Term a, Term b, Term c>
+  (.
+   z = Empty.term;
+  .) =
+ MethodDeclTail<^z, a, b, c>
+ | FieldDeclTail<^z, a, b, c>.
+
+MethodDeclTail<^Term z, Term a, Term b, Term c>
+  (.
+   Term e = Empty.term, g = Empty.term, h = Empty.term, i;
+  .) =
+ "("
+ [FormalParamList<^e>]
+ ")"
+ [DimSpecSeq<^g>]
+ [ThrowsDeclaration<^h>]
+ SemiOrBlock<^i> (. z = new MethodDeclaration(a, b, c, e, g, h, i); .).
+
+FieldDeclTail<^Term z, Term a, Term b, Term c>
+  (.
+   Term d = Empty.term, f = Empty.term, h = null;
+  .) =
+ [DimSpecSeq<^d>]
+ ["=" VariableInitializer<^f>]
+ ["," VariableDeclaratorList<^h>]
+ ";"
+  (.
+   z = new FieldDeclaration(a, b, h != null ?
+        (Term) (new VariableDeclareList(new VariableDeclarator(
+        new VariableIdentifier(c), d, f), h)) :
+        new VariableDeclarator(new VariableIdentifier(c), d, f));
+  .).
+
+VariableInitializer<^Term z> (. z = Empty.term; .) =
+ ArrayInitializer<^z>
+ | JavaExpression<^z>.
+
+ArrayInitializer<^Term z> (. Term b = Empty.term; .) =
+ "{"
+ [ArrayInitializerList<^b>]
+ "}" (. z = new ArrayInitializer(b); .).
+
+ArrayInitializerList<^Term z> (. Term a, c = null; .) =
+ VariableInitializer<^a>
+ ["," [ArrayInitializerList<^c>]]
+  (.
+   z = c != null ? (Term) (new VarInitializers(new ArrElementInit(a), c)) :
+        new ArrElementInit(a);
+  .).
+
+VariableDeclaratorList<^Term z> (. Term a, c = null; .) =
+ VariableDeclarator<^a>
+ ["," VariableDeclaratorList<^c>]
+  (.
+   z = c != null ? new VariableDeclareList(a, c) : a;
+  .).
+
+VariableDeclarator<^Term z> (. Term a, b = Empty.term, d = Empty.term; .) =
+ Identifier<^a>
+ [DimSpecSeq<^b>]
+ ["=" VariableInitializer<^d>]
+  (.
+   z = new VariableDeclarator(new VariableIdentifier(a), b, d);
+  .).
+
+PrimitiveMethodFieldDecl<^Term z> (. Term a, b = Empty.term, c; .) =
+ PrimitiveType<^a>
+ [DimSpecSeq<^b>]
+ Identifier<^c>
+ MethodDeclOrFieldDeclTail<^z, a, b, c>.
+
+/* */
+
+BlockStatement<^Term z> (. z = Empty.term; .) =
+ "final" FinalClsDeclOrVarDeclStmtTail<^z>
+ | ModifiersLocClassDeclNoFinal<^z>
+ | JavaStatement<^z>.
+
+FinalClsDeclOrVarDeclStmtTail<^Term z> (. z = Empty.term; .) =
+ OptModifiersLocalClassDecl<^z>
+ | FinalLocalVarDeclTail<^z>.
+
+OptModifiersLocalClassDecl<^Term z> (. Term a = null, b; .) =
+ [LocalClassModifierSeq<^a>]
+ "class"
+ ClassDeclaration<^b>
+  (.
+   z = new TypeDeclaration(a != null ?
+        new Seq(new AccModifier(AccModifier.FINAL), a) :
+        (Term) (new AccModifier(AccModifier.FINAL)), b);
+  .).
+
+LocalClassModifierSeq<^Term z> (. Term a, b = null; .) =
+ LocalClassModifier<^a>
+ [LocalClassModifierSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+LocalClassModifier<^Term z> (. z = Empty.term; .) =
+ "final" (. z = new AccModifier(AccModifier.FINAL); .)
+ | "abstract" (. z = new AccModifier(AccModifier.ABSTRACT); .)
+ | "strictfp" (. z = new AccModifier(AccModifier.STRICT); .).
+
+FinalLocalVarDeclTail<^Term z> (. Term b, c = Empty.term, d; .) =
+ SimpleType<^b>
+ [DimSpecSeq<^c>]
+ VariableDeclaratorList<^d>
+ ";"
+  (.
+   z = new ExprStatement(new LocalVariableDecl(
+        new AccModifier(AccModifier.FINAL), b, c, d));
+  .).
+
+ModifiersLocClassDeclNoFinal<^Term z> (. Term a = Empty.term, b; .) =
+ [LocalClassModifiersNoFinal<^a>]
+ "class"
+ ClassDeclaration<^b> (. z = new TypeDeclaration(a, b); .).
+
+LocalClassModifiersNoFinal<^Term z> (. Term a, b = null; .) =
+ AbstractOrStaticOrStrict<^a>
+ [LocalClassModifierSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+AbstractOrStaticOrStrict<^Term z> (. z = Empty.term; .) =
+ "abstract" (. z = new AccModifier(AccModifier.ABSTRACT); .)
+ | "static" (. z = new AccModifier(AccModifier.STATIC); .)
+ | "strictfp" (. z = new AccModifier(AccModifier.STRICT); .).
+
+JavaStatement<^Term z> (. z = Empty.term; .) =
+ ";" (. z = new ExprStatement(); .)
+ | JavaBlock<^z>
+ | "assert" AssertionStatement<^z>
+ | "break" BreakStatement<^z>
+ | "continue" ContinueStatement<^z>
+ | "do" DoStatement<^z>
+ | "for" ForStatement<^z>
+ | "if" IfThenOptElseStatement<^z>
+ | "return" ReturnStatement<^z>
+ | "switch" SwitchStatement<^z>
+ | "synchronized" SynchronizedStatement<^z>
+ | "throw" ThrowStatement<^z>
+ | "try" TryStatement<^z>
+ | "while" WhileStatement<^z>
+ | ExprOrLabeledStmntOrVarDecl<^z>.
+
+AssertionStatement<^Term z> (. Term b, d = Empty.term; .) =
+ JavaExpression<^b>
+ [":" JavaExpression<^d> (. d = new Argument(d); .)]
+ ";" (. z = new AssertionStatement(b, d); .).
+
+BreakStatement<^Term z> (. Term b = Empty.term; .) =
+ [Identifier<^b>]
+ ";" (. z = new BreakStatement(b); .).
+
+ContinueStatement<^Term z> (. Term b = Empty.term; .) =
+ [Identifier<^b>]
+ ";" (. z = new ContinueStatement(b); .).
+
+DoStatement<^Term z> (. Term b, e; .) =
+ JavaStatement<^b>
+ "while"
+ "("
+ JavaExpression<^e>
+ ")"
+ ";" (. z = new DoStatement(b, e); .).
+
+ForStatement<^Term z>
+  (.
+   Term c = Empty.term, e = Empty.term, g = Empty.term, i;
+  .) =
+ "("
+ [ForInit<^c>]
+ ";"
+ [JavaExpression<^e>]
+ ";"
+ [ExpressionList<^g>]
+ ")"
+ JavaStatement<^i> (. z = new ForStatement(c, e, g, i); .).
+
+ForInit<^Term z> (. z = Empty.term; .) =
+ "final" ForFinalInit<^z>
+ | ForVarExprInit<^z>.
+
+ForFinalInit<^Term z> (. Term b, c = Empty.term, d; .) =
+ [AnnotationGroup]
+ SimpleType<^b>
+ [DimSpecSeq<^c>]
+ VariableDeclaratorList<^d>
+  (.
+   z = new LocalVariableDecl(new AccModifier(AccModifier.FINAL), b, c, d);
+  .).
+
+ForVarExprInit<^Term z> (. Term a, b = null; .) =
+ [AnnotationGroup]
+ CondOrExpression<^a>
+ [ForVarExprInitTail<^b, a>] (. z = b != null ? b : a; .).
+
+ForVarExprInitTail<^Term z, Term a> (. z = Empty.term; Term b; .) =
+ VariableDeclaratorList<^b> (. z = new LocalVariableDecl(a, b); .)
+ | ForExprOnlyInitTail<^z, a>.
+
+ForExprOnlyInitTail<^Term z, Term a> (. Term a2, c = null; .) =
+ CommaExprOrExprTail<^a2, a>
+ ["," ExpressionList<^c>]
+  (.
+   z = c != null ? new ExpressionList(a2, c) : a2;
+  .).
+
+CommaExprOrExprTail<^Term z, Term a> (. Term c; z = Empty.term; .) =
+ "," StatementExpression<^c> (. z = new ExpressionList(a, c); .)
+ | "?" CondExprTail<^z, a>
+ | AssignmentOpExpr<^z, a>.
+
+StatementExpression<^Term z> (. Term a, b = null; .) =
+ OptPrefixUnaryExpr<^a>
+ [AssignmentOpExpr<^b, a>] (. z = b != null ? b : a; .).
+
+ExpressionList<^Term z> (. Term a, c = null; .) =
+ StatementExpression<^a>
+ ["," ExpressionList<^c>] (. z = c != null ? new ExpressionList(a, c) : a; .).
+
+IfThenOptElseStatement<^Term z> (. Term c, e, g = Empty.term; .) =
+ "("
+ JavaExpression<^c>
+ ")"
+ JavaStatement<^e>
+ ["else" JavaStatement<^g>] (. z = new IfThenElse(c, e, g); .).
+
+ReturnStatement<^Term z> (. Term b = Empty.term; .) =
+ [JavaExpression<^b>]
+ ";" (. z = new ReturnStatement(b); .).
+
+SwitchStatement<^Term z> (. Term c, f = Empty.term; .) =
+ "("
+ JavaExpression<^c>
+ ")"
+ "{"
+ [SwitchBlockStatementGroupSeq<^f>]
+ "}" (. z = new SwitchStatement(c, f); .).
+
+SwitchBlockStatementGroupSeq<^Term z> (. Term a, b = null; .) =
+ SwitchBlockStatementGroup<^a>
+ [SwitchBlockStatementGroupSeq<^b>] (. z = b != null ? new Seq(a, b) : a; .).
+
+SwitchBlockStatementGroup<^Term z>
+  (.
+   Term b, c = Empty.term; z = Empty.term;
+  .) =
+ "default" ":" [BlockStatementSeq<^c>] (. z = new CaseStatement(c); .)
+ | "case" ConditionalExpression<^b> ":" [BlockStatementSeq<^c>]
+  (.
+   z = new CaseStatement(new Expression(b), c);
+  .).
+
+SynchronizedStatement<^Term z> (. Term c, e; .) =
+ "("
+ JavaExpression<^c>
+ ")"
+ JavaBlock<^e> (. z = new SynchroStatement(c, e); .).
+
+ThrowStatement<^Term z> (. Term b; .) =
+ JavaExpression<^b>
+ ";" (. z = new ThrowStatement(b); .).
+
+TryStatement<^Term z> (. Term b; .) =
+ JavaBlock<^b>
+ TryStatementTail<^z, b>.
+
+TryStatementTail<^Term z, Term b> (. Term d; z = Empty.term; .) =
+ "finally" JavaBlock<^d> (. z = new TryStatement(b, d); .)
+ | CatchClausesOptFinally<^z, b>.
+
+CatchClausesOptFinally<^Term z, Term b> (. Term c, e = Empty.term; .) =
+ CatchClauseSeq<^c>
+ ["finally" JavaBlock<^e>] (. z = new TryStatement(b, c, e); .).
+
+CatchClauseSeq<^Term z> (. Term a, b = null; .) =
+ CatchClause<^a>
+ [CatchClauseSeq<^b>] (. z = b != null ? new CatchSeq(a, b) : a; .).
+
+CatchClause<^Term z> (. Term c = Empty.term, d, e, h = Empty.term; .) =
+ "catch"
+ "("
+ [FinalModifier<^c>]
+ [AnnotationGroup]
+ QualifiedIdentifier<^d>
+ Identifier<^e>
+ ")"
+ "{"
+ [BlockStatementSeq<^h>]
+ "}"
+  (.
+   z = new CatchStatement(c, new ClassOrIfaceType(d),
+        new VariableIdentifier(e), h);
+  .).
+
+WhileStatement<^Term z> (. Term c, e; .) =
+ "("
+ JavaExpression<^c>
+ ")"
+ JavaStatement<^e> (. z = new WhileStatement(c, e); .).
+
+ExprOrLabeledStmntOrVarDecl<^Term z> (. Term a; .) =
+ CondOrExpression<^a>
+ ExprOrLabelStmntOrVarDeclTail<^z, a>.
+
+ExprOrLabelStmntOrVarDeclTail<^Term z, Term a> (. Term c; z = Empty.term; .) =
+ ":" JavaStatement<^c> (. z = new LabeledStatement(a, c); .)
+ | OptForVarExprInitTailSemi<^z, a>.
+
+OptForVarExprInitTailSemi<^Term z, Term a> (. Term b = null; .) =
+ [ForVarExprInitTail<^b, a>]
+ ";" (. z = new ExprStatement(b != null ? b : a); .).
+
+/* */
+
+JavaExpression<^Term z> (. Term a, b = null; .) =
+ CondOrExpression<^a>
+ [ExpressionTail<^b, a>] (. z = new Expression(b != null ? b : a); .).
+
+CondOrExpression<^Term z> (. Term a, b = null; .) =
+ CondAndExpression<^a>
+ [OrCondAndExpressionSeq<^b, a>] (. z = b != null ? b : a; .).
+
+CondAndExpression<^Term z> (. Term a, b = null; .) =
+ BitwiseOrExpression<^a>
+ [AndBitwiseOrExpressionSeq<^b, a>] (. z = b != null ? b : a; .).
+
+BitwiseOrExpression<^Term z> (. Term a, b = null; .) =
+ BitwiseXorExpression<^a>
+ [BitOrBitwiseXorExpressionSeq<^b, a>] (. z = b != null ? b : a; .).
+
+BitwiseXorExpression<^Term z> (. Term a, b = null; .) =
+ BitwiseAndExpression<^a>
+ [XorBitwiseAndExpressionSeq<^b, a>] (. z = b != null ? b : a; .).
+
+BitwiseAndExpression<^Term z> (. Term a, b = null; .) =
+ EqualityExpression<^a>
+ [BitAndEqualityExpressionSeq<^b, a>] (. z = b != null ? b : a; .).
+
+EqualityExpression<^Term z> (. Term a, b = null; .) =
+ RelationalExpression<^a>
+ [EqualCompareRelationalExprSeq<^b, a>] (. z = b != null ? b : a; .).
+
+RelationalExpression<^Term z> (. Term a, b = null; .) =
+ ShiftExpression<^a>
+ [RelationalExpressionTail<^b, a>] (. z = b != null ? b : a; .).
+
+ShiftExpression<^Term z> (. Term a, b = null; .) =
+ AdditiveExpression<^a>
+ [ShiftAdditiveExprSeq<^b, a>] (. z = b != null ? b : a; .).
+
+AdditiveExpression<^Term z> (. Term a, b = null; .) =
+ MultiplicativeExpression<^a>
+ [PlusMinusMultiplicativeExprSeq<^b, a>] (. z = b != null ? b : a; .).
+
+MultiplicativeExpression<^Term z> (. Term a, b = null; .) =
+ UnaryExpression<^a>
+ [ModMulDivUnaryExprSeq<^b, a>] (. z = b != null ? b : a; .).
+
+ModMulDivUnaryExprSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ ModMulDivOp<^b>
+ UnaryExpression<^c>
+ [ModMulDivUnaryExprSeq<^d, new BinaryOp(a, b, c)>]
+  (.
+   z = d != null ? d : new BinaryOp(a, b, c);
+  .).
+
+ModMulDivOp<^Term z> (. z = Empty.term; .) =
+ "%" (. z = new LexTerm(LexTerm.MOD, token.val); .)
+ | "*" (. z = new LexTerm(LexTerm.TIMES, token.val); .)
+ | "/" (. z = new LexTerm(LexTerm.DIVIDE, token.val); .).
+
+PlusMinusMultiplicativeExprSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ PlusMinusOp<^b>
+ MultiplicativeExpression<^c>
+ [PlusMinusMultiplicativeExprSeq<^d, new BinaryOp(a, b, c)>]
+  (.
+   z = d != null ? d : new BinaryOp(a, b, c);
+  .).
+
+PlusMinusOp<^Term z> (. z = Empty.term; .) =
+ "+" (. z = new LexTerm(LexTerm.PLUS, token.val); .)
+ | "-" (. z = new LexTerm(LexTerm.MINUS, token.val); .).
+
+ShiftAdditiveExprSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ ShiftOp<^b>
+ AdditiveExpression<^c>
+ [ShiftAdditiveExprSeq<^d, new BinaryOp(a, b, c)>]
+  (.
+   z = d != null ? d : new BinaryOp(a, b, c);
+  .).
+
+ShiftOp<^Term z> (. z = Empty.term; .) =
+ "<<" (. z = new LexTerm(LexTerm.SHIFT_LEFT, token.val); .)
+ | ">>>" (. z = new LexTerm(LexTerm.FILLSHIFT_RIGHT, token.val); .)
+ | ">>" (. z = new LexTerm(LexTerm.SHIFT_RIGHT, token.val); .).
+
+RelationalExpressionTail<^Term z, Term a> (. z = Empty.term; .) =
+ "instanceof" InstanceOfTail<^z, a>
+ | RelCompareShiftExprSeq<^z, a>.
+
+InstanceOfTail<^Term z, Term a> (. Term c, d = Empty.term; .) =
+ SimpleType<^c>
+ [DimSpecSeq<^d>]
+  (.
+   z = new InstanceOf(a, c, d);
+  .).
+
+RelCompareShiftExprSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ RelCompareOp<^b>
+ ShiftExpression<^c>
+ [RelCompareShiftExprSeq<^d, new RelationalOp(a, b, c)>]
+  (.
+   z = d != null ? d : new RelationalOp(a, b, c);
+  .).
+
+RelCompareOp<^Term z> (. z = Empty.term; .) =
+ "<=" (. z = new LexTerm(LexTerm.LE, token.val); .)
+ | "<" (. z = new LexTerm(LexTerm.LT, token.val); .)
+ | ">=" (. z = new LexTerm(LexTerm.GE, token.val); .)
+ | ">" (. z = new LexTerm(LexTerm.GT, token.val); .).
+
+EqualCompareRelationalExprSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ EqualCompareOp<^b>
+ RelationalExpression<^c>
+ [EqualCompareRelationalExprSeq<^d, new RelationalOp(a, b, c)>]
+  (.
+   z = d != null ? d : new RelationalOp(a, b, c);
+  .).
+
+EqualCompareOp<^Term z> (. z = Empty.term; .) =
+ "!=" (. z = new LexTerm(LexTerm.NE, token.val); .)
+ | "==" (. z = new LexTerm(LexTerm.EQ, token.val); .).
+
+BitAndEqualityExpressionSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ "&" (. b = new LexTerm(LexTerm.BITAND, token.val); .)
+ EqualityExpression<^c>
+ [BitAndEqualityExpressionSeq<^d, new BinaryOp(a, b, c)>]
+  (.
+   z = d != null ? d : new BinaryOp(a, b, c);
+  .).
+
+XorBitwiseAndExpressionSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ "^" (. b = new LexTerm(LexTerm.XOR, token.val); .)
+ BitwiseAndExpression<^c>
+ [XorBitwiseAndExpressionSeq<^d, new BinaryOp(a, b, c)>]
+  (.
+   z = d != null ? d : new BinaryOp(a, b, c);
+  .).
+
+BitOrBitwiseXorExpressionSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ "|" (. b = new LexTerm(LexTerm.BITOR, token.val); .)
+ BitwiseXorExpression<^c>
+ [BitOrBitwiseXorExpressionSeq<^d, new BinaryOp(a, b, c)>]
+  (.
+   z = d != null ? d : new BinaryOp(a, b, c);
+  .).
+
+AndBitwiseOrExpressionSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ "&&" (. b = new LexTerm(LexTerm.AND, token.val); .)
+ BitwiseOrExpression<^c>
+ [AndBitwiseOrExpressionSeq<^d, new CondOrAndOperation(a, b, c)>]
+  (.
+   z = d != null ? d : new CondOrAndOperation(a, b, c);
+  .).
+
+OrCondAndExpressionSeq<^Term z, Term a> (. Term b, c, d = null; .) =
+ "||" (. b = new LexTerm(LexTerm.OR, token.val); .)
+ CondAndExpression<^c>
+ [OrCondAndExpressionSeq<^d, new CondOrAndOperation(a, b, c)>]
+  (.
+   z = d != null ? d : new CondOrAndOperation(a, b, c);
+  .).
+
+ExpressionTail<^Term z, Term a> (. z = Empty.term; .) =
+ "?" CondExprTail<^z, a>
+ | AssignmentOpExpr<^z, a>.
+
+CondExprTail<^Term z, Term a> (. Term c, e; .) =
+ JavaExpression<^c>
+ ":"
+ ConditionalExpression<^e> (. z = new CondExpression(a, c, e); .).
+
+ConditionalExpression<^Term z> (. Term a, b = null; .) =
+ CondOrExpression<^a>
+ ["?" CondExprTail<^b, a>] (. z = b != null ? b : a; .).
+
+AssignmentOpExpr<^Term z, Term a> (. Term b, c; .) =
+ AssignmentOperator<^b>
+ JavaExpression<^c> (. z = new Assignment(a, b, c); .).
+
+AssignmentOperator<^Term z> (. z = Empty.term; .) =
+ "=" (. z = new LexTerm(LexTerm.EQUALS, token.val); .)
+ | "*=" (. z = new LexTerm(LexTerm.TIMES_EQUALS, token.val); .)
+ | "/=" (. z = new LexTerm(LexTerm.DIVIDE_EQUALS, token.val); .)
+ | "%=" (. z = new LexTerm(LexTerm.MOD_EQUALS, token.val); .)
+ | "+=" (. z = new LexTerm(LexTerm.PLUS_EQUALS, token.val); .)
+ | "-=" (. z = new LexTerm(LexTerm.MINUS_EQUALS, token.val); .)
+ | "<<=" (. z = new LexTerm(LexTerm.SHLEFT_EQUALS, token.val); .)
+ | ">>=" (. z = new LexTerm(LexTerm.SHRIGHT_EQUALS, token.val); .)
+ | ">>>=" (. z = new LexTerm(LexTerm.FLSHIFT_EQUALS, token.val); .)
+ | "&=" (. z = new LexTerm(LexTerm.BITAND_EQUALS, token.val); .)
+ | "^=" (. z = new LexTerm(LexTerm.XOR_EQUALS, token.val); .)
+ | "|=" (. z = new LexTerm(LexTerm.BITOR_EQUALS, token.val); .).
+
+/* */
+
+UnaryExpression<^Term z> (. Term a, b; z = Empty.term; .) =
+ NegatePlusMinusOp<^a> UnaryExpression<^b>
+  (.
+   z = new UnaryExpression(a, b);
+  .)
+ | OptPrefixUnaryExpr<^z>.
+
+NegatePlusMinusOp<^Term z> (. z = Empty.term; .) =
+ "!" (. z = new LexTerm(LexTerm.NOT, token.val); .)
+ | "~" (. z = new LexTerm(LexTerm.BITNOT, token.val); .)
+ | "+" (. z = new LexTerm(LexTerm.PLUS, token.val); .)
+ | "-" (. z = new LexTerm(LexTerm.MINUS, token.val); .).
+
+OptPrefixUnaryExpr<^Term z> (. Term a = null, b; .) =
+ [IncDecOp<^a>]
+ UnaryExpressionTail<^b> (. z = a != null ? new PrefixOp(a, b) : b; .).
+
+IncDecOp<^Term z> (. z = Empty.term; .) =
+ "++" (. z = new LexTerm(LexTerm.INCREMENT, token.val); .)
+ | "--" (. z = new LexTerm(LexTerm.DECREMENT, token.val); .).
+
+UnaryExpressionTail<^Term z> (. z = Empty.term; .) =
+ "null" (. z = new LexTerm(LexTerm.xNULL, token.val); .)
+ | "false" (. z = new LexTerm(LexTerm.FALSE, token.val); .)
+ | "true" (. z = new LexTerm(LexTerm.TRUE, token.val); .)
+ | INTEGERLITERAL (. z = new IntLiteral(token.val); .)
+ | FLOATLITERAL (. z = new FloatLiteral(token.val); .)
+ | CHARLITERAL (. z = new CharacterLiteral(token.val); .)
+ | "(" UnaryWithPara<^z>
+ | "super" SuperConstrMethodAccess<^z, Empty.term>
+ | ThisOptConstrMethodAccess<^z>
+ | UnaryWithPrimitive<^z>
+ | UnaryWithNewOrStr<^z>
+ | UnaryWithIdent<^z>.
+
+UnaryWithPara<^Term z> (. Term b, d = null; .) =
+ JavaExpression<^b>
+ ")"
+ [UnaryWithParaTail<^d, b>] (. z = d != null ? d : new ParenExpression(b); .).
+
+UnaryWithParaTail<^Term z, Term b> (. z = Empty.term; Term d; .) =
+ CastPlusMinusUnary<^z, b>
+ | PostfixOptUnaryExpr<^z, b>
+ | UnaryWithParaComplexTail<^z, new ParenExpression(b)>
+ | UnaryExpressionTail<^d> (. z = new CastExpression(b, d); .).
+
+CastPlusMinusUnary<^Term z, Term b>
+  (.
+   Term d, e; if (!b.isType()) return null;
+  .) =
+ NegatePlusMinusOp<^d>
+ UnaryExpression<^e>
+  (.
+   z = new CastExpression(b, new UnaryExpression(d, e));
+  .).
+
+PostfixOptUnaryExpr<^Term z, Term b> (. Term d, e = null; .) =
+ IncDecOp<^d>
+ [UnaryExpressionTail<^e>]
+  (.
+   z = e != null ? (Term) (new CastExpression(b, new PrefixOp(d, e))) :
+        new PostfixOp(new ParenExpression(b), d);
+  .).
+
+SuperConstrMethodAccess<^Term z, Term a> (. z = Empty.term; .) =
+ "(" ExplicitConstrInvoke<^z, a, new Super()>
+ | "." SuperMethodAccessTail<^z, new Super(a)>.
+
+ExplicitConstrInvoke<^Term z, Term a, Term c> (. Term e = Empty.term; .) =
+ [ArgumentList<^e>]
+ ")" (. z = new ConstructorCall(a, c, e); .).
+
+ArgumentList<^Term z> (. Term a, c = null; .) =
+ JavaExpression<^a>
+ ["," ArgumentList<^c>]
+  (.
+   z = c != null ? (Term) (new ParameterList(new Argument(a), c)) :
+        new Argument(a);
+  .).
+
+SuperMethodAccessTail<^Term z, Term a> (. Term c, d = null, e = null; .) =
+ FieldMethodInvocation<^c, a>
+ [UnaryWithIdentTailSeq<^d, c>]
+ [IncDecOp<^e>]
+  (.
+   z = e != null ? new PostfixOp(d != null ? d : c, e) : d != null ? d : c;
+  .).
+
+FieldMethodInvocation<^Term z, Term a> (. Term c, d = null, e = null; .) =
+ Identifier<^c>
+ [PrimaryMethodInvoke<^d, a, c>]
+ ["[" DimensionExpressionSeq<^e, d != null ?
+  d : new PrimaryFieldAccess(a, c)>]
+  (.
+   z = e != null ? e : d != null ? d : new PrimaryFieldAccess(a, c);
+  .).
+
+PrimaryMethodInvoke<^Term z, Term a, Term c> (. Term e = Empty.term; .) =
+ "("
+ [ArgumentList<^e>]
+ ")" (. z = new MethodInvocation(a, c, e); .).
+
+DimensionExpressionSeq<^Term z, Term a> (. Term c, e = null; .) =
+ JavaExpression<^c>
+ "]"
+ ["[" DimensionExpressionSeq<^e, new ArrayAccess(a, c)>]
+  (.
+   z = e != null ? e : new ArrayAccess(a, c);
+  .).
+
+UnaryWithIdentTailSeq<^Term z, Term a> (. Term c, d = null; .) =
+ "."
+ NewInstOrSuperOrMethodInvoke<^c, a>
+ [UnaryWithIdentTailSeq<^d, c>] (. z = d != null ? d : c; .).
+
+NewInstOrSuperOrMethodInvoke<^Term z, Term a> (. z = Empty.term; .) =
+ "class" (. z = new ClassLiteral(new ClassOrIfaceType(a)); .)
+ | "new" InnerNewInstanceCreation<^z, a>
+ | "super" InnerSuperConstrInvocation<^z, a>
+ | FieldMethodInvocation<^z, a>.
+
+InnerNewInstanceCreation<^Term z, Term a>
+  (.
+   Term d, f = Empty.term, h = Empty.term;
+  .) =
+ Identifier<^d>
+ "("
+ [ArgumentList<^f>]
+ ")"
+ [ClassBody<^h>] (. z = new InstanceCreation(a, d, f, h); .).
+
+InnerSuperConstrInvocation<^Term z, Term a> (. Term e = Empty.term; .) =
+ "("
+ [ArgumentList<^e>]
+ ")" (. z = new ConstructorCall(a, new Super(), e); .).
+
+ThisOptConstrMethodAccess<^Term z> (. Term b = null; .) =
+ "this"
+ [ThisOptConstrMethodAccessTail<^b>] (. z = b != null ? b : new This(); .).
+
+ThisOptConstrMethodAccessTail<^Term z> (. z = Empty.term; .) =
+ "(" ExplicitConstrInvoke<^z, Empty.term, new This()>
+ | ThisOptMethodAccessTail<^z, new This()>.
+
+ThisOptMethodAccessTail<^Term z, Term a> (. Term b, c = null; .) =
+ UnaryWithIdentTailSeq<^b, a>
+ [IncDecOp<^c>] (. z = c != null ? new PostfixOp(b, c) : b; .).
+
+UnaryWithIdent<^Term z> (. Term a, b = null; .) =
+ Identifier<^a> /* IDENTIFIER (. a = new LexTerm(LexTerm.ID, token.val); .) */
+ [UnaryWithIdentBody<^b, new QualifiedName(a)>]
+  (.
+   z = b != null ? b : new Expression(new QualifiedName(a));
+  .).
+
+UnaryWithIdentBody<^Term z, Term a> (. z = Empty.term; .) =
+ "++"
+  (.
+   z = new PostfixOp(new Expression(a),
+        new LexTerm(LexTerm.INCREMENT, token.val));
+  .)
+ | "--"
+  (.
+   z = new PostfixOp(new Expression(a),
+        new LexTerm(LexTerm.DECREMENT, token.val));
+  .)
+ | "(" UnaryWithIdentArgsBody<^z, a>
+ | "." UnaryWithIdentDotTail<^z, a>
+ | "[" UnaryWithIdentBracketTail<^z, a>.
+
+UnaryWithIdentArgsBody<^Term z, Term a>
+  (.
+   Term c = Empty.term, e = null, f = null, g = null;
+  .) =
+ [ArgumentList<^c>]
+ ")"
+ ["[" DimensionExpressionSeq<^e, new MethodInvocation(a, c)>]
+ [UnaryWithIdentTailSeq<^f, e != null ? e : new MethodInvocation(a, c)>]
+ [IncDecOp<^g>]
+  (.
+   z = g != null ? new PostfixOp(f != null ? f : e != null ? e :
+        new MethodInvocation(a, c), g) : f != null ? f : e != null ? e :
+        new MethodInvocation(a, c);
+  .).
+
+UnaryWithIdentDotTail<^Term z, Term a> (. z = Empty.term; .) =
+ "super" SuperConstrMethodAccess<^z, new Expression(a)>
+ | UnaryWithIdentDotInstanceTail<^z, a>
+ | UnaryWithIdentQualified<^z, a>.
+
+UnaryWithIdentQualified<^Term z, Term a> (. Term c, d = null; .) =
+ Identifier<^c>
+ [UnaryWithIdentBody<^d, new QualifiedName(a, c)>]
+  (.
+   z = d != null ? d : new Expression(new QualifiedName(a, c));
+  .).
+
+UnaryWithIdentDotInstanceTail<^Term z, Term a> (. Term c, d = null; .) =
+ ClassOrThisOrNewInstCreation<^c, a>
+ [ThisOptMethodAccessTail<^d, c>] (. z = d != null ? d : c; .).
+
+ClassOrThisOrNewInstCreation<^Term z, Term a> (. z = Empty.term; .) =
+ "class" (. z = new ClassLiteral(new ClassOrIfaceType(a)); .)
+ | "new" InnerNewInstanceCreation<^z, new Expression(a)>
+ | "this" (. z = new This(new ClassOrIfaceType(a)); .).
+
+UnaryWithIdentBracketTail<^Term z, Term a> (. z = Empty.term; .) =
+ BracketDimsOptUnaryPrim<^z, a>
+ | ExprBrackDimExprsUnaryIndents<^z, a>.
+
+BracketDimsOptUnaryPrim<^Term z, Term a>
+  (.
+   Term c = Empty.term, d = null;
+  .) =
+ "]"
+ [DimSpecSeq<^c>]
+ [UnaryWithPrimitiveTail<^d, new TypeWithDims(new ClassOrIfaceType(a),
+  new DimSpec(c))>]
+  (.
+   z = d != null ? d : new TypeWithDims(new ClassOrIfaceType(a),
+        new DimSpec(c));
+  .).
+
+UnaryWithPrimitiveTail<^Term z, Term a> (. Term d = null; .) =
+ "."
+ "class"
+ [ThisOptMethodAccessTail<^d, new ClassLiteral(a)>]
+  (.
+   z = d != null ? d : new ClassLiteral(a);
+  .).
+
+ExprBrackDimExprsUnaryIndents<^Term z, Term a>
+  (.
+   Term c, e = null, f = null, g = null;
+  .) =
+ JavaExpression<^c>
+ "]"
+ ["[" DimensionExpressionSeq<^e, new ArrayAccess(new Expression(a), c)>]
+ [UnaryWithIdentTailSeq<^f, e != null ? e :
+  new ArrayAccess(new Expression(a), c)>]
+ [IncDecOp<^g>]
+  (.
+   z = g != null ? new PostfixOp(f != null ? f : e != null ? e :
+        new ArrayAccess(new Expression(a), c), g) : f != null ? f :
+        e != null ? e : new ArrayAccess(new Expression(a), c);
+  .).
+
+UnaryWithPrimitive<^Term z> (. Term a, b = null, c = null; .) =
+ PrimitiveType<^a>
+ [DimSpecSeq<^b>]
+ [UnaryWithPrimitiveTail<^c, b != null ? new TypeWithDims(a, b) : a>]
+  (.
+   z = c != null ? c : b != null ? new TypeWithDims(a, b) : a;
+  .).
+
+UnaryWithNewOrStr<^Term z> (. Term a, b = null; .) =
+ UnaryWithNewOrStrBody<^a>
+ [ThisOptMethodAccessTail<^b, a>] (. z = b != null ? b : a; .).
+
+UnaryWithNewOrStrBody<^Term z> (. z = Empty.term; .) =
+ "new" IdentNewInstanceOrPrimArrTail<^z>
+ | "void" "." "class"
+  (.
+   z = new ClassLiteral(new PrimitiveType(Type.VOID));
+  .)
+ | STRINGLITERAL (. z = new StringLiteral(token.val); .).
+
+IdentNewInstanceOrPrimArrTail<^Term z> (. z = Empty.term; .) =
+ QualIdentNewInstanceTail<^z>
+ | NewPrimArrayInstanceTail<^z>.
+
+QualIdentNewInstanceTail<^Term z> (. Term b; .) =
+ QualifiedIdentifier<^b>
+ NewInstanceBody<^z, new ClassOrIfaceType(b)>.
+
+NewInstanceBody<^Term z, Term b> (. z = Empty.term; .) =
+ "(" ArgumentsOptClassBody<^z, b>
+ | "[" NewArrayInstanceTail<^z, b>.
+
+ArgumentsOptClassBody<^Term z, Term b>
+  (.
+   Term d = Empty.term, f = Empty.term;
+  .) =
+ [ArgumentList<^d>]
+ ")"
+ [ClassBody<^f>] (. z = new InstanceCreation(b, d, f); .).
+
+NewArrayInstanceTail<^Term z, Term b> (. z = Empty.term; .) =
+ "]" BracketDimsArrayInit<^z, b> ["[" DimensionExpressionSeq<^z, z>]
+ | ExprBracketOptNewArrayBody<^z, b>.
+
+BracketDimsArrayInit<^Term z, Term b> (. Term c = Empty.term, d; .) =
+ [DimSpecSeq<^c>]
+ ArrayInitializer<^d> (. z = new AnonymousArray(b, new DimSpec(c), d); .).
+
+ExprBracketOptNewArrayBody<^Term z, Term b> (. Term d, f = null; .) =
+ JavaExpression<^d>
+ "]"
+ [NewArrayBody<^f, b, new DimExpr(d)>]
+  (.
+   z = f != null ? f : new ArrayCreation(b, new DimExpr(d));
+  .).
+
+NewArrayBody<^Term z, Term b, Term c> =
+ "["
+ NewArrayTail<^z, b, c>.
+
+NewArrayTail<^Term z, Term b, Term c> (. z = Empty.term; .) =
+ BracketDimSpecs<^z, b, c>
+ | ExprBracketOptNewArrayDims<^z, b, c>.
+
+BracketDimSpecs<^Term z, Term b, Term c> (. Term d = Empty.term; .) =
+ "]"
+ [DimSpecSeq<^d>] (. z = new ArrayCreation(b, c, new DimSpec(d)); .).
+
+ExprBracketOptNewArrayDims<^Term z, Term b, Term c> (. Term d, f = null; .) =
+ JavaExpression<^d>
+ "]"
+ [NewArrayBody<^f, b, new DimsList(c, new DimExpr(d))>]
+  (.
+   z = f != null ? f : new ArrayCreation(b, new DimsList(c, new DimExpr(d)));
+  .).
+
+NewPrimArrayInstanceTail<^Term z> (. Term b; .) =
+ PrimitiveType<^b>
+ "["
+ NewArrayInstanceTail<^z, b>.
+
+UnaryWithParaComplexTail<^Term z, Term a> (. Term b, c = null, d = null; .) =
+ UnaryWithIdentTailOrDimExprs<^b, a>
+ [UnaryWithIdentTailSeq<^c, b>]
+ [IncDecOp<^d>]
+  (.
+   z = d != null ? new PostfixOp(c != null ? c : b, d) : c != null ? c : b;
+  .).
+
+UnaryWithIdentTailOrDimExprs<^Term z, Term a> (. z = Empty.term; .) =
+ "." NewInstOrSuperOrMethodInvoke<^z, a>
+ | "[" DimensionExpressionSeq<^z, a>.
+
+END comivmaisoftjcgo.

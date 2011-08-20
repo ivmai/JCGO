@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/FileAppendOutput.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,50 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+
+/**
+ * This class is for writing the output files.
+ * A file may be closed and re-opened again many times.
+ */
+
+final class FileAppendOutput extends OutputStream
+{
+
+ private RandomAccessFile raf;
+
+ FileAppendOutput(File f, boolean opened)
+  throws IOException
+ {
+  raf = new RandomAccessFile(f, "rw");
+  long len = raf.length();
+  if ((len == 0L) == opened)
+   throw new IOException();
+  raf.seek(len);
+ }
+
+ public void write(int v)
+  throws IOException
+ {
+  raf.write(v);
+  Main.dict.outBytesCount++;
+ }
+
+ public void write(byte[] b, int off, int len)
+  throws IOException
+ {
+  raf.write(b, off, len);
+  Main.dict.outBytesCount += len;
+ }
+
+ public void close()
+  throws IOException
+ {
+  raf.close();
+ }
+}

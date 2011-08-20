@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/TypeWithDims.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,44 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for an array type.
+ **
+ * Format:
+ * PrimitiveType/ClassOrIfaceType Dims
+ */
+
+final class TypeWithDims extends LexNode
+{
+
+ private int dims = -1;
+
+ TypeWithDims(Term a, Term b)
+ {
+  super(a, b);
+ }
+
+ void processPass1(Context c)
+ {
+  c.typeDims = 0;
+  terms[1].processPass1(c);
+  terms[0].processPass1(c);
+  assertCond(c.typeClassDefinition.objectSize() != Type.VOID);
+  dims = c.typeDims;
+ }
+
+ ExpressionType exprType()
+ {
+  assertCond(dims >= 0);
+  ExpressionType exprType = terms[0].exprType();
+  return dims > 0 ? exprType.signatureClass().asExprType(
+          exprType.signatureDimensions() + dims) : exprType;
+ }
+
+ boolean isType()
+ {
+  return true;
+ }
+}

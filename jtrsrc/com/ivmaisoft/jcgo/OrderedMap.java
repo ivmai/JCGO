@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/OrderedMap.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,66 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+import java.util.Enumeration;
+
+/**
+ * An ordered hashtable (FIFO).
+ */
+
+final class OrderedMap
+{
+
+ private final ObjHashtable map = new ObjHashtable();
+
+ private final ObjVector orderedKeys = new ObjVector();
+
+ OrderedMap() {}
+
+ Object put(Object key, Object value)
+ {
+  Object oldValue = map.put(key, value);
+  if (oldValue == null)
+   orderedKeys.addElement(key);
+  return oldValue;
+ }
+
+ Object remove(Object key)
+ {
+  Object oldValue = map.remove(key);
+  if (oldValue != null)
+   orderedKeys.removeElementAt(orderedKeys.indexOf(key));
+  return oldValue;
+ }
+
+ Object get(Object key)
+ {
+  return map.get(key);
+ }
+
+ int size()
+ {
+  return orderedKeys.size();
+ }
+
+ Object keyAt(int index)
+ {
+  return orderedKeys.elementAt(index);
+ }
+
+ Enumeration keys()
+ {
+  return orderedKeys.elements();
+ }
+
+ Enumeration unorderedElements()
+ {
+  return map.elements();
+ }
+
+ void copyKeysInto(Object[] anArray)
+ {
+  orderedKeys.copyInto(anArray);
+ }
+}

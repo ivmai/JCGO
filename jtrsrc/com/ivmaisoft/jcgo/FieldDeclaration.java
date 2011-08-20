@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/FieldDeclaration.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,48 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for the start of a class field definition.
+ **
+ * Format:
+ * PrimitiveType/ClassOrIfaceType [Dims] VariableDeclarators
+ */
+
+final class FieldDeclaration extends LexNode
+{
+
+ FieldDeclaration(Term a, Term b, Term c)
+ {
+  super(a, b, c);
+ }
+
+ void processPass0(Context c)
+ {
+  assertCond(c.currentClass != null);
+  if ((c.modifiers & AccModifier.STATIC) != 0)
+   c.currentClass.setMayContainClinit();
+  terms[0].processPass0(c);
+  terms[2].processPass0(c);
+ }
+
+ void processPass1(Context c)
+ {
+  if ((c.modifiers & (AccModifier.SYNCHRONIZED | AccModifier.NATIVE |
+      AccModifier.ABSTRACT | AccModifier.STRICT)) != 0)
+   fatalError(c, "Illegal modifier specified for a field");
+  if (c.currentClass.isInterface() &&
+      (c.modifiers & (AccModifier.PRIVATE | AccModifier.PROTECTED |
+      AccModifier.VOLATILE | AccModifier.TRANSIENT)) != 0)
+   fatalError(c, "Illegal modifier found for an interface constant");
+  if ((c.modifiers & AccModifier.STATIC) != 0 &&
+      (c.modifiers & AccModifier.FINAL) == 0 &&
+      !c.currentClass.isStaticClass())
+   fatalError(c, "An inner class cannot have static non-final fields");
+  c.typeDims = 0;
+  terms[1].processPass1(c);
+  terms[0].processPass1(c);
+  terms[2].processPass1(c);
+ }
+}

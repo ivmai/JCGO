@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/IntLiteral.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,49 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Lexical term for an integer literal.
+ */
+
+final class IntLiteral extends LexTerm
+{
+
+ private ConstValue constVal;
+
+ IntLiteral(String tokenval)
+ {
+  super(LexTerm.NUMBER, tokenval);
+ }
+
+ IntLiteral(ConstValue constVal)
+ {
+  super(LexTerm.NUMBER, constVal.isLong() ? "0L" : "0");
+  this.constVal = constVal;
+ }
+
+ void processPass1(Context c)
+ {
+  if (constVal == null)
+   constVal = new ConstValue(dottedName());
+ }
+
+ ExpressionType exprType()
+ {
+  assertCond(constVal != null);
+  return Main.dict.classTable[constVal.isLong() ? Type.LONG : Type.INT];
+ }
+
+ ConstValue evaluateConstValue()
+ {
+  assertCond(constVal != null);
+  return constVal;
+ }
+
+ String stringOutput()
+ {
+  assertCond(constVal != null);
+  return constVal.stringOutput();
+ }
+}

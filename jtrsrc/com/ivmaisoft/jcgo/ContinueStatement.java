@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/ContinueStatement.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,42 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for the continue statement.
+ **
+ * Format:
+ * CONTINUE [ID] SEMI
+ */
+
+final class ContinueStatement extends BreakStatement
+{
+
+ ContinueStatement(Term b)
+ {
+  super(b);
+ }
+
+ void processPass1(Context c)
+ {
+  if (!processPassOneCommon(c))
+  {
+   if (labelStmt != null)
+   {
+    labelStmt.makeContinueLabel(c.currentMethod);
+    c.hasContinueDeep = true;
+   }
+    else c.hasContinueSimple = true;
+  }
+ }
+
+ void processOutput(OutputContext oc)
+ {
+  if (labelStmt != null)
+   labelStmt.writeGoto(oc, curTry(), false);
+   else if (!terms[0].notEmpty())
+    TryStatement.outputFinallyGroup(curTry(), lastBreakableTry(), oc,
+     "continue");
+ }
+}

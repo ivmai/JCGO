@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/ExactClassType.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,79 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * An exact (not subclassed) class actual expression type.
+ */
+
+final class ExactClassType extends ExpressionType
+{
+
+ private /* final */ ClassDefinition aclass;
+
+ ExactClassType(ClassDefinition aclass)
+ {
+  int s = aclass.objectSize();
+  Term.assertCond(s == Type.CLASSINTERFACE);
+  this.aclass = aclass;
+ }
+
+ ExpressionType indirectedType()
+ {
+  return null;
+ }
+
+ String getJniName()
+ {
+  Term.assertCond(false);
+  return null;
+ }
+
+ String name()
+ {
+  return aclass.name();
+ }
+
+ String getJavaSignature()
+ {
+  return "=" + aclass.getJavaSignature();
+ }
+
+ String csign()
+ {
+  Term.assertCond(false);
+  return null;
+ }
+
+ ClassDefinition receiverClass()
+ {
+  return aclass;
+ }
+
+ ClassDefinition signatureClass()
+ {
+  return aclass;
+ }
+
+ int signatureDimensions()
+ {
+  return 0;
+ }
+
+ boolean hasRealInstances()
+ {
+  return aclass.hasRealInstances();
+ }
+
+ int objectSize()
+ {
+  return Type.CLASSINTERFACE;
+ }
+
+ String castName()
+ {
+  Term.assertCond(false);
+  return null;
+ }
+}

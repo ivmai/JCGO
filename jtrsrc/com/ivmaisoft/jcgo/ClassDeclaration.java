@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/ClassDeclaration.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,52 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+/**
+ * Grammar production for a class definition.
+ **
+ * Format:
+ * CLASS ID [Extends] [Implements] ClassBody
+ */
+
+class ClassDeclaration extends LexNode
+{
+
+ private ClassDefinition classDefn;
+
+ ClassDeclaration(Term b, Term c, Term d, Term e)
+ {
+  super(b, c, d, e);
+ }
+
+ final void processPass0(Context c)
+ {
+  String id = terms[0].dottedName();
+  String name;
+  if (c.currentClass == null)
+   name = c.packageName + id;
+   else name = c.localScope != null ? c.currentClass.nextLocalClassName(id) :
+                c.currentClass.name() + "$" + id;
+  if ((c.modifiers & (AccModifier.SYNCHRONIZED | AccModifier.VOLATILE |
+      AccModifier.TRANSIENT | AccModifier.NATIVE)) != 0 ||
+      ((c.modifiers & AccModifier.STATIC) != 0 && c.currentClass == null))
+   fatalError(c, "Illegal modifier specified for class: " + name);
+  if ((c.modifiers & AccModifier.FINAL) != 0 && isInterface())
+   fatalError(c, "An interface cannot be final: " + name);
+  classDefn = Main.dict.get(name);
+  classDefn.definePass0(c, c.modifiers, id, terms[1], terms[2], terms[3],
+   isInterface());
+ }
+
+ boolean isInterface()
+ {
+  return false;
+ }
+
+ final void processPass1(Context c)
+ {
+  assertCond(classDefn != null);
+  classDefn.processPass1(c);
+ }
+}

@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/jtrsrc/com/ivmaisoft/jcgo/ObjHashSet.java --
+ * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,48 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
-#endif
+package com.ivmaisoft.jcgo;
 
-#ifdef JCGO_112 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
-#endif
+import java.util.Enumeration;
+
+/**
+ * An unordered set (hash set of objects).
+ */
+
+final class ObjHashSet
+{
+
+ private final ObjHashtable map = new ObjHashtable();
+
+ ObjHashSet() {}
+
+ int size()
+ {
+  return map.size();
+ }
+
+ boolean contains(Object obj)
+ {
+  return map.get(obj) != null;
+ }
+
+ boolean remove(Object obj)
+ {
+  return map.remove(obj) != null;
+ }
+
+ boolean add(Object obj)
+ {
+  return map.put(obj, obj) == null;
+ }
+
+ void clear()
+ {
+  map.clear();
+ }
+
+ Enumeration elements()
+ {
+  return map.elements();
+ }
+}

@@ -1,0 +1,1169 @@
+
+                  JCGO - Java source to C code translator
+                  ---------------------------------------
+                        version 1.12 (20-Jul-2011)
+                        --------------------------
+                               User's Guide
+                               ------------
+
+Copyright (C) 2001-2011 Ivan Maidanski <ivmai@mail.ru>
+Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com
+All rights reserved.
+
+Disclaimer
+----------
+
+Use of this software is subject to license terms.
+This is free software distributed under the GPL license with the GNU
+Classpath exception. See LICENSE file for more details.
+
+Preface
+-------
+
+JCGO (pronounced as "j-c-go") is a software application which translates
+(converts) programs written in Java into platform-independent C code,
+which could, further, be compiled (by third-party tools) into
+highly-optimized native code for the target platform and deployed.
+
+JCGO application is a powerful solution that enables your desktop,
+server-side and embedded/mobile/wireless Java applications to take full
+advantage of the underlying hardware. In addition, JCGO effectively
+protects your intellectual property by making your programs when
+compiled to native code as hard to reverse engineer as if they were
+written in C/C++.
+
+JCGO consists of the following parts: the translator executables (one
+for every supported development platform), the JCGO-specific part
+of the Java runtime environment, the JCGO-specific part of a C runtime
+environment, the precompiled libraries part, the supplementary and
+JCGO-specific auxiliary tools, miscellaneous and sample source files,
+and the accompanying documentation.
+
+Licensing, warranty and trademarks issues
+-----------------------------------------
+
+This software and its documentation have been tested and reviewed.
+Nevertheless, the author makes no warranty or representation, either
+express or implied, with respect to the software and documentation
+included with this application. In no event will the author be liable for
+direct, indirect, special, incidental or consequential damages
+resulting from any defect in the software or documentation included
+with this application.
+
+Java (tm) and all Java-based trademarks and logos are trademarks
+or registered trademarks of Sun Microsystems, Inc.
+
+All trademarks and copyrights mentioned in this documentation are the
+property of their respective holders.
+
+The rest of the JCGO is covered by GNU General Public License (GPL),
+version 2, with a special exception (so called "GNU Classpath exception"),
+which gives you the right to use it within any other software regardless of
+the license terms (see exact license information in the header of an open
+source file).
+
+JCGO may contain a number of third-party open-source materials.
+
+Please read COPYING file carefully for the full
+licensing information. For any included third-party sources see the
+license information in the header of that files. For any included
+libraries in a binary form see licenses supplied in their sources and
+with the corresponding C compilers.
+
+Official project web site
+-------------------------
+
+The JCGO project official web home page is:
+http://www.ivmaisoft.com/jcgo/
+
+The JCGO development repository web page is:
+http://sourceforge.net/projects/jcgo/
+
+Introduction
+------------
+
+Thank you for downloading JCGO application - the tool for creation
+of conventional native code applications using the Java programming
+language. JCGO takes Java source files as input and translates them
+into a set of files in the platform-independent C programming language,
+which is further compiled to a binary executable for your target
+platform by a standard ANSI C/C++ compiler.
+
+JCGO translator uses some optimization algorithms that allow, together
+with optimizations performed by a C compiler, the resulting executable
+code to reach better performance if compared with the traditional Java
+implementations (based on the Just-In-Time technology).
+
+The produced executable does not contain nor require a Java Virtual
+Machine to execute, so its resource requirements are smaller than that
+required by a typical Java VM. This also simplifies the process
+of deployment and distribution of an application. In addition, the
+produced native code is highly resistant to reverse engineering and
+tampering.
+
+JCGO at a glance
+----------------
+
+Producing a native executable file for your Java application is done
+in three steps with the JCGO application: generation of C code
+files from Java source files, compiling these C code files into one or
+more machine-dependent object files, and linking them all together with
+C library into a binary executable file.
+
+The JCGO translator (which is, in other words, a "retargetable"
+optimizing Java-source-to-C static whole-program compiler) transforms
+the Java source files of your application, the source files of all Java
+libraries used by your application, the source files of the standard
+class library (the Java Runtime Environment) and a number of the
+JCGO-specific Java files together (constituting the "translation set"
+of Java files) at once into a set of files with optimized (but
+human-readable) platform-independent ISO/ANSI C code. This
+transformation is performed on the developer's system, which may differ
+from the target system of your application. If you need to pack any
+resource files (only the standard Java property file) into your
+application then you should convert these resource files into the
+corresponding Java source files (a special stand-alone utility
+is supplied within the JCGO application to automate this
+conversion) beforehand and pass them too as an input to the JCGO
+translator.
+
+To create a native executable file for your application (processed with
+the JCGO translator) you need a standard ISO/ANSI C compiler and linker
+for the target platform (the target hardware and operating system).
+Since JCGO generates platform-independent C code and uses only a small
+cross-platform (portable) set of the standard C library functions,
+there is a large number of platforms supported - based on different CPU
+architectures (e.g., x86, amd64, ppc, ppc64, ia64, sparc, alpha, mips,
+i8086, arm, sh, xscale, etc.) and running different Operating Systems
+(e.g., Windows, FreeBSD, GNU/Linux, Mac OS X (Darwin), Solaris SunOS,
+OS/2, pure DOS, BeOS, PocketPC/WinMobile/WinCE, or even without OS,
+etc.).
+
+By using the desired C compiler toolkit, you compile the generated
+C code files (all at once as a single compilation unit or each file
+separately) for your Java application together with the JCGO-specific
+C part of Java runtime. A lot of C macros are provided to customize the
+compilation process and the resulting executable. Besides, a typical
+C compiler offers a good set of options to control code optimization
+and debugging support features.
+
+The linkage step for your application is done by the desired C compiler
+toolkit in the same way as for a normal C program except that
+a precompiled Garbage Collector library (either static or dynamic)
+is linked with it too.
+
+Java compliance and unsupported features
+----------------------------------------
+
+JCGO is compliant with the Java 2 Standard Edition (J2SE) v1.4
+platform. JCGO uses GNU Classpath v0.93 core class library.
+
+JCGO does not support Java exception stack tracing. JCGO does not
+support the features introduced in the 3rd version of the Java Language
+Specification and J2SE v1.5 platform.
+
+JCGO optimization techniques
+----------------------------
+
+JCGO translator itself performs at least the following local and global
+optimizations:
+- unused class, methods and fields elimination;
+- marking suitable methods for inlining;
+- turning virtual calls into direct ones;
+- turning all interface method calls into either virtual or direct
+ones;
+- fields, local variables and parameters reordering;
+- runtime checks for null pointer, array index, cast type elimination;
+- on-the-stack object allocation;
+- performing class initialization at program start-up;
+- removing unused class meta-information for "Reflection" API;
+- packing characters of Latin-1 strings into byte arrays;
+- putting static arrays into program image data sections;
+- putting strings, classes and immutable arrays into program image
+read-only section.
+
+The further optimizations of the code are done by the C compiler you
+use.
+
+JCGO advantages and drawbacks
+-----------------------------
+
+JCGO employs the concept of the Ahead-of-Time (static) compilation
+on the developer's system which gives at least the following advantages
+over the traditional Java VM runtime interpretation and Just-in-Time
+(JIT) compilation to the compiled programs:
+- faster execution and smaller memory footprint (no code
+interpretation, no unused class meta-information, large set of local
+and global optimization, runtime checks elimination, code and read-only
+data sharing across multiple running program instances);
+- shorter start-up time (no class load, no class verification, no JIT,
+functions and static data reordering for faster executable on-demand
+loading);
+- more performance tuning flexibility (you may choose less program size
+or more speed, more robustness or more speed);
+- native and easier program deployment (a single native executable,
+no stand-alone Java VM Runtime Environment needed, has own name in the
+process list, applicability of native code packers, code protectors and
+custom installer creators);
+- better resistance to code decompilation and reverse engineering (the
+compiled program is as hard to decompile as for a conventional C/C++
+program).
+
+These advantages identify, in fact, the goals that may be achieved
+by applying the JCGO to your application.
+
+The drawbacks of JCGO in respect to the Ahead-of-Time compilation are:
+- not cross-platform (native executable is created only for the target
+system specified at compilation time);
+- no runtime-specific optimizations and profiling (all optimizations
+are done at the developer's host and for the specified CPU model only);
+- no support for dynamic applications (all the classes comprising the
+application must be passed to JCGO and compiled to native code at the
+developer's host, all functions and fields accessed through the Java
+"Reflection" API should be generally identified).
+
+JCGO translates Java source files instead of binary Java class files
+of your application - this gives the following advantages:
+- some more optimizations are possible;
+- the produced C code is more human-readable;
+- no need to have a "javac" tool and to manually compile Java source
+files to Java class binary files.
+
+The drawback of this approach is:
+- full sources of the application and the used libraries are needed
+(you have to decompile Java class binary files if the required Java
+source files are missing and, of course, if this is legal by the
+applicable license).
+
+JCGO translates the sources of an application all at once and a
+C compiler processes the generated C files all at once. The advantages
+of "all-at-once" translation and compilation are:
+- more global optimizations are possible;
+- only needed part of the Java VM runtime is compiled;
+- unused classes, methods, fields are all eliminated;
+- more methods are possible to inline.
+
+The drawbacks of the "all-at-once" approach are:
+- everything should be re-translated to C and recompiled if any Java
+source is changed;
+- code duplication in every application executable file is present (for
+the Java runtime code and used libraries);
+- the JCGO translator and a C compiler use a lot of system resources
+(CPU and RAM) to do the work.
+
+JCGO translates your Java application to a native executable in 3 steps
+(to C code first, then to object file, and then to executable file).
+The "through C" conversion model gives you the following advantages
+over the direct Java-to-executable conversion model:
+- much more portability (JCGO has a wide range of the supported target
+systems);
+- allows you to treat Java application as a normal C one (this means
+that you have much more control over optimization and code tuning, you
+have ability to look through, verify, adopt the code in C, have ability
+to use verified and time-proven C/C++ compilers, and you have the
+possibility to debug and profile your application with the standard
+C tools);
+- gives you flexibility in linking an application with the Garbage
+Collector and other third-party libraries (both static and dynamic
+methods of linking are supported).
+
+The drawbacks of the "through C" approach are:
+- you need a C compiler for the target system to succeed;
+- the used C compiler (and/or linker) may contain bugs;
+- it is harder for you to compile an application (you should known the
+C programming language and have skills in C compilation and linking,
+you have to manually invoke the C compiler).
+
+Note, however, that while JCGO produces human-readable C code, this
+code does not contain comments and is not maintainable (i.e., you
+cannot really use JCGO for your project to migrate from Java to C).
+
+Note also, as an advantage, that JCGO contains and uses only free open
+sources (except when an AWT GUI application is translated - Sun J2SE
+v1.4.2 community sources could be used in this case).
+
+Scope of possible applicability
+-------------------------------
+
+JCGO is targeted mainly for the following user categories:
+- application software developers (to get higher performance, smaller
+memory footprint and smaller start-up time for an application,
+to protect the code as an intellectual property, to allow
+an application to execute on platforms without the Java VM support,
+to simplify deployment, distribution and installation of an
+application, to apply time-proven and well-known C/C++ compilation and
+debugging tools to a Java application);
+- hardware device developers (to migrate from C device code to Java,
+to write new device code in Java with nearly the same performance
+efficiency as in C, to use Java for 8- and 16-bit CPUs with ROM-able
+code and small amount of RAM, to reuse existing Java code for small
+device programming);
+- software porting men (to execute existing applications on platforms
+without a Java VM support);
+- software advanced users (to get higher performance for frequently
+used applications, to run an application in the 64-bit mode).
+
+Development system requirements
+-------------------------------
+
+At present the JCGO translator itself is built to be executed on any
+"x86" platform running GNU/Linux or Windows operating system.
+
+The minimal hardware requirements for the JCGO translator are:
+- Intel Pentium III 500 MHz CPU (or equivalent);
+- 1024 MiB RAM;
+- 200 MiB free disk space.
+
+The amount of available real RAM space is critical - you should have
+at least 200 KiB per every class included in the "translation set"
+in average, otherwise the performance of the JCGO translator
+significantly degrades.
+
+Operating System requirement for the JCGO translator is (one of):
+- Microsoft Windows 2000 or higher (to run "jcgo.exe" on Win32);
+- GNU/Linux OS based on Kernel 2.6 or higher (to run Linux version
+of "jcgo");
+- Sun JRE 1.4 or higher (to run "jcgo.jar" as an alternative to Windows
+and Linux native binary versions of the JCGO translator).
+
+Other development platforms and operating systems could be supported
+in the future. Note also, that the target platform
+of a translated application does not depend of the development platform
+used to run the JCGO translator.
+
+Required knowledge and skills
+-----------------------------
+
+To use the JCGO translator successfully you should generally
+be familiar with the C programming language and have adequate skills
+in the compilation area with the C compiler you choose to use for the
+target platform.
+
+It is also supposed that you know the name of the class with the entry
+point of the application you translate, the names of all the classes
+accessed dynamically from the application, the fully-qualified names
+of all the methods and fields accessed from the application through the
+Java "Reflection" API.
+
+Downloading prerequisites
+-------------------------
+
+To start using the JCGO application you need to download the JCGO
+distributive files and install it successfully.
+
+The following files constitutes "the JCGO distributive files":
+- jcgo-src-1_XX.tar.bz2 (the source files used by JCGO and by a
+C compiler);
+- jcgo-lib-1_XX.tar.gz (the auto-generated Java files used by JCGO,
+precompiled libraries and auxiliary executables for the supported
+platforms, as well as the JCGO translator executable  for a Java VM);
+- jcgo-bin-win32-x86.zip (the JCGO translator executable for Windows
+development host);
+- jcgo-bin-1_XX-linux-x86.tar.gz (the JCGO translator executable for
+Linux/x86 development host);
+- classpath-0.93.tar.gz (the GNU Classpath - Essential Libraries for
+Java).
+
+Note: version 0.93 of the GNU Classpath is the only supported version -
+its later versions are incompatible with JCGO currently.
+
+In addition, in case you need a custom-specific Garbage Collector (GC)
+library (e.g., for a specific target platform) which is not among the
+precompiled libraries, then its sources should be downloaded too and,
+then, compiled manually as required. At present, only two GC libraries
+are supported:
+- Boehm-Demers-Weiser Conservative GC (BDWGC, BoehmGC) version 7.2 or
+later (with built-in libatomic_ops library);
+- TinyGC (Tiny Garbage Collector) - a binary-compatible small
+alternative to Boehm GC (normally, should be used only for targets
+where Boehm GC is not supported or is unappropriated).
+
+To manually compile the desired GC library, please download
+gc-7.2.tar.gz (or newer) for Boehm GC, or tinygc-2_5.tar.bz2 (or newer)
+for TinyGC.
+
+The exact links to the distributive files (and their exact names for
+the current JCGO version) are provided at the JCGO official web home
+page.
+
+To compile an SWT GUI application, you will need the corresponding
+(i.e., for the required target platform) SWT library sources (of version
+3.5, 3.6 or 3.7M3).
+
+To compile an application which uses Sun Javax Comm API, you will need
+either RXTX library sources (version 2.2) or the original Sun Java
+Communications API library sources.
+
+To compile an application that accesses OS API via JNA, you will need
+JNA (Java Native Access) library sources (version 3.2.7).
+
+Note also, that you need some more distributive files to translate
+an AWT GUI application (e.g., with Sun Win32/X11 AWT back-ends) or an
+AWT/SWT application which uses Java Sound API, or an SQL application
+that uses Sun JDBC-ODBC bridge:
+- jcgo-sunawt-lib-1_XX.tar.gz (the JCGO-SUNAWT auto-generated Java
+files used by the JCGO translator and precompiled import libraries);
+- jcgo-sunawt-linux-x86-1_00.tar.gz (JCGO-SUNAWT runtime binary
+re-distributive pack for GNU Linux/x86 targets);
+- jcgo-sunawt-solaris-x86-1_00.tar.gz (JCGO-SUNAWT runtime binary
+re-distributive pack for Solaris SunOS/x86 targets);
+- jcgo-sunawt-win32-x86-1_00.7z (JCGO-SUNAWT runtime binary
+re-distributive pack for Windows/x86 targets);
+- j2sdk-1_4_2-src-scsl.zip (Sun J2SDK v1.4.2 SCSL sources);
+- src.zip from the Sun J2SE v1.4.2_19 SDK (Sun Java core API class
+sources).
+
+Entirely for the purpose of the distributive files unpacking, you need
+some tar+gz/bz2 unpacker tool (e.g., tar and ungzip/bzip2 for Unix-like
+OS, or "7-Zip" for Windows).
+
+Installation procedure
+----------------------
+
+Before installing the current version of the JCGO, please completely
+remove the previous one installation (if you have any).
+
+Then, please extract the JCGO distributive files (using an unpacker
+tool of your choice) into the "JCGO home" (base) installation folder
+preserving the directory structure. The recommended name for the JCGO
+home is "C:\JCGO" on Windows ("/usr/share/JCGO" on Unix-like system),
+but you are free to use any other folder (directory) for it.
+
+For AWT GUI applications translation, as a special exception (for the
+above unpacking rule), j2sdk-1_4_2-src-scsl.zip should be unpacked
+to the newly-created "j2sdk-1_4_2-src-scsl" folder (of the "JCGO"
+installation folder) and src.zip from the Sun J2SE v1.4.2_19 SDK - to
+"j2sdk1.4.2_19_src", respectively.
+
+Note: at the end of the installation process it is better to protect
+the entire JCGO installation folder and all its contents from
+an accidental modification (never add, delete, or modify files within
+the JCGO application - if you need to use a modified version of
+a source file then copy it to your project first), so please set
+"read-only" access to the entire JCGO installation folder and its
+subfolders (if this protection mechanism is supported by the File
+System).
+
+JCGO home folder contents
+-------------------------
+
+After you complete the JCGO installation process, the JCGO home folder
+contents are as follows:
+- "auxbin" - the JCGO auxiliary tools ("GenRefl", "JPropJav" and
+"TraceJni" utilities supplied both as a Java VM executable and as
+native executables for the supported platforms);
+- "classpath-0.93" - the unpacked contents of the GNU Classpath
+("Essential Libraries for Java") distributive file;
+- "dlls" - precompiled dynamic-link (shared object) libraries (for the
+supported platforms);
+- "examples" - several simple Java samples (like "Hello world")
+to translate;
+- "goclsp" - a set of JCGO-specific partial replacements and fixes for
+GNU Classpath;
+- "include" - the JCGO C core runtime (compiled together with the
+output of the JCGO translator);
+- "jnidload" - the source for creating JCGO-specific static trampolines
+with distinctive names for multiple dynamically-loaded "JNI_OnLoad" and
+"JNI_OnUnload" functions (for the case when these functions are
+residing in multiple dynamic libraries but used together);
+- "jtrsrc" - the JGCO translator source;
+- "libs" - precompiled libraries (for "x86" and "amd64" platforms only,
+might be used by a C linker);
+- "minihdr" - minimal subset of the standard ISO/ANSI C compiler header
+files sufficient to compile the JCGO C core runtime and native
+back-ends (useful only for non-standard C runtime environments);
+- "miscsrc" - miscellaneous C and Java sources ("JAWT" stub shared
+library source, "JPropJav" utility source, "T-PThread" library source
+and header, "WinMain" wrapper source);
+- "native" - the JCGO C native back-ends (file I/O, network I/O,
+process execution, OS-specific properties retrieval);
+- "reflgen" - JNI method and field reflection usage data and the
+sources of the JCGO tools for handling the reflection usage data;
+- "rflg_out" - the addendum Java source files used by the JCGO
+translator (generated automatically by "JPropJav" utility from
+goclsp/clsp_fix/resource, classpath-0.93/resource, and by "GenRefl"
+utility from reflgen/*.dat files);
+- "COPYING" - GNU General Public License;
+- "LICENSE" - JCGO software license agreement;
+- "README" - the JCGO "read me" and documentation (this file);
+- "README_QUICK.txt" - the JCGO quick start tips (for Windows and Linux);
+- "Samples" - C compilation samples;
+- "jcgo" - the JCGO translator executable (for GNU/Linux on x86);
+- "jcgo.exe" - the JCGO translator executable (for Win32);
+- "jcgo.jar" - the JCGO translator executable (for Java VM);
+- "stdpaths.in" - response file (containing the "core" source paths)
+for the JCGO translator;
+- "j2sdk-1_4_2-src-scsl" - the unpacked contents of the Sun J2SDK
+v1.4.2 SCSL sources distributive file (used only with the additional
+"JCGO-SUNAWT" pack);
+- "j2sdk1.4.2_19_src" - the unpacked contents of "src.zip" file of the
+Sun J2SE v1.4.2_19 SDK (used only with the additional "JCGO-SUNAWT"
+pack);
+- "sawt_out" - the precompiled (generated) parts of the additional
+"JCGO-SUNAWT" pack (distributed separately);
+- "sunawt" - the sources of the additional "JCGO-SUNAWT" pack (optional)
+integrating the Sun J2SE v1.4.2 AWT/JSound/SQL front-ends.
+
+JCGO translator command-line arguments
+--------------------------------------
+
+The JCGO translator itself ("jcgo") is a command-line tool. It accepts
+the following arguments:
+- optional "verbose mode" switch (-v);
+- optional output existing folder name switch (-d <directory>) for the
+generated ".c" and ".h" files to put in (otherwise, "jcgo_Out" folder
+in the current folder is created and used);
+- the full name of the class with "main(String[])" method of the
+application to translate;
+- source paths list specifier switch (-sourcepath <pathlist> or -src
+<pathlist> for short) for the translator to get Java source files from
+(notes: the order of paths is important; it is possible to use "$~"
+as a path prefix meaning the JCGO home (installation) folder; the
+current folder is always implicitly added to the end of the specified
+list; it is also possible to use "conditional" paths, in the form
+of <path>/$%<packageOrClass>, meaning that the specified source path
+should be used only to search for the designated class or classes
+within the designated package);
+- optional additional full class names (for the classes used
+dynamically via "Class.forName()" calls or through the Java
+"Reflection" API, including Proxy classes);
+- optional command (-r<flags> <packageOrClass>) to force particular
+members reflection for a given class or for all classes (of the
+"translation set") inside a given package (flags specifier:
+[p|[[p]c][g|[p]m][[p]f]], where flag symbol 'c' means reflect all
+constructors (if with 'p' prefix then only public entities),
+'g' - reflect all declared public non-static getter and setter methods,
+['p']'m' - reflect all declared [public] methods, ['p']'f' - reflect
+all declared [public] fields, single 'p' flag is equivalent to "pcpmpf"
+specifier, and the flags omission has the same meaning as "cmf" one);
+- optional "response" file (@<filename>) for user convenience
+containing optional additional full class names (one per line),
+optional source paths list specifier switches ("$~" prefix could
+be used here too), and optional "-r" commands.
+
+Translating first sample application
+------------------------------------
+
+The sample conversion of "Hello world" application on Windows and
+Unix-like development hosts (for the same targets) is provided bellow.
+It is assumed that the JCGO software is installed into its recommended
+folder. It is also assumed that "C:\MyProject" ("/home/user/MyProject"
+on Unix) folder exists, in which the resulting "hello.exe" ("hello"
+on Unix) native executable file would be put.
+
+For Windows development host and target ("MinGW" C/C++ compiler is used
+here):
+
+cd C:\MyJcgoProjects
+mkdir .\Hello
+C:\JCGO\jcgo -d .\Hello -sourcepath $~\examples Hello @$~\stdpaths.in
+gcc -IC:\JCGO\include -IC:\JCGO\include\boehmgc -IC:\JCGO\native
+ -DJCGO_FFDATA -o hello .\Hello\Main.c C:\JCGO\libs\x86\mingw\libgc.a
+
+For Linux (on x86) development host and target:
+
+cd /home/user/MyJcgoProjects
+mkdir ./Hello
+/usr/share/JCGO/jcgo -d ./Hello -sourcepath $~/examples Hello \
+ @$~/stdpaths.in
+gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/include/boehmgc \
+ -I /usr/share/JCGO/native -fwrapv -DJCGO_UNIX -D_IEEEFP_H \
+ -DJCGO_UNIFSYS -o hello Hello/Main.c -lm \
+ /usr/share/JCGO/libs/x86/linux/libgc.a
+
+Appendix A: The core source paths for the JCGO translator
+---------------------------------------------------------
+
+goclsp/clsp_asc - include only to use only Latin-1/UTF-8 in streams;
+goclsp/clsp_fix - normally should be included (Classpath fixes);
+goclsp/clsp_ldr - normally should be included;
+goclsp/clsp_pgk - include only to use Gtk GNU AWT back-end;
+goclsp/clsp_pqt - include only to use Qt GNU AWT back-end;
+goclsp/clsp_res - must be always included;
+goclsp/fpvm - include only to redirect Math to StrictMath methods;
+goclsp/vm - must be always included (VM-specific classes);
+goclsp/vm_str - normally should be included (packed strings support);
+rflg_out - normally should be included;
+classpath-0.93 - must be always included ("Java essential" classes);
+classpath-0.93/external/relaxngDatatype - normally should be included;
+classpath-0.93/external/sax - normally should be included;
+classpath-0.93/external/w3c_dom - normally should be included.
+
+Appendix B: Environment variables recognized by the JCGO runtime
+----------------------------------------------------------------
+
+LOGNAME or USER, or USERNAME - "user.name" property ("anonymous"
+by default);
+USERLANG - "user.language" property ("en" by default);
+USERCTRY - "user.region" property ("US" by default);
+CODEPAGE - "file.encoding" property ("ISO8859_1" by default);
+CONSOLE_CODEPAGE - alternate encoding for the console output
+(stdout/stderr);
+UNICODE_ENCODING - "sun.io.unicode.encoding" property (either
+"UnicodeLittle" or "UnicodeBig");
+PROCESSOR_ARCHITECTURE or MACHTYPE, or HOSTTYPE - "os.arch" property
+("x86" by default);
+NUMBER_OF_PROCESSORS - number of available processors (1 by default);
+HOME or HOMEPATH, or USERPROFILE - "user.home" property;
+TMP or TMPDIR, or TEMP - "java.io.tmpdir" property;
+PROG_JAVA_HOME - explicit (non-default) "java.home" property;
+CLASSPATH - for "java.class.path" property;
+CLASSPATH_HOME - "gnu.classpath.home" property;
+LD_LIBRARY_PATH and PATH - for "java.library.path" property;
+PATHEXT - pathlist of valid non-Unix program extensions (e.g.,
+".EXE;.BAT");
+TZ=zzz[+/-]d[d][lll] - time zone information (for "user.timezone"
+property);
+JAVA_PROPS - space-separated list of custom Java properties
+(-Dname=value);
+NO_TIME_HIGH_RESOLUTION - do not use Win32 system timer resolution
+switching;
+STDERROUT_LOGFILE - file name for the redirected stderr/stdout (if
+turned on);
+USE_UNICODE_API - explicitly specify whether to use Unicode system API
+where possible (if allowed) or use its ASCII (multibyte) variant ("0"
+to use ASCII).
+
+Appendix C: Environment variables recognized by the Garbage Collector
+---------------------------------------------------------------------
+
+GC_DONT_GC - turn off garbage collection;
+GC_ENABLE_INCREMENTAL - turn on incremental garbage collection mode
+(may not work correctly on some platforms);
+GC_DISABLE_INCREMENTAL - disable incremental garbage collection mode
+explicitly turned on by an application;
+GC_PRINT_STATS - turn on statistic printing on every garbage
+collection;
+GC_ALL_INTERIOR_POINTERS - turn on "all-interior-pointers" collector
+mode;
+GC_IGNORE_GCJ_INFO - ignore the GCJ-style type descriptors (if
+supported);
+GC_FORCE_UNMAP_ON_GCOLLECT - force immediate memory unmapping (if
+supported) on explicitly-initiated garbage collections;
+GC_INITIAL_HEAP_SIZE - set initial heap size (in bytes);
+GC_MAXIMUM_HEAP_SIZE - set maximum heap size (in bytes);
+GC_FREE_SPACE_DIVISOR - change the default trade-off between garbage
+collection and heap growth;
+GC_PAUSE_TIME_TARGET - set the desired garbage collection maximal pause
+time (incremental collection time limit, in milliseconds);
+GC_UNMAP_THRESHOLD - change the default "threshold" value (if
+supported) for the garbage collector free blocks unmapping ("0"
+to disable heap shrinking);
+GC_MARKERS - explicitly set the number of parallel "marker" threads (if
+the garbage collector supports parallel marking).
+
+Appendix D: C macros used to control compilation
+------------------------------------------------
+
+/* Include "config.h" file */
+#define HAVE_CONFIG_H
+
+/* Allow Win32 API usage where necessary */
+#define JCGO_WIN32
+
+/* Allow OS/2 platform API usage where necessary */
+#define JCGO_OS2
+
+/* Only if JCGO_THREADS is defined, and JCGO_OS2 and JCGO_WIN32 are not
+ defined: use Solaris SunOS native threads (instead of POSIX
+ threads) */
+#define JCGO_SOLTHR
+
+/* Only if JCGO_THREADS is defined: all threads are allowed to be
+ running fully parallel (otherwise, the threads are non-preemptive
+ except for I/O operations) */
+#define JCGO_PARALLEL
+
+/* Only if JCGO_THREADS and JCGO_PARALLEL are defined: do not use
+ atomic fetch() and store() operations to access Java volatile fields
+ (i.e., treat Java "volatile" access modifier as C one) */
+#define JCGO_CVOLATILE
+
+/* Only if JCGO_THREADS is defined: assume that the standard C library
+ is not thread-safe (i.e., C system calls are non-reentrant ones) */
+#define JCGO_NOMTCLIB
+
+/* Only if JCGO_NOFP is not defined: floating-point variables have the
+ reversed byte-order (the opposite to the order of bytes in an integer
+ variable) */
+#define JCGO_REVFLOAT
+
+/* Only if JCGO_NOFP is not defined: Allow advanced math functions
+ (cbrt, expm1, floorf, fmodf, log1p) usage where necessary */
+#define JCGO_MATHEXT
+
+/* Define (or allow to define if used for compiling C files of the JCGO
+ "native" library) Unicode "wmain" function as the program entry point
+ (instead of "main") */
+#define JCGO_WMAIN
+
+/* Only if JCGO_NATSEP is not defined: use Unicode (wchar_t) functions
+ of the file API (of the standard C library) where appropriate
+ (otherwise, only ASCII (multibyte) functions are used) */
+#define JCGO_SYSWCHAR
+
+/* Only if JCGO_NATSEP is not defined and JCGO_SYSWCHAR is defined:
+ choose whether to use Unicode or ASCII (multibyte) functions of the
+ file API (of the standard C library) at run-time (useful for Win32
+ platform) */
+#define JCGO_SYSDUALW
+
+/* Only if JCGO_NATSEP is not defined: use mbstowcs() and wcstombs()
+ (instead of mbtowc() and wctomb(), respectively) for the
+ multibyte-to-Java and Java-to-multibyte string conversions (useful for
+ WinCE platforms) */
+#define JCGO_DOWCSTOMBS
+
+/* Only if JCGO_NATSEP is not defined: get some Java system properties
+ using Win32 API directly (useful for WinCE platforms) */
+#define JCGO_WINEXINFO
+
+/* Only if JCGO_NATSEP is not defined: use Win32 file I/O API directly
+ (useful for WinCE platforms) */
+#define JCGO_WINFILE
+
+/* Use C "stdout" instead of "stderr" file descriptor for the Java
+ "System.err" stream (and for fatal runtime errors outputting) */
+#define JCGO_ERRSTDOUT
+
+/* Only if JCGO_NOFILES is not defined: redirect (or allow to redirect
+ if used for compiling C files of the JCGO "native" library) C "stderr"
+ (and "stdout" if JCGO_ERRSTDOUT is defined too) stream to ".log" file
+ (only if "STDERROUT_LOGFILE" environment variable is set specifying
+ the log file name or if the executable-name-based log file already
+ exists) */
+#define JCGO_ERRTOLOG
+
+/* Only if JCGO_ERRTOLOG is defined: force C "stderr" (and "stdout"
+ if JCGO_ERRSTDOUT is defined too) stream redirection (the log file
+ will be created at the program start-up) */
+#define JCGO_TOLOGFORCE
+
+/* Only if JCGO_NATSEP, JCGO_NOFILES and JCGO_WINFILE are not defined:
+ use _findfirst/_findnext/_findclose with handle and _finddata_t data
+ structure for directory scanning */
+#define JCGO_FFDATA
+
+/* Only if JCGO_NATSEP, JCGO_NOFILES and JCGO_WINFILE are not defined:
+ use findfirst/findnext with ffblk data structure for directory
+ scanning (otherwise, opendir/readdir/closedir are used if JCGO_FFDATA
+ and JCGO_FFDOS are not defined) */
+#define JCGO_FFBLK
+
+/* Only if JCGO_NATSEP, JCGO_NOFILES and JCGO_WINFILE are not defined:
+ use _dos_findfirst/_dos_findnext with find_t data structure for
+ directory scanning (only if JCGO_FFDATA and JCGO_FFBLK are not
+ defined) */
+#define JCGO_FFDOS
+
+/* Only if JCGO_NATSEP, JCGO_NOFILES and JCGO_WINFILE are not defined:
+ use file I/O functions with large-file support */
+#define JCGO_LARGEFILE
+
+/* Only if JCGO_NATSEP, JCGO_NOFILES, JCGO_UNIX and JCGO_WINFILE are
+ not defined, and JCGO_LARGEFILE is defined: use _chsize_s() file I/O
+ API call (instead of chsize() or SetEndOfFile() ones) */
+#define JCGO_FCHSIZES
+
+/* Only if JCGO_NATSEP is not defined: use Unix-style file naming
+ conventions (target for Unix platform) */
+#define JCGO_UNIFSYS
+
+/* Only if JCGO_NATSEP and JCGO_UNIFSYS are not defined: target for
+ a single-root file system (required for WinCE platforms) */
+#define JCGO_ONEROOTFS
+
+/* Only if JCGO_NATSEP and JCGO_NOFILES are not defined, and
+ JCGO_UNIFSYS is defined: target the JCGO "native" library for ancient
+ Mac OS (Darwin) platforms */
+#define JCGO_MACOSX
+
+/* Only if JCGO_NATSEP and JCGO_WINFILE are not defined, and JCGO_EXEC
+ is defined: use Unix process execution conventions (target for Unix
+ platform) */
+#define JCGO_UNIPROC
+
+/* Only if JCGO_NATSEP is not defined: allow execution (spawning)
+ of child processes */
+#define JCGO_EXEC
+
+/* Only if JCGO_NATSEP is not defined: allow Internet networking
+ capabilities to be used */
+#define JCGO_INET
+
+/* Only if JCGO_NATSEP is not defined, and JCGO_INET and JCGO_WIN32 are
+ defined: use old WinSock v1.1 interface (instead of WinSock v2.2) */
+#define JCGO_OLDWSOCK
+
+/* Only if JCGO_NATSEP and JCGO_WIN32 are not defined, and JCGO_INET
+ is defined: use GNU-style (BSD) gethostbyaddr_r() and
+ gethostbyname_r() reentrant functions (otherwise, non-reentrant
+ variants of these functions are used if JCGO_SYSVNETDB is not
+ defined) */
+#define JCGO_GNUNETDB
+
+/* Only if JCGO_NATSEP, JCGO_WIN32 and JCGO_GNUNETDB are not defined,
+ and JCGO_INET is defined: use SysV-style (Solaris SunOS)
+ gethostbyaddr_r() and gethostbyname_r() reentrant functions
+ (otherwise, non-reentrant variants of these functions are used) */
+#define JCGO_SYSVNETDB
+
+/* Only if JCGO_NATSEP, JCGO_NOTIME and JCGO_WINFILE are not defined:
+ use clock_gettime(CLOCK_MONOTONIC) to obtain nanoTime() value if
+ possible */
+#define JCGO_CLOCKGETTM
+
+/* Only if JCGO_NATSEP is not defined: do not use any C time-related
+ functions */
+#define JCGO_NOTIME
+
+/* Only if JCGO_NATSEP is not defined: do not provide any access to the
+ underlying file system */
+#define JCGO_NOFILES
+
+/* Only if JCGO_NATSEP and JCGO_NOFILES are not defined: assume the
+ underlying file system has no concept of a current working
+ directory */
+#define JCGO_NOCWDIR
+
+/* Only if JCGO_NATSEP, JCGO_NOFILES, JCGO_NOTIME and JCGO_WINFILE are
+ not defined: do not use C "utimbuf" struct and utime() system call */
+#define JCGO_NOUTIMBUF
+
+/* Only if JCGO_NATSEP and JCGO_NOFILES are not defined: do not use
+ realpath() C library call */
+#define JCGO_NOREALPATH
+
+/* Only if JCGO_NATSEP is not defined: do not query system name and
+ release version from OS */
+#define JCGO_NOSYSNAME
+
+/* Do not print any message on fatal runtime errors */
+#define JCGO_NOFATALMSG
+
+/* Compile every produced C file separately */
+#define JCGO_SEPARATED
+
+/* Do not compile C files of the JCGO "native" library */
+#define JCGO_NATSEP
+
+/* Do not support and use Java Native Interface (JNI) */
+#define JCGO_NOJNI
+
+/* Only if JCGO_NOJNI is not defined: do not support JNI_CreateJavaVM()
+ and AttachCurrentThread() of JNIInvokeInterface */
+#define JCGO_NOCREATJVM
+
+/* Only if JCGO_CHKCAST or JCGO_INDEXCHK, or JCGO_SFTNULLP,
+ or JCGO_HWNULLZ is defined: abort execution (with the corresponding
+ "assertion violated" message) instead of throwing
+ array-index-out-of-bounds, array-store, class-cast and null-pointer
+ exceptions by VM runtime */
+#define JCGO_RTASSERT
+
+/* Enable Java assertions; it may be defined or undefined independently
+ for every class if JCGO_SEPARATED is defined */
+#define JCGO_ASSERTION
+
+/* Only if JCGO_STDCLINIT is not defined: turn on class proper
+ initialization order checking; it may be defined or undefined
+ independently for every class if JCGO_SEPARATED is defined */
+#define JCGO_CLINITCHK
+
+/* Force index checking for every array access; it may be defined
+ or undefined independently for every class if JCGO_SEPARATED is
+ defined */
+#define JCGO_INDEXCHK
+
+/* Force type checking for all class cast operations and for all object
+ arrays element storing; it may be defined or undefined independently
+ for every class if JCGO_SEPARATED is defined */
+#define JCGO_CHKCAST
+
+/* Use (force) explicit software null-pointer dereference checking
+ (instead of using hardware pointer checking support); it may be
+ defined or undefined independently for every class if JCGO_SEPARATED
+ is defined */
+#define JCGO_SFTNULLP
+
+/* Only if JCGO_SFTNULLP and JCGO_NOSEGV are not defined: always try to
+ dereference an object pointer with zero (or nearly zero) offset first
+ (thus allowing hardware null-pointer dereference checking even if it
+ is limited); it may be defined or undefined independently for every
+ class if JCGO_SEPARATED is defined */
+#define JCGO_HWNULLZ
+
+/* Do not use SIGSEGV and SIGBUS signals by VM runtime (disable
+ hardware null-pointer dereference checking) */
+#define JCGO_NOSEGV
+
+/* Do not change default handlers for SIGINT and SIGTERM signals */
+#define JCGO_NOCTRLC
+
+/* Use Unix platform basic API */
+#define JCGO_UNIX
+
+/* Produce code supporting multi-threaded execution */
+#define JCGO_THREADS
+
+/* Use the standard class on-demand initialization (otherwise, all
+ classes are initialized at program start-up); it should be used (at
+ least) when the JCGO translator warns that it cannot determine proper
+ initialization order for one or more classes */
+#define JCGO_STDCLINIT
+
+/* Use Structured Exception Handling (SEH) instead of setjmp()
+ to implement Java exception handling (works only if jumping out of
+ a __finally block has Java-like behavior during termination
+ handling) */
+#define JCGO_SEHTRY
+
+/* Use C int (instead of C unsigned char) type for the Java boolean
+ type (note that JNI is affected too, so JCGO_BOOLINT should not be
+ normally defined if JCGO_NOJNI is not defined) */
+#define JCGO_BOOLINT
+
+/* Use extended C __int8, __int16, __int32, __int64 types for the Java
+ byte, short and char, int, long types respectively (with the
+ exceptions stated for JCGO_INTFIT, JCGO_USELONG macros) */
+#define JCGO_INTNN
+
+/* Assume sizeof(int) is 4, so use C int (not long or __int32) for the
+ Java int type */
+#define JCGO_INTFIT
+
+/* Use C long for the Java long type (otherwise, use either C __int64
+ or long long type) */
+#define JCGO_USELONG
+
+/* Only if JCGO_USELONG is not defined: use "LL" suffix for __int64
+ type values or "i64" suffix for long long type values (vice versa,
+ otherwise) */
+#define JCGO_INVLL
+
+/* Do not use C float and double types and floating-point arithmetics
+ at all (in this case the Java float and double types are represented
+ by the Java int and long types respectively) */
+#define JCGO_NOFP
+
+/* Only if JCGO_NOFP is not defined: use C long double type (to
+ represent Java double type and perform all floating-point calculations
+ with the extended precision) instead of the (normal) double type (note
+ that JNI is affected too, so JCGO_LONGDBL should not be normally
+ defined if JCGO_NOJNI is not defined) */
+#define JCGO_LONGDBL
+
+/* Only if JCGO_SEPARATED is not defined: do not mark Java functions
+ as inline that are used before their definitions in the generated
+ C code (no "forward" inlining) */
+#define JCGO_NOFRWINL
+
+/* Do not use "const" keyword for immutable C struct members (fields) */
+#define JCGO_NOFLDCONST
+
+/* Prefix JNI functions names with additional "_" (underscore) */
+#define JCGO_JNIUSCORE
+
+/* Only if JCGO_THREADS and JCGO_WIN32 are defined: allow to switch the
+ system timer to the highest possible resolution when needed */
+#define JCGO_TIMEHIRES
+
+/* Only if JCGO_THREADS is defined, and JCGO_OS2 or JCGO_WIN32
+ is defined: use OS CreateThread() API call instead of C
+ _beginthread() */
+#define JCGO_CREATHREAD
+
+/* Allow to allocate and access "huge" arrays (occupying multiple
+ adjacent memory segments); only for "large" data address models */
+#define JCGO_HUGEARR
+
+/* Do not use memory garbage collector, use the standard calloc
+ instead, so that the allocated memory is never reclaimed (and
+ finalizers are never executed) */
+#define JCGO_NOGC
+
+/* Store and use the GCJ-style length-based type descriptors (useful
+ only if JCGO_NOGC is not defined) to make garbage collection a bit
+ more accurate */
+#define JCGO_USEGCJ
+
+/* Only if JCGO_NOGC is not defined: clear "static data roots" preset
+ by the garbage collector at start-up and disable dynamic library data
+ segments registering */
+#define JCGO_GCRESETDLS
+
+/* Only if JCGO_NOGC is not defined: do not turn off
+ "all-interior-pointers" recognition mode of the garbage collector */
+#define JCGO_GCALLINTER
+
+/* Only if JCGO_NOGC is not defined: force (explicitly turn on) GC
+ incremental mode (should be used with great care unless JCGO_NOSEGV
+ or JCGO_WIN32 is defined) */
+#define JCGO_GCINC
+
+/* Only if JCGO_NOGC is not defined: use shared version of GC
+ library */
+#define GC_DLL
+
+/* Only if JCGO_NOGC is not defined: use the debug version of GC
+ malloc */
+#define GC_DEBUG
+
+/* Only if JCGO_NOGC is not defined and JCGO_THREADS is defined: do not
+ redirect C library thread creation calls to GC (use explicit GC thread
+ registration instead) */
+#define GC_NO_THREAD_REDIRECTS
+
+/* Only if JCGO_NOGC is not defined: force immediate memory unmapping
+ (if supported) on explicitly-initiated garbage collections by
+ default */
+#define GC_FORCE_UNMAP_ON_GCOLLECT
+
+/* Only if JCGO_NOGC is not defined: set the desired initial heap size
+ (in bytes) */
+#define GC_INITIAL_HEAP_SIZE 1024*1024
+
+/* Only if JCGO_NOGC is not defined: explicitly specify
+ GC_free_space_divisor value (otherwise, the default value is used) */
+#define GC_FREE_SPACE_DIVISOR 5
+
+/* Only if JCGO_NOGC is not defined: explicitly specify calling
+ convention for the GC API functions */
+#define GC_CALL __cdecl
+
+/* Only if JCGO_NOGC is not defined: explicitly specify an alternate
+ calling convention for the GC API user callbacks */
+#define GC_CALLBACK __cdecl
+
+/* Do not use C "const" keyword */
+#define CONST /**/
+
+/* Do not inline functions */
+#define INLINE /**/
+
+/* Do not use C "static" keyword for functions (i.e., use external
+ linkage for all functions) */
+#define STATIC /**/
+
+/* Use internal linkage for some C functions that should normally have
+ external linkage (visibility) */
+#define EXTRASTATIC static
+
+/* Use "dllimport" declaration modifier for imported functions */
+#define JNIIMPORT __declspec(dllimport)
+
+/* Use "dllexport" declaration modifier for exported functions */
+#define JNIEXPORT __declspec(dllexport)
+
+/* Use "static" declaration modifier for some (considerable) JNU
+ functions (instead of JNIEXPORT modifier) */
+#define JNUBIGEXPORT static
+
+/* Use "stdcall" calling convention for JNI library */
+#define JNICALL __stdcall
+
+/* Do not use "fast calling" convention explicitly */
+#define CFASTCALL /**/
+
+/* Do not use "cdecl" calling convention for C runtime library
+ callbacks */
+#define CLIBDECL /**/
+
+/* Do not perform explicit initialization of the floating-point
+ module */
+#define FPINIT /**/
+
+/* Only if JCGO_THREADS is defined: do not perform explicit
+ initialization of the C threads library */
+#define THREADSINIT /**/
+
+/* Only if JCGO_THREADS is defined: explicitly specify default stack
+ size for non-main threads (zero for system-specific stack size) */
+#define THREADSTACKSZ 0
+
+/* Only if JCGO_SEPARATED is not defined: do not use C "static" storage
+ class for global variables (i.e., use external linkage for all global
+ data) */
+#define STATICDATA /**/
+
+/* Only if JCGO_SEPARATED is not defined: override C storage class
+ (specified by STATICDATA) for global GC-sensitive variables (useful
+ only if JCGO_NOGC is not defined) */
+#define GCSTATICDATA /**/
+
+/* Only if JCGO_NOGC is not defined: explicitly instruct the garbage
+ collector about the first GC-sensitive (i.e., which could hold
+ pointers to heap-allocated Java objects) symbol placed to "data"
+ section by the target code linker */
+#define GCDATAFIRSTSYM java_lang_String__class
+
+/* Only if JCGO_NOGC is not defined: explicitly instruct the garbage
+ collector about the last GC-sensitive symbol placed to "data" section
+ by the target code linker */
+#define GCDATALASTSYM jcgo_noTypesClassArr
+
+/* Only if JCGO_NOGC is not defined: explicitly instruct the garbage
+ collector about the first GC-sensitive symbol placed to "bss" section
+ by the target code linker */
+#define GCBSSFIRSTSYM jcgo_initialized
+
+/* Only if JCGO_NOGC is not defined: explicitly instruct the garbage
+ collector about the last GC-sensitive symbol placed to "bss" section
+ by the target code linker */
+#define GCBSSLASTSYM jcgo_globData
+
+/* Specify an alternate section to place all C global variables which
+ are non-zero initially and, besides, could not hold pointers to any
+ heap-allocated Java object during run time (useful only if JCGO_NOGC
+ is not defined); it may be defined or undefined independently for
+ every class if JCGO_SEPARATED is defined */
+#define ATTRIBNONGC __attribute__((section(".dataord")))
+
+/* Specify an alternate section to place all C global non-zero
+ variables which could hold pointers to heap-allocated Java objects
+ (useful only if JCGO_NOGC is not defined and JCGO_GCRESETDLS
+ is defined; should be used instead of ATTRIBNONGC when the target
+ C compiler does not place the read-only data into a separate program
+ section) */
+#define ATTRIBGCDATA __attribute__((section(".datagc")))
+
+/* Specify an alternate section to place all C global variables which
+ are initialized to zero and could hold pointers to heap-allocated Java
+ objects (useful only if JCGO_NOGC is not defined and JCGO_GCRESETDLS
+ is defined) */
+#define ATTRIBGCBSS __attribute__((section(".bss4gc")))
+
+/* Ignore GNU C 'malloc' attribute (for some memory allocation internal
+ functions) */
+#define ATTRIBMALLOC /**/
+
+/* Ignore 'noreturn' attribute of the Java 'throw' statement */
+#define DECLSPECNORET /**/
+
+/* Explicitly specify the decl and the name of C main entry function */
+#define MAINENTRY int/**/__cdecl/**/main
+
+/* Prototype all "JNI_OnLoad" and "JNI_OnUnload" external functions
+ (using JNIONLOAD and JNIONUNLOAD macros) those names are specified
+ in either JNIONLOADLIST or JNIONUNLOADLIST lists */
+#define JNIONLOADDECLS JNIONLOAD(JNI_OnLoad1)JNIONUNLOAD(JNI_OnUnload1)
+
+/* Specify comma-separated names list of "JNI_OnLoad" functions to
+ call */
+#define JNIONLOADLIST JNI_OnLoad1,JNI_OnLoad2
+
+/* Specify comma-separated names list of "JNI_OnUnload" functions to
+ call */
+#define JNIONUNLOADLIST JNI_OnUnload1,JNI_OnUnload2
+
+/* Link native package.Class.jniFunc() to a stub (aborting the
+ execution) instead of linking it to the external
+ Java_package_Class_jniFunc() */
+#define NOJAVA_package_Class_jniFunc
+
+/* Specify the default value for "JAVA_PROPS" environment variable (if
+ the latter is unset); the string value opening quote must be prefixed
+ with 'L' if and only if JCGO_WMAIN is defined */
+#define JAVADEFPROPS ""
+
+                          --- [ End of File ] ---
