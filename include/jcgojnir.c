@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -591,8 +591,8 @@ jcgo_JniFromReflectedMethod( JNIEnv *pJniEnv, jobject method )
  methodID = jcgo_reflect != NULL && (pentry =
              jcgo_reflect->methodsEntry) != NULL ? (jmethodID)(pentry +
              (unsigned)java_lang_reflect_VMMethod__getMethodSlot0X__Lo(
-             jobj)) : (jmethodID)&((jvtable)&JCGO_METHODS_OF(
-             JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_thisRtn;
+             jobj)) : (jmethodID)(&((jvtable)&JCGO_METHODS_OF(
+             JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_thisRtn);
  JCGO_NATCBACK_END(pJniEnv)
 #endif
  return (jmethodID)methodID;

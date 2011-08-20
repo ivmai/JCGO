@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -59,7 +59,7 @@ typedef void (JNICALL *jcgo_jnionunload_t)(JavaVM *, void *);
 JNIONLOADDECLS
 #endif
 
-STATICDATA jcgo_jnionload_t jcgo_jniOnLoadList[] =
+STATICDATA jcgo_jnionload_t /* CONST */ jcgo_jniOnLoadList[] =
 {
 #ifdef JNIONLOADLIST
  JNIONLOADLIST,
@@ -67,7 +67,7 @@ STATICDATA jcgo_jnionload_t jcgo_jniOnLoadList[] =
  0
 };
 
-STATICDATA jcgo_jnionunload_t jcgo_jniOnUnloadList[] =
+STATICDATA jcgo_jnionunload_t /* CONST */ jcgo_jniOnUnloadList[] =
 {
 #ifdef JNIONUNLOADLIST
  JNIONUNLOADLIST,
@@ -592,12 +592,12 @@ STATICDATA CONST struct JNIInvokeInterface_ jcgo_jniInvokeIface =
  jcgo_JniVmAttachCurrentThreadAsDaemon
 };
 
-STATICDATA JavaVM jcgo_jniJavaVM ATTRIBNONGC = &jcgo_jniInvokeIface;
+STATICDATA JavaVM CONST jcgo_jniJavaVM = &jcgo_jniInvokeIface;
 
 STATIC jint JNICALL
 jcgo_JniGetJavaVM( JNIEnv *pJniEnv, JavaVM **pvm )
 {
- *pvm = &jcgo_jniJavaVM;
+ *pvm = (JavaVM *)&jcgo_jniJavaVM;
  return 0;
 }
 
@@ -669,7 +669,7 @@ JNI_CreateJavaVM( JavaVM **pvm, void **penv, void *args )
 #endif
     jcgo_mainTCB.jniEnv = &jcgo_jniNatIface;
     *(JNIEnv **)penv = &jcgo_mainTCB.jniEnv;
-    *pvm = &jcgo_jniJavaVM;
+    *pvm = (JavaVM *)&jcgo_jniJavaVM;
     return 0;
    }
   }
@@ -691,7 +691,7 @@ JNI_GetCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs )
  }
  *nVMs = 1;
  if ((jint)bufLen > 0)
-  *vmBuf = &jcgo_jniJavaVM;
+  vmBuf[0] = (JavaVM *)&jcgo_jniJavaVM;
  return 0;
 }
 
@@ -699,7 +699,7 @@ JCGO_NOSEP_STATIC JNIEnv *CFASTCALL jcgo_jniEnterX( jObjectArr localObjs )
 {
  struct jcgo_tcb_s *tcb;
  JCGO_GET_CURTCB(&tcb);
- JCGO_METHODS_OF(localObjs) = (jvtable)&jObjectArr_methods;
+ *(jvtable *)&JCGO_METHODS_OF(localObjs) = (jvtable)&jObjectArr_methods;
  JCGO_FIELD_NZACCESS(localObjs, jcgo_component) =
   JCGO_CLASSREF_OF(java_lang_Object__class);
 #ifdef JCGO_SEHTRY
@@ -757,7 +757,7 @@ STATIC void CFASTCALL jcgo_jniOnLoad( void )
    while (jcgo_jniOnLoadList[++i])
    {
     JCGO_JNI_BLOCK(0)
-    (*jcgo_jniOnLoadList[i])(&jcgo_jniJavaVM, NULL);
+    (*jcgo_jniOnLoadList[i])((JavaVM *)&jcgo_jniJavaVM, NULL);
     jcgo_jniLeave(jcgo_pJniEnv, NULL);
    }
    jcgo_jniOnLoadDone = 2;
@@ -782,7 +782,7 @@ JCGO_NOSEP_INLINE void JCGO_INLFRW_FASTCALL jcgo_jniOnUnload( void )
    JCGO_TRY_BLOCK
    {
     JCGO_JNI_BLOCK(0)
-    (*jcgo_jniOnUnloadList[i])(&jcgo_jniJavaVM, NULL);
+    (*jcgo_jniOnUnloadList[i])((JavaVM *)&jcgo_jniJavaVM, NULL);
     jcgo_jniLeave(jcgo_pJniEnv, NULL);
    }
    JCGO_TRY_LEAVE

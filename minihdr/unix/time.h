@@ -1,9 +1,9 @@
 /*
- * @(#) $(JCGO)/minihdr/common/time.h --
- * a part of the minimalist "libc" headers for JCGO.
+ * @(#) $(JCGO)/minihdr/unix/time.h --
+ * a part of the minimalist "libc" headers for JCGO (Unix-specific).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -48,6 +48,27 @@ extern "C"
 {
 #endif
 
+#ifndef _TIME_NO_CLOCK_MONOTONIC
+#define _POSIX_MONOTONIC_CLOCK 0
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC 1
+#endif
+#endif
+
+#ifndef _CLOCKID_T_DEFINED
+#define _CLOCKID_T_DEFINED
+typedef int clockid_t;
+#endif
+
+#ifndef _TIMESPEC_DEFINED
+#define _TIMESPEC_DEFINED
+typedef struct timespec
+{
+ time_t tv_sec;
+ long tv_nsec;
+} timespec_t;
+#endif
+
 #ifndef _TM_DEFINED
 #define _TM_DEFINED
 struct tm
@@ -77,6 +98,11 @@ _EXPFUNC void _RTLENTRY tzset(void);
 #endif
 
 _EXPFUNC struct tm *_RTLENTRY localtime(const time_t *) _ATTRIBUTE_NONNULL(1);
+
+#ifndef _TIME_NO_CLOCK_GETTIME
+_EXPFUNC int _RTLENTRY clock_gettime(clockid_t, struct timespec *)
+ _ATTRIBUTE_NONNULL(2);
+#endif
 
 #ifdef __cplusplus
 }

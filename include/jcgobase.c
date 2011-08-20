@@ -196,7 +196,7 @@ JCGO_NOSEP_INLINE int CFASTCALL jcgo_restoreTCB( struct jcgo_tcb_s *tcb )
 #endif
 
 #ifdef JCGO_THREADS
-#define JCGO_MAIN_EXITEND if (jcgo_noTypesClassArr.jcgo_methods != NULL) exit(0);
+#define JCGO_MAIN_EXITEND if (*(void *volatile *)&jcgo_noTypesClassArr.jcgo_methods != NULL) exit(0);
 #else
 #ifdef JCGO_NOGC
 #define JCGO_MAIN_EXITEND /* empty */
@@ -226,7 +226,7 @@ JCGO_NOSEP_INLINE int CFASTCALL jcgo_restoreTCB( struct jcgo_tcb_s *tcb )
 #ifndef OBJT_java_lang_Throwable
 struct java_lang_Throwable_s
 {
- CONST struct java_lang_Object_methods_s *jcgo_methods;
+ CONST struct java_lang_Object_methods_s *JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
 };
 #endif

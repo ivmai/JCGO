@@ -1,15 +1,10 @@
 /*
- * @(#) $(JCGO)/include/jcgover.h --
- * a part of the JCGO runtime subsystem.
+ * @(#) $(JCGO)/minihdr/dos/time.h --
+ * a part of the minimalist "libc" headers for JCGO (PC-specific).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
  * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
- */
-
-/**
- * This file is compiled together with the files produced by the JCGO
- * translator (do not include and/or compile this file directly).
  */
 
 /*
@@ -41,10 +36,50 @@
  * exception statement from your version.
  */
 
-#ifdef JCGO_BUILDING_NATIVE
-#define JCGO_110
+#ifndef _TIME_H
+#define _TIME_H
+
+#ifndef _SYS_TYPES_H
+#include <sys/types.h>
 #endif
 
-#ifdef JCGO_110 /* translator version */
-#define JCGO_VER 110 /* 1.10 - runtime/source version */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#ifndef _TM_DEFINED
+#define _TM_DEFINED
+struct tm
+{
+ int tm_sec;
+ int tm_min;
+ int tm_hour;
+ int tm_mday;
+ int tm_mon; /* unused */
+ int tm_year; /* unused */
+ int tm_wday; /* unused */
+ int tm_yday; /* unused */
+ int tm_isdst; /* unused */
+#ifndef _TM_NO_GMTOFF
+ long tm_gmtoff; /* unused */
+ const char *tm_zone; /* unused */
+#endif
+};
+#ifndef _TM_NO_GMTOFF
+#define __tm_gmtoff tm_gmtoff
+#define __tm_zone tm_zone
+#endif
+#endif
+
+#ifndef _TIME_NO_TZSET
+_EXPFUNC void _RTLENTRY tzset(void);
+#endif
+
+_EXPFUNC struct tm *_RTLENTRY localtime(const time_t *) _ATTRIBUTE_NONNULL(1);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

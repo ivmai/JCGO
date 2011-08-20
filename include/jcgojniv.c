@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -285,7 +285,7 @@ jcgo_JniDefineClass( JNIEnv *pJniEnv, CONST char *name, jobject loader,
  JCGO_NATCBACK_END(pJniEnv)
  return (jclass)jcgo_jniToLocalRef(pJniEnv, (jObject)aclass);
 #else
- if (jcgo_noTypesClassArr.jcgo_methods != NULL)
+ if (*(void *volatile *)&jcgo_noTypesClassArr.jcgo_methods != NULL)
   JCGO_FATAL_ABORT("Cannot find java.lang.VMClassLoader$ClassParser!");
  return NULL;
 #endif
@@ -592,7 +592,7 @@ jcgo_JniThrowNew( JNIEnv *pJniEnv, jclass clazz, CONST char *msg )
  }
   else jobj = (*rtn)(jobj);
  res = 0;
- if (jcgo_noTypesClassArr.jcgo_methods != NULL)
+ if (*(void *volatile *)&jcgo_noTypesClassArr.jcgo_methods != NULL)
   JCGO_THROW_EXC(jobj);
  JCGO_NATCBACK_END(pJniEnv)
  return (jint)res;

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -440,7 +440,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newObject( jvtable jcgo_methods )
   JCGO_FATAL_ABORT("Out of memory!");
 #endif
  }
- JCGO_METHODS_OF(JCGO_OBJREF_OF(*(jObject)ptr)) = jcgo_methods;
+ *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(*(jObject)ptr)) = jcgo_methods;
  return JCGO_OBJREF_OF(*(jObject)ptr);
 }
 
@@ -540,19 +540,19 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
 #endif
  }
  if (dims)
-  JCGO_METHODS_OF(JCGO_OBJREF_OF(*(jObjectArr)ptr)) =
+  *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(*(jObjectArr)ptr)) =
    (jvtable)&JCGO_METHODS_OF(
    jcgo_coreClasses[(unsigned)(typenum - 1)].vmdata);
   else
   {
-   JCGO_METHODS_OF(JCGO_OBJREF_OF(*(jObjectArr)ptr)) =
+   *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(*(jObjectArr)ptr)) =
     (jvtable)&JCGO_METHODS_OF(
     jcgo_objArrStubClasses[typenum - (OBJT_jarray + OBJT_void)].vmdata);
    JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(*(jObjectArr)ptr), jcgo_component) =
     aclass;
   }
- JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(*(jObjectArr)ptr), length) =
-  (JCGO_ARRLENGTH_T)len;
+ *(JCGO_ARRLENGTH_T *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(*(jObjectArr)ptr),
+  length) = (JCGO_ARRLENGTH_T)len;
  return JCGO_OBJREF_OF(*(jObject)ptr);
 }
 

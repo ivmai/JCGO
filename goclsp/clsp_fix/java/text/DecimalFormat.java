@@ -679,26 +679,16 @@ public class DecimalFormat extends NumberFormat
     char decimalSeparator = symbols.getDecimalSeparator();
     char zero = symbols.getZeroDigit();
     char exponent = symbols.getExponential();
-
-    // stop parsing position in the string
-    int stop = start + maximumIntegerDigits;
-    if (maximumFractionDigits > 0)
-      stop += maximumFractionDigits + 1;
-    if (useExponentialNotation)
-      stop += (minExponentDigits > 0 ? minExponentDigits : 1) + 2;
+    char groupingSeparator = symbols.getGroupingSeparator();
 
     boolean inExponent = false;
 
-    // correct the size of the end parsing flag
-    int len = str.length();
-    if (len < stop) stop = len;
-    char groupingSeparator = symbols.getGroupingSeparator();
-
     // this will be our final number
-    StringBuilder number = new StringBuilder();
+    int len = str.length();
+    StringBuilder number = new StringBuilder(len - start);
 
     int i;
-    for (i = start; i < stop; i++)
+    for (i = start; i < len; i++)
       {
         char ch = str.charAt(i);
         if (ch >= zero && ch <= (zero + 9))

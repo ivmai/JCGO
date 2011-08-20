@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -80,8 +80,8 @@ java_lang_VMObject__clone0__Lo( java_lang_Object obj )
  {
   newObj = (java_lang_Object)jcgo_newObject((jvtable)JCGO_METHODS_OF(obj));
   size = (int)JCGO_METHODS_OF(obj)->jcgo_objsize;
-  JCGO_MEM_CPY((void *)&JCGO_METHODS_OF(newObj), &JCGO_METHODS_OF(obj),
-   (unsigned)(size < 0 ? -size : size));
+  JCGO_MEM_CPY((void *)&JCGO_METHODS_OF(newObj),
+   (void *)&JCGO_METHODS_OF(obj), (unsigned)(size < 0 ? -size : size));
 #ifdef JCGO_THREADS
   JCGO_FIELD_NZACCESS(newObj, jcgo_mon) = NULL;
 #endif

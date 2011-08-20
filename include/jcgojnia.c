@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -1252,7 +1252,7 @@ jcgo_JniNewDirectByteBuffer( JNIEnv *pJniEnv, void *address, jlong capacity )
  JCGO_NATCBACK_END(pJniEnv)
  return jcgo_jniToLocalRef(pJniEnv, (jObject)buffer);
 #else
- if (jcgo_noTypesClassArr.jcgo_methods != NULL)
+ if (*(void *volatile *)&jcgo_noTypesClassArr.jcgo_methods != NULL)
   JCGO_FATAL_ABORT("Cannot find java.nio.VMDirectByteBuffer!");
  return NULL;
 #endif

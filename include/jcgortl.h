@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -15,9 +15,9 @@
 /*
  * Used control macros: JCGO_ASSERTION, JCGO_CHKCAST, JCGO_CLINITCHK,
  * JCGO_CVOLATILE, JCGO_HUGEARR, JCGO_HWNULLZ, JCGO_INDEXCHK, JCGO_JNIUSCORE,
- * JCGO_NOFP, JCGO_NOFRWINL, JCGO_NOJNI, JCGO_NOSEGV, JCGO_PARALLEL,
- * JCGO_SEHTRY, JCGO_SEPARATED, JCGO_SFTNULLP, JCGO_STDCLINIT, JCGO_THREADS,
- * JCGO_UNIX, JCGO_USEGCJ, JCGO_USELONG.
+ * JCGO_NOFLDCONST, JCGO_NOFP, JCGO_NOFRWINL, JCGO_NOJNI, JCGO_NOSEGV,
+ * JCGO_PARALLEL, JCGO_SEHTRY, JCGO_SEPARATED, JCGO_SFTNULLP, JCGO_STDCLINIT,
+ * JCGO_THREADS, JCGO_UNIX, JCGO_USEGCJ, JCGO_USELONG.
  * Macros for tuning: ATTRIBGCBSS, ATTRIBGCDATA, ATTRIBMALLOC, ATTRIBNONGC,
  * CFASTCALL, DECLSPECNORET, GCSTATICDATA, EXTRASTATIC, INLINE, STATIC,
  * STATICDATA.
@@ -337,6 +337,12 @@
 #define JCGO_CORECLASS_FOR(typenum) ((java_lang_Class)JCGO_OBJREF_OF(jcgo_coreClasses[(typenum) - 1]))
 #endif
 
+#ifdef JCGO_NOFLDCONST
+#define JCGO_IMMFLD_CONST /* empty */
+#else
+#define JCGO_IMMFLD_CONST CONST
+#endif
+
 #ifdef JCGO_ASSERTION
 #define JCGO_ASSERT_STMT(cond, throwable) if (!(cond)) JCGO_THROW_EXC(throwable)
 #else
@@ -387,18 +393,18 @@
 #define JCGO_FP_ZEROF jcgo_fpZeroF /* (jfloat)0.0 */
 #endif
 
-#define JCGO_STATIC_ARRAY(primtype, len) struct { jvtable jcgo_methods; JCGO_MON_DEFN JCGO_ARRLENGTH_T length; primtype primtype[len]; }
-#define JCGO_STATIC_OBJARRAY(len) struct { jvtable jcgo_methods; JCGO_MON_DEFN JCGO_ARRLENGTH_T length; java_lang_Class jcgo_component; jObject jObject[len]; }
+#define JCGO_STATIC_ARRAY(primtype, len) struct { jvtable JCGO_IMMFLD_CONST jcgo_methods; JCGO_MON_DEFN JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length; primtype primtype[len]; }
+#define JCGO_STATIC_OBJARRAY(len) struct { jvtable JCGO_IMMFLD_CONST jcgo_methods; JCGO_MON_DEFN JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length; java_lang_Class jcgo_component; jObject jObject[len]; }
 
-#define JCGO_STACKOBJ_OBJARRNEW(objname, methods, compclass, len) (jcgo_bzero((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), jcgo_component) = (compclass), (jObjectArr)JCGO_OBJREF_OF(objname))
+#define JCGO_STACKOBJ_OBJARRNEW(objname, methods, compclass, len) (jcgo_bzero((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), *(JCGO_ARRLENGTH_T *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), jcgo_component) = (compclass), (jObjectArr)JCGO_OBJREF_OF(objname))
 #define JCGO_STACKOBJ_ARRCLONE(objname, arrname) (jcgo_memcpy((void *)JCGO_OBJREF_OF(objname), (CONST void *)JCGO_OBJREF_OF(arrname), sizeof(objname)), JCGO_OBJREF_OF(objname))
-#define JCGO_STACKOBJ_PRIMARRNEW(objname, methods, len) (jcgo_bzero((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_OBJREF_OF(objname))
-#define JCGO_STACKOBJ_NEW(objname, methods) (jcgo_bzero((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), (JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = &methods), JCGO_OBJREF_OF(objname))
+#define JCGO_STACKOBJ_PRIMARRNEW(objname, methods, len) (jcgo_bzero((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), *(JCGO_ARRLENGTH_T *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_OBJREF_OF(objname))
+#define JCGO_STACKOBJ_NEW(objname, methods) (jcgo_bzero((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), (*(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods)), JCGO_OBJREF_OF(objname))
 
-#define JCGO_STACKOBJVLT_OBJARRNEW(objname, methods, compclass, len) (jcgo_bzeroVlt((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), jcgo_component) = (compclass), (jObjectArr)JCGO_OBJREF_OF(objname))
+#define JCGO_STACKOBJVLT_OBJARRNEW(objname, methods, compclass, len) (jcgo_bzeroVlt((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), *(JCGO_ARRLENGTH_T *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), jcgo_component) = (compclass), (jObjectArr)JCGO_OBJREF_OF(objname))
 #define JCGO_STACKOBJVLT_ARRCLONE(objname, arrname) (jcgo_memcpyVlt((void *)JCGO_OBJREF_OF(objname), (CONST void *)JCGO_OBJREF_OF(arrname), sizeof(objname)), JCGO_OBJREF_OF(objname))
-#define JCGO_STACKOBJVLT_PRIMARRNEW(objname, methods, len) (jcgo_bzeroVlt((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_OBJREF_OF(objname))
-#define JCGO_STACKOBJVLT_NEW(objname, methods) (jcgo_bzeroVlt((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), (JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = &methods), JCGO_OBJREF_OF(objname))
+#define JCGO_STACKOBJVLT_PRIMARRNEW(objname, methods, len) (jcgo_bzeroVlt((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), *(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods), *(JCGO_ARRLENGTH_T *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(objname), length) = (len), JCGO_OBJREF_OF(objname))
+#define JCGO_STACKOBJVLT_NEW(objname, methods) (jcgo_bzeroVlt((void *)JCGO_OBJREF_OF(objname), sizeof(objname)), (*(jvtable *)&JCGO_METHODS_OF(JCGO_OBJREF_OF(objname)) = (jvtable)(&methods)), JCGO_OBJREF_OF(objname))
 
 #ifdef JCGO_NOJNI
 #define JCGO_JNI_BLOCK(objArgsCnt) JNIEnv *jcgo_pJniEnv = jcgo_jniEnter();
@@ -407,7 +413,7 @@
 #ifndef JCGO_JNI_DEFLOCALREFS
 #define JCGO_JNI_DEFLOCALREFS 16
 #endif
-#define JCGO_JNI_BLOCK(objArgsCnt) JNIEnv *jcgo_pJniEnv; JCGO_STATIC_OBJARRAY((objArgsCnt) + JCGO_JNI_DEFLOCALREFS + 2) jcgo_stackjnilocals; jcgo_bzero((void *)JCGO_OBJREF_OF(jcgo_stackjnilocals), sizeof(jcgo_stackjnilocals)); JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(jcgo_stackjnilocals), length) = (objArgsCnt) + JCGO_JNI_DEFLOCALREFS + 2; jcgo_pJniEnv = jcgo_jniEnterX((jObjectArr)JCGO_OBJREF_OF(jcgo_stackjnilocals));
+#define JCGO_JNI_BLOCK(objArgsCnt) JNIEnv *jcgo_pJniEnv; JCGO_STATIC_OBJARRAY((objArgsCnt) + JCGO_JNI_DEFLOCALREFS + 2) jcgo_stackjnilocals; jcgo_bzero((void *)JCGO_OBJREF_OF(jcgo_stackjnilocals), sizeof(jcgo_stackjnilocals)); *(JCGO_ARRLENGTH_T *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(jcgo_stackjnilocals), length) = (objArgsCnt) + JCGO_JNI_DEFLOCALREFS + 2; jcgo_pJniEnv = jcgo_jniEnterX((jObjectArr)JCGO_OBJREF_OF(jcgo_stackjnilocals));
 #define JCGO_JNI_TOLOCALREF(index, obj) ((JCGO_ARR_INTERNALACC(jObject, JCGO_OBJREF_OF(jcgo_stackjnilocals), (index) + 1) = (jObject)(obj)) != jnull ? (jobject)&JCGO_ARR_INTERNALACC(jObject, JCGO_OBJREF_OF(jcgo_stackjnilocals), (index) + 1) : NULL)
 #endif
 
@@ -672,80 +678,80 @@ typedef CONST struct jcgo_methods_s *jvtable;
 
 struct jcgo_object_s
 {
- jvtable jcgo_methods; /* first */
+ jvtable JCGO_IMMFLD_CONST jcgo_methods; /* first */
  JCGO_MON_DEFN
 };
 
 struct jcgo_jobjectarr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length; /* third */
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length; /* third */
  java_lang_Class jcgo_component; /* fourth */
  jObject jObject[1];
 };
 
 struct jcgo_jbooleanarr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jboolean jboolean[1];
 };
 
 struct jcgo_jbytearr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jbyte jbyte[1];
 };
 
 struct jcgo_jchararr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jchar jchar[1];
 };
 
 struct jcgo_jshortarr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jshort jshort[1];
 };
 
 struct jcgo_jintarr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jint jint[1];
 };
 
 struct jcgo_jlongarr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jlong jlong[1];
 };
 
 struct jcgo_jfloatarr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jfloat jfloat[1];
 };
 
 struct jcgo_jdoublearr_s
 {
- jvtable jcgo_methods;
+ jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
- JCGO_ARRLENGTH_T length;
+ JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
  jdouble jdouble[1];
 };
 
