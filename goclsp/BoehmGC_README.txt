@@ -1,7 +1,7 @@
 Copyright (c) 1988, 1989 Hans-J. Boehm, Alan J. Demers
 Copyright (c) 1991-1996 by Xerox Corporation.  All rights reserved.
 Copyright (c) 1996-1999 by Silicon Graphics.  All rights reserved.
-Copyright (c) 1999-2005 Hewlett-Packard Development Company, L.P.
+Copyright (c) 1999-2011 by Hewlett-Packard Development Company.
 
 The file linux_threads.c is also
 Copyright (c) 1998 by Fergus Henderson.  All rights reserved.
@@ -36,7 +36,7 @@ Public License, but is not needed by, nor linked into the collector library.
 It is included here only becuase the atomic_ops distribution is, for
 simplicity, included in its entirety.
 
-This is version 7.2alpha4 of a conservative garbage collector for C and C++.
+This is version 7.2alpha6 of a conservative garbage collector for C and C++.
 
 You might find a more recent version of this at
 
@@ -129,7 +129,7 @@ ALL_INTERIOR_POINTERS defined, or GC_all_interior_pointers is otherwise
 set, as is now the default.
 
 Compiling without ALL_INTERIOR_POINTERS may reduce accidental retention
-of garbage objects, by requiring pointers from the heap to to the beginning
+of garbage objects, by requiring pointers from the heap to the beginning
 of an object.  But this no longer appears to be a significant
 issue for most programs occupying a small fraction of the possible
 address space.
@@ -440,8 +440,7 @@ collector is invoked while the object is live.  The first deallocation
 of an object will clear the debugging info associated with an
 object, so accidentally repeated calls to GC_debug_free will report the
 deallocation of an object without debugging information.  Out of
-memory errors will be reported to stderr, in addition to returning
-NIL.
+memory errors will be reported to stderr, in addition to returning NULL.
 
   GC_debug_malloc checking  during garbage collection is enabled
 with the first call to GC_debug_malloc.  This will result in some
