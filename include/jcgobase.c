@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -286,8 +286,10 @@ int _CRT_glob = 1;
 #endif
 #endif
 
+#ifndef JCGO_NOGC
 #ifndef JCGO_MAIN_OMITSETROOTS
 JCGO_NOSEP_GCDATA void *jcgo_pDataFirstSym = (void *)(&GCDATAFIRSTSYM);
+#endif
 #endif
 
 JCGO_NOSEP_INLINE void JCGO_INLFRW_FASTCALL jcgo_initFP( void );
