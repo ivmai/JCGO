@@ -24,3 +24,7 @@
 /jcgo-sunawt-solaris-x86*
 /jcgo-sunawt-win32-x86*
 /libatomic_ops*
+
+/*.tar
+/*.tar.bz2
+/*.tar.gz
