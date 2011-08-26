@@ -12,17 +12,13 @@ ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz
 3. Unpack all the prerequisites to C:\JCGO (preserving the directory
 structure).
 
-4. Copy jcgo.exe and LICENSE.txt files to C:\JCGO.
-
-5. Run jcgo.exe and press "Activate" button.
-
-6. Try to convert "Hello world" sample to Windows binary (unoptimized):
+4. Try to convert "Hello world" sample to Windows binary (unoptimized):
 
 - create your "projects" folders (e.g., "C:\MyJcgoProjects") and change
 the current directory to it;
 
 - type:
-C:\JCGO\jcgo -sourcepath $~\examples Hello @$~\stdpaths.in
+java -jar C:\JCGO\jcgo.jar -sourcepath $~\examples Hello @$~\stdpaths.in
 
 - invoke the MinGW C compiler (GCC):
 
@@ -34,7 +30,7 @@ cl -IC:\JCGO\include -IC:\JCGO\include\boehmgc -IC:\JCGO\native -DJCGO_INTNN -DJ
 
 - run "hello.exe" file.
 
-7. View "README.txt" file.
+5. View "README" file.
 
 
 JCGO quick start tips for Linux/x86 development host
@@ -47,18 +43,13 @@ JCGO quick start tips for Linux/x86 development host
 3. Unpack all the prerequisites to /usr/share/JCGO (preserving the
 directory structure).
 
-4. Copy "jcgo" and LICENSE.txt files to /usr/share/JCGO.
-
-5. Put your "jcgo.key" license file to /usr/share/JCGO
-(the license file is sent to your via e-mail on request).
-
-6. Try to convert "Hello world" sample to a Linux/x86 binary (unoptimized):
+4. Try to convert "Hello world" sample to a Linux/x86 binary (unoptimized):
 
 - create your "projects" folders (e.g., "~/MyJcgoProjects") and change
 the current directory to it;
 
 - type:
-/usr/share/JCGO/jcgo -src $~/examples Hello @$~/stdpaths.in
+java -jar /usr/share/JCGO/jcgo.jar -src $~/examples Hello @$~/stdpaths.in
 
 - invoke the GNU GCC:
 
