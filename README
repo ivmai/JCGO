@@ -1,7 +1,7 @@
 
                   JCGO - Java source to C code translator
                   ---------------------------------------
-                        version 1.12 (20-Jul-2011)
+                        version 1.13 (internal)
                         --------------------------
                                User's Guide
                                ------------
@@ -356,11 +356,11 @@ The following files constitutes "the JCGO distributive files":
 C compiler);
 - jcgo-lib-1_XX.tar.gz (the auto-generated Java files used by JCGO,
 precompiled libraries and auxiliary executables for the supported
-platforms, as well as the JCGO translator executable  for a Java VM);
+platforms, as well as the JCGO translator executable for a Java VM);
 - jcgo-bin-win32-x86.zip (the JCGO translator executable for Windows
-development host);
+development host, optional file);
 - jcgo-bin-1_XX-linux-x86.tar.gz (the JCGO translator executable for
-Linux/x86 development host);
+Linux/x86 development host, optional file);
 - classpath-0.93.tar.gz (the GNU Classpath - Essential Libraries for
 Java).
 
