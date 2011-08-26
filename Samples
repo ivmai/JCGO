@@ -96,6 +96,9 @@ For embedded x86:
 For Android (Linux on embedded ARM):
  android-ndk-1.5_r1 arm-eabi-gcc (GCC) 4.2.1
 
+For iPhone/iPad (Darwin on embedded ARM):
+ gcc version 4.2.1 (Based on Apple Inc. build 5555)
+
 For PlayStation (embedded MIPS):
  devkitPSP release 11 (GCC v4.1.2, PSPDEV 20060507)
 
@@ -138,6 +141,8 @@ Options for building 'gc' library (bdwgc - Boehm Garbage collecting storage allo
  freebsd gcc (libgc.a): -O2 -fno-strict-aliasing -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DUSE_MMAP -I include -c
  freebsd gcc threads (libgcmt.a): -O2 -fno-strict-aliasing -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DLARGE_CONFIG -DUSE_MMAP -DUSE_MUNMAP -DGC_THREADS -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -I include -I libatomic_ops/src -c
  macosx gcc (libgc.a): -O2 -fno-common -arch i386 -arch x86_64 -arch ppc -arch ppc64 -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -I include -c
+ darwin iphone gcc threads (libgcmt.a): -O2 -fno-common -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DUSE_MMAP -DUSE_MUNMAP -DGC_THREADS -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -I include -I libatomic_ops/src -DNO_DYLD_BIND_FULLY_IMAGE -c
+ android arm-eabi-gcc threads (libgcmt.a): -O2 -fno-strict-aliasing -fno-short-enums -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DUSE_MMAP -DUSE_MUNMAP -DGC_THREADS -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -DPLATFORM_ANDROID -DIGNORE_DYNAMIC_LOADING -I include -I libatomic_ops/src -nostdlib -lc -c
  wince msdev cl arm (gc.lib): -Ox -W3 -GS- -GF -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DGC_READ_ENV_FILE -I.\include -DUNICODE -DUNDER_CE -D_WIN32_WCE=0x0300 -D_ARM_ -DARM -Zl -c /nologo
  wince msdev cl arm threads (gcmt.lib): -Ox -W3 -GS- -GF -MT -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DGC_THREADS -DGC_READ_ENV_FILE -I.\include -I.\libatomic_ops\src -DUSE_MUNMAP -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -DUNICODE -DUNDER_CE -D_WIN32_WCE=0x0300 -D_ARM_ -DARM -Zl -c /nologo
  wince cegcc/mingw32ce gcc arm/x86 (libgc.a): -O2 -fno-strict-aliasing -Wall -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DGC_READ_ENV_FILE -I include -c
@@ -309,7 +314,7 @@ macosx gcc:
 [1601] gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/include/boehmgc -I /usr/share/JCGO/native -fwrapv -DJCGO_INTFIT -DJCGO_UNIX -D_IEEEFP_H -D_FPU_CONTROL_H -DJCGO_MATHEXT -DJCGO_UNIFSYS -DJCGO_THREADS -DJCGO_PARALLEL -DJCGO_USEGCJ -DJCGO_STDCLINIT -DJCGO_INDEXCHK -DJCGO_CHKCAST -DJCGO_ASSERTION -DJCGO_EXEC -DJCGO_UNIPROC -DJCGO_INET -arch i386 Main.c libgcmt.a
 [1602] gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/native -O2 -fwrapv -DJCGO_INTFIT -DJCGO_UNIX -D_IEEEFP_H -D_FPU_CONTROL_H -DJCGO_MATHEXT -DJCGO_UNIFSYS -DJCGO_NOGC Main.c
 [1603] gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/include/boehmgc -I /usr/share/JCGO/native -O2 -fwrapv -DJCGO_INTFIT -DJCGO_UNIX -D_IEEEFP_H -D_FPU_CONTROL_H -DJCGO_MATHEXT -DJCGO_UNIFSYS -DJCGO_INET -arch i386 -arch x86_64 -arch ppc -arch ppc64 Main.c libgc.a
-[1604] gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/native -Os -fwrapv -DJCGO_INTFIT -DJCGO_UNIX -D_IEEEFP_H -D_FPU_CONTROL_H -DJCGO_MATHEXT -DJCGO_UNIFSYS -DJCGO_THREADS -DJCGO_NOGC -DJCGO_PARALLEL -DJCGO_EXEC -DJCGO_UNIPROC -DJCGO_INET -arch i386 -arch x86_64 -arch ppc -arch ppc64 Main.c
+[1604] gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/native -Os -fwrapv -DJCGO_INTFIT -DJCGO_UNIX -D_IEEEFP_H -D_FPU_CONTROL_H -DJCGO_MATHEXT -DJCGO_UNIFSYS -DJCGO_THREADS -DJCGO_NOGC -DJCGO_PARALLEL -DJCGO_EXEC -DJCGO_UNIPROC -DJCGO_INET -arch i386 -arch x86_64 -arch ppc -arch ppc64 -DGCSTATICDATA= -DATTRIBNONGC=__attribute__\(\(section\(\"__DATA,__dataord,regular\"\)\)\) -DJCGO_GCRESETDLS -dead_strip Main.c
 
 solaris cc:
 [1701] cc -I /usr/share/JCGO/include -I /usr/share/JCGO/include/boehmgc -I /usr/share/JCGO/native -mt -erroff=E_WHITE_SPACE_IN_DIRECTIVE -erroff=E_INTEGER_OVERFLOW_DETECTED -erroff=E_STATEMENT_NOT_REACHED -D_FPU_CONTROL_H -DJCGO_INTFIT -DJCGO_UNIX -DJCGO_MATHEXT -DJCGO_UNIFSYS -DJCGO_THREADS -DJCGO_PARALLEL -DJCGO_USEGCJ -DJCGO_STDCLINIT -DJCGO_INDEXCHK -DJCGO_CHKCAST -DJCGO_ASSERTION -DJCGO_LARGEFILE -DJCGO_EXEC -DJCGO_UNIPROC -DJCGO_INET -DJCGO_SYSVNETDB -s Main.c -lm -lsocket -lnsl -lposix4 /usr/share/JCGO/libs/x86/solaris/libgcmt.a
