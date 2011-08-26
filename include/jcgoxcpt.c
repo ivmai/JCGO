@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -394,7 +394,7 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_throwExc( jObject throwable )
    "[JNI] Segmentation fault detected!" : "Null pointer exception!");
 #endif
 #endif
-  exit(-1);
+  JCGO_ABORT_EXIT;
  }
 }
 

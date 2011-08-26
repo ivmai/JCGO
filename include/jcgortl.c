@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -17,7 +17,7 @@
  * jcgojnmd.h, jcgomem.h, jcgortl.h, jcgothrd.c, jcgothrd.h): JCGO_CVOLATILE,
  * JCGO_HUGEARR, JCGO_NATSEP, JCGO_NOCREATJVM, JCGO_NOCTRLC, JCGO_NOGC,
  * JCGO_NOFATALMSG, JCGO_NOJNI, JCGO_RTASSERT, JCGO_SEHTRY, JCGO_THREADS,
- * JCGO_UNIX, JCGO_WMAIN.
+ * JCGO_TRUEABORT, JCGO_UNIX, JCGO_WMAIN.
  * Macros for tuning: CLIBDECL, JAVADEFPROPS, MAINENTRY.
  */
 
@@ -135,6 +135,12 @@
 #ifndef OBJT_java_lang_ref_ReferenceQueue
 #define JCGO_FNLZDATA_OMITREFQUE
 #endif
+#endif
+
+#ifdef JCGO_TRUEABORT
+#define JCGO_ABORT_EXIT abort()
+#else
+#define JCGO_ABORT_EXIT exit(-1)
 #endif
 
 #define JCGO_CAST_PTRTONUM(ptr) ((char *)(ptr) - (char *)NULL)

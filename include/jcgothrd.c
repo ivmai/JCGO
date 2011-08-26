@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -753,7 +753,7 @@ EXTRASTATIC void *GC_CALLBACK jcgo_threadLaunchBody(
  (void)JCGO_THREADT_CLEAR(&((struct jcgo_tcb_s *)param)->thrhandle);
 #ifdef OBJT_java_lang_VMThread
  if (throwable != jnull)
-  exit(-1);
+  JCGO_ABORT_EXIT;
 #endif
  return NULL;
 }

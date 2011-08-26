@@ -861,6 +861,10 @@ Appendix D: C macros used to control compilation
  exceptions by VM runtime */
 #define JCGO_RTASSERT
 
+/* Abort the application (on JCGO runtime fatal error) via abort()
+ instead of exit(-1) call. */
+#define JCGO_TRUEABORT
+
 /* Enable Java assertions; it may be defined or undefined independently
  for every class if JCGO_SEPARATED is defined */
 #define JCGO_ASSERTION

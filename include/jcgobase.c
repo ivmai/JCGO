@@ -303,7 +303,7 @@ JNIIMPORT jstring JNICALL JCGO_MAIN_TCONVERTCMDARG( JNIEnv *pJniEnv,
 
 #ifdef JCGO_NOFATALMSG
 
-#define JCGO_FATAL_ABORT(msg) exit(-1)
+#define JCGO_FATAL_ABORT(msg) JCGO_ABORT_EXIT
 
 #else /* JCGO_NOFATALMSG */
 
@@ -316,7 +316,7 @@ STATIC void CFASTCALL jcgo_printFatalMsg( CONST char *msg )
   " !!! FATAL ERROR: " : " !!! FATAL INITIALIZER ERROR: ", msg);
 }
 
-#define JCGO_FATAL_ABORT(msg) (jcgo_printFatalMsg(msg), exit(-1))
+#define JCGO_FATAL_ABORT(msg) (jcgo_printFatalMsg(msg), JCGO_ABORT_EXIT)
 
 #endif /* ! JCGO_NOFATALMSG */
 
