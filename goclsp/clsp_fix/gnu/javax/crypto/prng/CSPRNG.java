@@ -166,7 +166,14 @@ public class CSPRNG
                                           "spinner-" + i);
           SPINNER_THREADS[i].setDaemon(true);
           SPINNER_THREADS[i].setPriority(Thread.MIN_PRIORITY);
-          SPINNER_THREADS[i].start();
+          try
+            {
+              SPINNER_THREADS[i].start();
+            }
+          catch (OutOfMemoryError e)
+            {
+              // Ignore.
+            }
         }
     }
   /** The message digest (SHA-1) used in the mixing function. */
@@ -748,7 +755,14 @@ public class CSPRNG
         pollerThread = new Thread(poller);
         pollerThread.setDaemon(true);
         pollerThread.setPriority(Thread.NORM_PRIORITY - 1);
-        pollerThread.start();
+        try
+          {
+            pollerThread.start();
+          }
+        catch (OutOfMemoryError e)
+          {
+            // Ignore.
+          }
         if (blocking)
           try
             {
