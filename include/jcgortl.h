@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -682,17 +682,13 @@ struct jcgo_object_s
  JCGO_MON_DEFN
 };
 
-#infdef JCGO_ARRLENGTH_DECLVAL
-#define JCGO_ARRLENGTH_DECLVAL 1
-#endif
-
 struct jcgo_jobjectarr_s
 {
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length; /* third */
  java_lang_Class jcgo_component; /* fourth */
- jObject jObject[JCGO_ARRLENGTH_DECLVAL];
+ jObject jObject[1];
 };
 
 struct jcgo_jbooleanarr_s
@@ -700,7 +696,7 @@ struct jcgo_jbooleanarr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jboolean jboolean[JCGO_ARRLENGTH_DECLVAL];
+ jboolean jboolean[1];
 };
 
 struct jcgo_jbytearr_s
@@ -708,7 +704,7 @@ struct jcgo_jbytearr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jbyte jbyte[JCGO_ARRLENGTH_DECLVAL];
+ jbyte jbyte[1];
 };
 
 struct jcgo_jchararr_s
@@ -716,7 +712,7 @@ struct jcgo_jchararr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jchar jchar[JCGO_ARRLENGTH_DECLVAL];
+ jchar jchar[1];
 };
 
 struct jcgo_jshortarr_s
@@ -724,7 +720,7 @@ struct jcgo_jshortarr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jshort jshort[JCGO_ARRLENGTH_DECLVAL];
+ jshort jshort[1];
 };
 
 struct jcgo_jintarr_s
@@ -732,7 +728,7 @@ struct jcgo_jintarr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jint jint[JCGO_ARRLENGTH_DECLVAL];
+ jint jint[1];
 };
 
 struct jcgo_jlongarr_s
@@ -740,7 +736,7 @@ struct jcgo_jlongarr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jlong jlong[JCGO_ARRLENGTH_DECLVAL];
+ jlong jlong[1];
 };
 
 struct jcgo_jfloatarr_s
@@ -748,7 +744,7 @@ struct jcgo_jfloatarr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jfloat jfloat[JCGO_ARRLENGTH_DECLVAL];
+ jfloat jfloat[1];
 };
 
 struct jcgo_jdoublearr_s
@@ -756,7 +752,7 @@ struct jcgo_jdoublearr_s
  jvtable JCGO_IMMFLD_CONST jcgo_methods;
  JCGO_MON_DEFN
  JCGO_ARRLENGTH_T JCGO_IMMFLD_CONST length;
- jdouble jdouble[JCGO_ARRLENGTH_DECLVAL];
+ jdouble jdouble[1];
 };
 
 typedef struct jcgo_jobjectarr_s *jObjectArr;
