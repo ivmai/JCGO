@@ -1,8 +1,8 @@
 
                   JCGO - Java source to C code translator
                   ---------------------------------------
-                        version 1.13 (internal)
-                        --------------------------
+                          version 1.13 (internal)
+                          -----------------------
                                User's Guide
                                ------------
 
@@ -77,7 +77,7 @@ The JCGO project official web home page is:
 http://www.ivmaisoft.com/jcgo/
 
 The JCGO development repository web page is:
-http://sourceforge.net/projects/jcgo/
+https://github.com/ivmai/JCGO
 
 Introduction
 ------------
