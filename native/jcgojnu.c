@@ -258,7 +258,7 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
 #ifdef JCGO_DOWCSTOMBS
   wbuf[1] = (wchar_t)0;
 #else
-  (void)wctomb(NULL, (wchar_t)0);
+  *(volatile char *)&mbbuf[0] = (char)wctomb(NULL, (wchar_t)0);
 #endif
   for (i = 0; i < cnt; i++)
   {
@@ -379,7 +379,7 @@ jcgo_JnuNewStringPlatform( JNIEnv *pJniEnv, CONST char *cstr )
       break;
    }
 #else
-   (void)mbtowc(&wch, NULL, 0);
+   *(volatile wchar_t *)&wch = (wchar_t)mbtowc(&wch, NULL, 0);
    for (pos = 0; pos < len; pos = (unsigned)res + pos)
    {
     if ((res = mbtowc(&wch, cstr + pos, len - pos + 1)) <= 0)
