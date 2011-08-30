@@ -1,5 +1,5 @@
 # @(#) $(JCGO)/reflgen/swt.dat --
-# JNI method/field reflection dependency for "Eclipse SWT" GUI v3.5 .. v3.7M3
+# JNI method/field reflection dependency for "Eclipse SWT" GUI v3.5 .. v3.8M1
 # (data file for JCGO "GenRefl" utility).
 ##
 # Project: JCGO (http://www.ivmaisoft.com/jcgo/)
@@ -7,7 +7,7 @@
 # Use is subject to license terms. No warranties. All rights reserved.
 ##
 
-# Revised for SWT version: 3.713
+# Revised for SWT version: 3.800
 
 # Note 1: supported SWT back-ends: Carbon (v3.7), Cocoa, Gtk, Motif (v3.7M3), Photon (v3.7M3), Windows, WPF (v3.6M1).
 
@@ -2954,6 +2954,8 @@ org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper(*):org.eclipse.swt.internal.
 org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper(*):org.eclipse.swt.internal.cocoa.NSSize.width
 org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper(*):org.eclipse.swt.internal.cocoa.objc_super.receiver
 org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper(*):org.eclipse.swt.internal.cocoa.objc_super.super_class
+org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper_bool(*):org.eclipse.swt.internal.cocoa.NSPoint.x
+org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper_bool(*):org.eclipse.swt.internal.cocoa.NSPoint.y
 org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper_bool(*):org.eclipse.swt.internal.cocoa.NSRange.length
 org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper_bool(*):org.eclipse.swt.internal.cocoa.NSRange.location
 org.eclipse.swt.internal.cocoa.OS.objc_msgSendSuper_bool(*):org.eclipse.swt.internal.cocoa.objc_super.receiver
@@ -4487,6 +4489,10 @@ org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.ole.
 org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.ole.win32.STGMEDIUM.pUnkForRelease
 org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.ole.win32.STGMEDIUM.tymed
 org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.ole.win32.STGMEDIUM.unionField
+org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.win32.RECT.bottom
+org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.win32.RECT.left
+org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.win32.RECT.right
+org.eclipse.swt.internal.ole.win32.COM.VtblCall(*):org.eclipse.swt.internal.win32.RECT.top
 org.eclipse.swt.internal.ole.win32.COM.WriteClassStg(*):org.eclipse.swt.internal.ole.win32.GUID.Data1
 org.eclipse.swt.internal.ole.win32.COM.WriteClassStg(*):org.eclipse.swt.internal.ole.win32.GUID.Data2
 org.eclipse.swt.internal.ole.win32.COM.WriteClassStg(*):org.eclipse.swt.internal.ole.win32.GUID.Data3
@@ -5258,6 +5264,23 @@ org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.we
 org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.staticFunctions
 org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.staticValues
 org.eclipse.swt.internal.webkit.WebKitGTK.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.version
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.attributes
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.callAsConstructor
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.callAsFunction
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.className
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.convertToType
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.deleteProperty
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.finalize
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.getProperty
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.getPropertyNames
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.hasInstance
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.hasProperty
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.initialize
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.parentClass
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.setProperty
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.staticFunctions
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.staticValues
+org.eclipse.swt.internal.webkit.WebKit_win32.memmove(*):org.eclipse.swt.internal.webkit.JSClassDefinition.version
 
 org.eclipse.swt.internal.win32.OS.AdjustWindowRectEx(*):org.eclipse.swt.internal.win32.RECT.bottom
 org.eclipse.swt.internal.win32.OS.AdjustWindowRectEx(*):org.eclipse.swt.internal.win32.RECT.left
@@ -5293,6 +5316,8 @@ org.eclipse.swt.internal.win32.OS.Call(*):org.eclipse.swt.internal.win32.DLLVERS
 org.eclipse.swt.internal.win32.OS.Call(*):org.eclipse.swt.internal.win32.DLLVERSIONINFO.dwMajorVersion
 org.eclipse.swt.internal.win32.OS.Call(*):org.eclipse.swt.internal.win32.DLLVERSIONINFO.dwMinorVersion
 org.eclipse.swt.internal.win32.OS.Call(*):org.eclipse.swt.internal.win32.DLLVERSIONINFO.dwPlatformID
+org.eclipse.swt.internal.win32.OS.CertNameToStrA(*):org.eclipse.swt.internal.win32.CERT_NAME_BLOB.pbData
+org.eclipse.swt.internal.win32.OS.CertNameToStrW(*):org.eclipse.swt.internal.win32.CERT_NAME_BLOB.pbData
 org.eclipse.swt.internal.win32.OS.ChooseColorA(*):org.eclipse.swt.internal.win32.CHOOSECOLOR.Flags
 org.eclipse.swt.internal.win32.OS.ChooseColorA(*):org.eclipse.swt.internal.win32.CHOOSECOLOR.hInstance
 org.eclipse.swt.internal.win32.OS.ChooseColorA(*):org.eclipse.swt.internal.win32.CHOOSECOLOR.hwndOwner
@@ -5604,6 +5629,16 @@ org.eclipse.swt.internal.win32.OS.ExtTextOutW(*):org.eclipse.swt.internal.win32.
 org.eclipse.swt.internal.win32.OS.ExtTextOutW(*):org.eclipse.swt.internal.win32.RECT.left
 org.eclipse.swt.internal.win32.OS.ExtTextOutW(*):org.eclipse.swt.internal.win32.RECT.right
 org.eclipse.swt.internal.win32.OS.ExtTextOutW(*):org.eclipse.swt.internal.win32.RECT.top
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.FILETIME.dwHighDateTime
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.FILETIME.dwLowDateTime
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wDay
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wDayOfWeek
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wHour
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wMilliseconds
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wMinute
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wMonth
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wSecond
+org.eclipse.swt.internal.win32.OS.FileTimeToSystemTime(*):org.eclipse.swt.internal.win32.SYSTEMTIME.wYear
 org.eclipse.swt.internal.win32.OS.FillRect(*):org.eclipse.swt.internal.win32.RECT.bottom
 org.eclipse.swt.internal.win32.OS.FillRect(*):org.eclipse.swt.internal.win32.RECT.left
 org.eclipse.swt.internal.win32.OS.FillRect(*):org.eclipse.swt.internal.win32.RECT.right
@@ -5699,6 +5734,16 @@ org.eclipse.swt.internal.win32.OS.GetGUIThreadInfo(*):org.eclipse.swt.internal.w
 org.eclipse.swt.internal.win32.OS.GetGUIThreadInfo(*):org.eclipse.swt.internal.win32.GUITHREADINFO.left
 org.eclipse.swt.internal.win32.OS.GetGUIThreadInfo(*):org.eclipse.swt.internal.win32.GUITHREADINFO.right
 org.eclipse.swt.internal.win32.OS.GetGUIThreadInfo(*):org.eclipse.swt.internal.win32.GUITHREADINFO.top
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.cbExtraArgs
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.cbSize
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwFlags
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwID
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwInstanceID
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwSequenceID
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.hwndTarget
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.ullArguments
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.x
+org.eclipse.swt.internal.win32.OS.GetGestureInfo(*):org.eclipse.swt.internal.win32.GESTUREINFO.y
 org.eclipse.swt.internal.win32.OS.GetIconInfo(*):org.eclipse.swt.internal.win32.ICONINFO.fIcon
 org.eclipse.swt.internal.win32.OS.GetIconInfo(*):org.eclipse.swt.internal.win32.ICONINFO.hbmColor
 org.eclipse.swt.internal.win32.OS.GetIconInfo(*):org.eclipse.swt.internal.win32.ICONINFO.hbmMask
@@ -6421,6 +6466,35 @@ org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.B
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.BITMAPINFOHEADER.biWidth
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.BITMAPINFOHEADER.biXPelsPerMeter
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.BITMAPINFOHEADER.biYPelsPerMeter
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_CONTEXT.cbCertEncoded
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_CONTEXT.dwCertEncodingType
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_CONTEXT.hCertStore
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_CONTEXT.pCertInfo
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_CONTEXT.pbCertEncoded
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.Issuer
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.IssuerUniqueId
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.NotAfter
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.NotBefore
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.SerialNumber
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.SignatureAlgorithm
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.Subject
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.SubjectPublicKeyInfo
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.SubjectUniqueId
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.cExtension
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.dwVersion
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_INFO.rgExtension
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_NAME_BLOB.pbData
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_PUBLIC_KEY_INFO.Algorithm
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CERT_PUBLIC_KEY_INFO.PublicKey
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_ALGORITHM_IDENTIFIER.Parameters
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_ALGORITHM_IDENTIFIER.pszObjId
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_BIT_BLOB.cUnusedBits
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_BIT_BLOB.cbData
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_BIT_BLOB.pbData
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_INTEGER_BLOB.cbData
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_INTEGER_BLOB.pbData
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_OBJID_BLOB.cbData
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.CRYPT_OBJID_BLOB.pbData
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.DEVMODE.dmBitsPerPel
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.DEVMODE.dmCollate
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.DEVMODE.dmColor
@@ -6501,6 +6575,23 @@ org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.E
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.EXTLOGPEN.elpPenStyle
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.EXTLOGPEN.elpStyleEntry
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.EXTLOGPEN.elpWidth
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FILETIME.dwHighDateTime
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FILETIME.dwLowDateTime
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.fAltGRModifier
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.fControlModifier
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.fMenuModifier
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.fOnInkingSurface
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.fShiftModifier
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.fWinModifier
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.iActionArgument
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.iFlickActionCommandCode
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.iFlickDirection
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_DATA.iReserved
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_POINT.x
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.FLICK_POINT.y
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTURECONFIG.dwBlock
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTURECONFIG.dwID
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTURECONFIG.dwWant
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GRADIENT_RECT.LowerRight
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GRADIENT_RECT.UpperLeft
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.HDITEM.cchTextMax
@@ -6817,6 +6908,16 @@ org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.T
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TEXTMETRICW.tmDefaultChar
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TEXTMETRICW.tmFirstChar
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TEXTMETRICW.tmLastChar
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.cxContact
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.cyContact
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.dwExtraInfo
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.dwFlags
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.dwID
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.dwMask
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.dwTime
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.hSource
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.x
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TOUCHINPUT.y
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TRIVERTEX.Alpha
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TRIVERTEX.Blue
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.TRIVERTEX.Green
