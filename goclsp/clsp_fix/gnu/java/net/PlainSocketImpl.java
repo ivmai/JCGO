@@ -139,6 +139,11 @@ public class PlainSocketImpl extends SocketImpl
   }
 
   /**
+   * This field holds the socket timeout until the native socket is created.
+   */
+  private int initialTimeout;
+
+  /**
    * Sets the specified option on a socket to the passed in object.  For
    * options that take an integer argument, the passed in object is an
    * Integer.  The option_id parameter is one of the defined constants in
@@ -153,6 +158,16 @@ public class PlainSocketImpl extends SocketImpl
   {
     switch (optionId)
       {
+        case SO_TIMEOUT:
+          if (channel == null && value instanceof Integer)
+            {
+               initialTimeout = ((Integer) value).intValue();
+               /* Timeout cannot be set at the native layer until the native
+                * socket is created.
+                */
+               return;
+            }
+          /* FALL THROUGH */
         case SO_LINGER:
         case IP_MULTICAST_LOOP:
         case SO_BROADCAST:
@@ -162,7 +177,6 @@ public class PlainSocketImpl extends SocketImpl
         case IP_TOS:
         case SO_RCVBUF:
         case SO_SNDBUF:
-        case SO_TIMEOUT:
         case SO_REUSEADDR:
           impl.setOption(optionId, value);
           return;
@@ -201,6 +215,10 @@ public class PlainSocketImpl extends SocketImpl
     // This filters options which are invalid for TCP.
     switch (optionId)
     {
+      case SO_TIMEOUT:
+        if (channel == null)
+          return new Integer(initialTimeout); /* if socket is uninitialized */
+        /* FALL THROUGH */
       case SO_LINGER:
       case IP_MULTICAST_LOOP:
       case SO_BROADCAST:
@@ -210,7 +228,6 @@ public class PlainSocketImpl extends SocketImpl
       case IP_TOS:
       case SO_RCVBUF:
       case SO_SNDBUF:
-      case SO_TIMEOUT:
       case SO_REUSEADDR:
         return impl.getOption(optionId);
       default:
@@ -245,6 +262,12 @@ public class PlainSocketImpl extends SocketImpl
     vmchannel.initSocket(stream);
     channel.configureBlocking(true);
     impl.getState().setChannelFD(vmchannel.getState());
+    if (initialTimeout != 0)
+      {
+        /* Pass the timeout value to the native layer. */
+        impl.setOption(SO_TIMEOUT, new Integer(initialTimeout));
+        initialTimeout = 0; /* clear initial value */
+      }
   }
 
   /**
