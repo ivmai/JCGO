@@ -450,8 +450,7 @@ JCGO home folder contents
 After you complete the JCGO installation process, the JCGO home folder
 contents are as follows:
 - "auxbin" - the JCGO auxiliary tools ("GenRefl", "JPropJav" and
-"TraceJni" utilities supplied both as a Java VM executable and as
-native executables for the supported platforms);
+"TraceJni" utilities);
 - "classpath-0.93" - the unpacked contents of the GNU Classpath
 ("Essential Libraries for Java") distributive file;
 - "dlls" - precompiled dynamic-link (shared object) libraries (for the
@@ -708,11 +707,15 @@ Appendix D: C macros used to control compilation
  platform) */
 #define JCGO_SYSDUALW
 
-/* Only if JCGO_NATSEP is not defined: use mbstowcs() and wcstombs()
- (instead of mbtowc() and wctomb(), respectively) for the
+/* Only if JCGO_NATSEP and JCGO_UTFWCTOMB are not defined: use mbstowcs()
+ and wcstombs() (instead of mbtowc() and wctomb(), respectively) for the
  multibyte-to-Java and Java-to-multibyte string conversions (useful for
  WinCE platforms) */
 #define JCGO_DOWCSTOMBS
+
+/* Only if JCGO_NATSEP is not defined: assume native multi-byte encoding
+ is UTF-8 (useful if mbtowc/wctomb and mbstowcs/wcstombs are missing) */
+#define JCGO_UTFWCTOMB
 
 /* Only if JCGO_NATSEP is not defined: get some Java system properties
  using Win32 API directly (useful for WinCE platforms) */

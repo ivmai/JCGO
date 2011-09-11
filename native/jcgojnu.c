@@ -3,13 +3,13 @@
  * a part of the JCGO native layer library (native layer API implementation).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
 /*
  * Used control macros: JCGO_DOWCSTOMBS, JCGO_HUGEARR, JCGO_NOJNI,
- * JCGO_SYSWCHAR, JCGO_THREADS, JCGO_WMAIN.
+ * JCGO_SYSWCHAR, JCGO_THREADS, JCGO_UTFWCTOMB, JCGO_WMAIN.
  * Macros for tuning: JNUBIGEXPORT.
  */
 
@@ -60,6 +60,8 @@ jstring JNICALL jcgo_jnuStringCreate( JNIEnv *pJniEnv, jint len );
 
 #ifdef JCGO_VER
 
+#ifndef JCGO_UTFWCTOMB
+
 /* #include <stdlib.h> */
 /* const int MB_CUR_MAX; */
 
@@ -80,6 +82,8 @@ jstring JNICALL jcgo_jnuStringCreate( JNIEnv *pJniEnv, jint len );
 #ifndef MB_LEN_MAX
 #define MB_LEN_MAX 6
 #endif
+
+#endif /* !JCGO_UTFWCTOMB */
 
 #ifndef JNUBIGEXPORT
 #define JNUBIGEXPORT JNIEXPORT
@@ -191,6 +195,10 @@ jcgo_JnuStringSizeOfPlatform( JNIEnv *pJniEnv, jstring str )
 #endif
  if (count > 0)
  {
+#ifdef JCGO_UTFWCTOMB
+  len = count <= (jint)(((((unsigned)-1) >> 1) - 16) / 3) ?
+         (unsigned)count * 3 : (((unsigned)-1) >> 1) - (unsigned)16;
+#else
   len = (unsigned)count;
   if (count > (jint)((((unsigned)-1) >> 1) - 16))
    len = (((unsigned)-1) >> 1) - (unsigned)16;
@@ -211,6 +219,7 @@ jcgo_JnuStringSizeOfPlatform( JNIEnv *pJniEnv, jstring str )
             (((unsigned)-1) >> 1) - (unsigned)16;
     }
   }
+#endif
  }
  return len + 1;
 }
@@ -220,7 +229,6 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
  unsigned size )
 {
  int cnt;
- int res;
  int i;
  unsigned pos;
  unsigned len;
@@ -230,11 +238,16 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
 #ifdef JCGO_NOJNI
  int isbytes;
 #endif
+#ifdef JCGO_UTFWCTOMB
+ jchar wch;
+#else
+ int res;
 #ifdef JCGO_DOWCSTOMBS
  wchar_t wbuf[2];
 #else
  int j;
  char mbbuf[MB_LEN_MAX];
+#endif
 #endif
  if (cbuf != NULL && size)
  {
@@ -255,13 +268,48 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
   cnt = (int)len;
   if ((jint)cnt > count)
    cnt = (int)count;
+#ifndef JCGO_UTFWCTOMB
 #ifdef JCGO_DOWCSTOMBS
   wbuf[1] = (wchar_t)0;
 #else
   *(volatile char *)&mbbuf[0] = (char)wctomb(NULL, (wchar_t)0);
 #endif
+#endif
   for (i = 0; i < cnt; i++)
   {
+#ifdef JCGO_UTFWCTOMB
+#ifdef JCGO_NOJNI
+   wch = isbytes ? (unsigned char)(*((volatile jbyte JCGO_HPTR_MOD *)chars +
+          (unsigned)i)) : *(chars + (unsigned)i);
+#else
+   wch = *(chars + (unsigned)i);
+#endif
+   if (wch < 0x80 && wch)
+   {
+    if (pos >= len)
+     break;
+    cbuf[pos] = (char)wch;
+   }
+    else
+    {
+     if (wch < 0x800)
+     {
+      if (pos + 1 >= len)
+       break;
+      cbuf[pos] = (char)((wch >> 6) | 0xc0);
+     }
+      else
+      {
+       if (pos + 2 >= len)
+        break;
+       cbuf[pos] = (char)((wch >> 12) | 0xe0);
+       cbuf[pos + 1] = (char)(((wch >> 6) & 0x3f) | 0x80);
+       pos++;
+      }
+     cbuf[++pos] = (char)((wch & 0x3f) | 0x80);
+    }
+   pos++;
+#else
 #ifdef JCGO_DOWCSTOMBS
 #ifdef JCGO_NOJNI
    wbuf[0] = (wchar_t)(isbytes ?
@@ -306,6 +354,7 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
      }
       else cbuf[pos++] = '\0';
     }
+#endif
   }
 #ifndef JCGO_NOJNI
   (*pJniEnv)->ReleaseStringChars(pJniEnv, str, (CONST jchar *)chars);
@@ -332,10 +381,16 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
 JNUBIGEXPORT jstring JNICALL
 jcgo_JnuNewStringPlatform( JNIEnv *pJniEnv, CONST char *cstr )
 {
+#ifdef JCGO_UTFWCTOMB
+ jchar wch;
+ char ch;
+ unsigned pos;
+#else
 #ifndef JCGO_DOWCSTOMBS
  wchar_t wch;
  int res;
  unsigned pos;
+#endif
 #endif
  unsigned len = 0;
  int i = (int)(((unsigned)-1) >> 1) - 16;
@@ -370,6 +425,24 @@ jcgo_JnuNewStringPlatform( JNIEnv *pJniEnv, CONST char *cstr )
   if (chars != NULL)
   {
    i = 0;
+#ifdef JCGO_UTFWCTOMB
+   for (pos = 0; pos < len; pos++)
+   {
+    wch = (unsigned char)cstr[pos];
+    if (wch >= 0x80 && (wch > 0xef ||
+        ((ch = cstr[++pos]) & 0xc0) != 0x80 || (wch < 0xe0 ?
+        (wch = (jchar)(((wch & 0x1f) << 6) | (ch & 0x3f))) < 0x80 && wch :
+        (wch = (jchar)((wch << 12) | ((jchar)(ch & 0x3f) << 6) |
+        (cstr[++pos] & 0x3f))) < 0x800 || (cstr[pos] & 0xc0) != 0x80)))
+    {
+     *chars = (jchar)0x3f; /*'?'*/
+     if (i <= 0)
+      i = 1;
+     break;
+    }
+    *(chars + (i++)) = wch;
+   }
+#else
 #ifdef JCGO_DOWCSTOMBS
    if (len && (i = (int)mbstowcs(chars, cstr, len)) < 0)
    {
@@ -398,6 +471,7 @@ jcgo_JnuNewStringPlatform( JNIEnv *pJniEnv, CONST char *cstr )
     }
     *(chars + (i++)) = (jchar)wch;
    }
+#endif
 #endif
 #ifdef JCGO_NOJNI
    *jcgo_jnuStringLengthPtr(str) = i;
