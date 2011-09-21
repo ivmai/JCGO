@@ -18,6 +18,11 @@ structure).
 the current directory to it;
 
 - type:
+
+C:\JCGO\jcgo.exe -sourcepath $~\examples Hello @$~\stdpaths.in
+
+or, alternatively:
+
 java -jar C:\JCGO\jcgo.jar -sourcepath $~\examples Hello @$~\stdpaths.in
 
 - invoke the MinGW C compiler (GCC):
@@ -49,6 +54,11 @@ directory structure).
 the current directory to it;
 
 - type:
+
+/usr/share/JCGO/jcgo -src $~/examples Hello @$~/stdpaths.in
+
+or, alternatively:
+
 java -jar /usr/share/JCGO/jcgo.jar -src $~/examples Hello @$~/stdpaths.in
 
 - invoke the GNU GCC:
