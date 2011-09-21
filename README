@@ -331,6 +331,10 @@ in the future. Note also, that the target platform
 of a translated application does not depend of the development platform
 used to run the JCGO translator.
 
+Note about running "jcgo.jar": translation of a big application
+requires a big stack, so please pass "-Xss" option to JVM with
+a reasonable value.
+
 Required knowledge and skills
 -----------------------------
 
@@ -487,8 +491,8 @@ utility from reflgen/*.dat files);
 - "README" - the JCGO "read me" and documentation (this file);
 - "README_QUICK.txt" - the JCGO quick start tips (for Windows and Linux);
 - "Samples" - C compilation samples;
-- "jcgo" - the JCGO translator executable (for GNU/Linux on x86);
-- "jcgo.exe" - the JCGO translator executable (for Win32);
+- "jcgo" - the JCGO translator executable (for GNU/Linux on x86 host);
+- "jcgo.exe" - the JCGO translator executable (for Win32 host);
 - "jcgo.jar" - the JCGO translator executable (for Java VM);
 - "stdpaths.in" - response file (containing the "core" source paths)
 for the JCGO translator;
