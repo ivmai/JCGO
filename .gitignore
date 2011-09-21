@@ -4,6 +4,7 @@
 
 /core
 /jcgo
+/jcgo-*
 /jcgo.exe
 /jcgo.jar
 
@@ -20,9 +21,6 @@
 
 /bdwgc
 /gc7.*
-/jcgo-sunawt-linux-x86*
-/jcgo-sunawt-solaris-x86*
-/jcgo-sunawt-win32-x86*
 /libatomic_ops*
 
 /*.tar
