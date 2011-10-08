@@ -1,5 +1,5 @@
 # @(#) $(JCGO)/reflgen/swt.dat --
-# JNI method/field reflection dependency for "Eclipse SWT" GUI v3.5 .. v3.8M1
+# JNI method/field reflection dependency for "Eclipse SWT" GUI v3.5 .. v3.8M2
 # (data file for JCGO "GenRefl" utility).
 ##
 # Project: JCGO (http://www.ivmaisoft.com/jcgo/)
@@ -7,9 +7,11 @@
 # Use is subject to license terms. No warranties. All rights reserved.
 ##
 
-# Revised for SWT version: 3.800
+# Revised for SWT v3.6 build number: 3.659
+# Revised for SWT v3.7 build number: 3.738
+# Revised for SWT v3.8 build number: 3.804
 
-# Note 1: supported SWT back-ends: Carbon (v3.7), Cocoa, Gtk, Motif (v3.7M3), Photon (v3.7M3), Windows, WPF (v3.6M1).
+# Note 1: supported SWT back-ends: Carbon (v3.7.1), Cocoa, Gtk, Motif (v3.7M3), Photon (v3.7M3), Windows, WPF (v3.6M1).
 
 # Note 2: SWT native library has one JNI_OnLoad() entry.
 
@@ -6598,6 +6600,16 @@ org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.F
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTURECONFIG.dwBlock
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTURECONFIG.dwID
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTURECONFIG.dwWant
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.cbExtraArgs
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.cbSize
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwFlags
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwID
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwInstanceID
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.dwSequenceID
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.hwndTarget
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.ullArguments
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.x
+org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GESTUREINFO.y
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GRADIENT_RECT.LowerRight
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.GRADIENT_RECT.UpperLeft
 org.eclipse.swt.internal.win32.OS.MoveMemory(*):org.eclipse.swt.internal.win32.HDITEM.cchTextMax
