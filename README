@@ -392,7 +392,8 @@ page.
 
 To compile an SWT GUI application, you will need the corresponding
 (i.e., for the required target platform) SWT library sources (of version
-3.5, 3.6 or 3.7M3).
+3.5 or newer - please refer to reflgen/swt.dat for the exact information
+of the supported versions).
 
 To compile an application which uses Sun Javax Comm API, you will need
 either RXTX library sources (version 2.2) or the original Sun Java
