@@ -29,6 +29,18 @@ diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/StopWatc
    return result.substring(0, length);
   }
  
+diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/Util.java fixed_decomp/com/ibm/oti/awt/Util.java
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/Util.java	2011-10-11 11:49:18.225636500 +0400
++++ fixed_decomp/com/ibm/oti/awt/Util.java	2011-10-10 16:07:21.065287000 +0400
+@@ -371,8 +371,6 @@
+   gCurImageDataSize += increment;
+   if (gCurImageDataSize < gMaxImageDataSize)
+    return;
+-  else
+-   throw new OutOfMemoryError("Exceeded image data limit of " + gMaxImageDataSize + " bytes.");
+  }
+ 
+  public static synchronized void imageAllocated(Image image, int size)
 diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/image/GraphicsHandler.java fixed_decomp/com/ibm/oti/awt/image/GraphicsHandler.java
 --- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/com/ibm/oti/awt/image/GraphicsHandler.java	2004-06-01 13:21:14.000000000 +0300
 +++ fixed_decomp/com/ibm/oti/awt/image/GraphicsHandler.java	2009-11-26 20:25:40.000000000 +0300
@@ -197,8 +209,8 @@ diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/EventQueue.java
  
    public RunnableEvent(Runnable runnable)
 diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Font.java fixed_decomp/java/awt/Font.java
---- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Font.java	2004-06-01 13:21:16.000000000 +0300
-+++ fixed_decomp/java/awt/Font.java	2009-11-26 16:48:54.000000000 +0300
+--- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Font.java	2011-10-11 11:49:20.012425100 +0400
++++ fixed_decomp/java/awt/Font.java	2011-10-10 16:11:20.822151400 +0400
 @@ -63,7 +63,7 @@
    String fontName = "dialog";
    String styleString = "plain";
@@ -208,6 +220,62 @@ diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Font.java fixed
    if (font != null)
    {
     String delimiter = font.indexOf("-") != -1 || font.trim().equals("") ? "-" : " ";
+@@ -182,6 +182,8 @@
+   if (rb == null)
+   {
+    InputStream in = java.awt.Font.class.getResourceAsStream("font.properties");
++   if (in != null)
++   {
+    try
+    {
+     rb = new PropertyResourceBundle(in);
+@@ -189,8 +191,45 @@
+    }
+    catch (IOException _ex) { }
+   }
++  }
+   if (rb == null)
+-   throw new AWTError("Unable to load font properties");
++    rb = new java.util.ListResourceBundle()
++    {
++      protected Object[][] getContents()
++      {
++        Object[][] contents =
++        {
++          {"TimesRoman.Windows", "Times New Roman"},
++          {"Helvetica.Windows", "Arial"},
++          {"Courier.Windows", "Courier New"},
++          {"Dialog.Windows", "Arial"},
++          {"DialogInput.Windows", "Courier New"},
++          {"Symbol.Windows", "Symbol"},
++          {"Serif.Windows", "Times New Roman"},
++          {"SansSerif.Windows", "Arial"},
++          {"Monospaced.Windows", "Courier New"},
++          {"TimesRoman.QNX", "Dutch801 Rm BT"},
++          {"Helvetica.QNX", "Swis721 BT"},
++          {"Courier.QNX", "Courier10 BT"},
++          {"Dialog.QNX", "Swis721 BT"},
++          {"DialogInput.QNX", "Courier10 BT"},
++          {"Symbol.QNX", "Courier 10 BT"},
++          {"Serif.QNX", "Dutch801 Rm BT"},
++          {"SansSerif.QNX", "Swis721 BT"},
++          {"Monospaced.QNX", "Courier10 BT"},
++          {"TimesRoman.Linux", "times, new century schoolbook, century schoolbook l"},
++          {"Helvetica.Linux", "helvetica, lucida"},
++          {"Courier.Linux", "courier"},
++          {"Dialog.Linux", "helvetica, lucida"},
++          {"DialogInput.Linux", "courier"},
++          {"Symbol.Linux", "symbol, courier"},
++          {"Serif.Linux", "times, new century schoolbook, century schoolbook l"},
++          {"SansSerif.Linux", "helvetica, lucida"},
++          {"Monospaced.Linux", "courier"},
++        };
++        return contents;
++      }
++    };
+   String osMatch = Util.getOSName();
+   Vector logicalFontNames = new Vector();
+   if (osMatch != null)
 diff -ru ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Menu.java fixed_decomp/java/awt/Menu.java
 --- ibmJ9_jclPPro10_ui_jaddecomp_ff_pi100_t1_space/java/awt/Menu.java	2004-06-01 13:21:16.000000000 +0300
 +++ fixed_decomp/java/awt/Menu.java	2009-11-27 13:11:22.000000000 +0300
