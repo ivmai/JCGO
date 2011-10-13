@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -13,8 +13,8 @@
  */
 
 /*
- * Used control macros: FPINIT, JCGO_LONGDBL, JCGO_MATHEXT, JCGO_NOFP,
- * JCGO_REVFLOAT.
+ * Used control macros: FPINIT, JCGO_FASTMATH, JCGO_LONGDBL, JCGO_MATHEXT,
+ * JCGO_NOFP, JCGO_REVFLOAT.
  * Macros for tuning: FPINIT.
  */
 
@@ -153,13 +153,24 @@ JCGO_NOSEP_STATIC jfloat CFASTCALL jcgo_fdivf( jfloat f1, jfloat f2 )
 #ifdef JCGO_NOFP
 JCGO_NOSEP_INLINE jdouble JCGO_INLFRW_FASTCALL
 #else
+#ifdef JCGO_FASTMATH
+JCGO_NOSEP_INLINE jdouble JCGO_INLFRW_FASTCALL
+#else
 JCGO_NOSEP_STATIC jdouble CFASTCALL
+#endif
 #endif
 jcgo_fmod( jdouble d1, jdouble d2 )
 {
 #ifdef JCGO_NOFP
  return (u_jlong)(d2 + (jdouble)1) > (u_jlong)1L ?
          (jdouble)((jlong)d1 % (jlong)d2) : (jdouble)0;
+#else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return fmodl(d1, d2);
+#else
+ return fmod(d1, d2);
+#endif
 #else
  jdouble d;
  if (d2 != (jdouble)0.0 && JCGO_FP_FINITE(d1))
@@ -194,18 +205,26 @@ jcgo_fmod( jdouble d1, jdouble d2 )
  }
  return jcgo_fpNaN;
 #endif
+#endif
 }
 
 #ifdef JCGO_NOFP
 JCGO_NOSEP_INLINE jfloat JCGO_INLFRW_FASTCALL
 #else
+#ifdef JCGO_FASTMATH
+JCGO_NOSEP_INLINE jfloat JCGO_INLFRW_FASTCALL
+#else
 JCGO_NOSEP_STATIC jfloat CFASTCALL
+#endif
 #endif
 jcgo_fmodf( jfloat f1, jfloat f2 )
 {
 #ifdef JCGO_NOFP
  return (u_jint)(f2 + (jfloat)1) > (u_jint)1 ?
          (jfloat)((jint)f1 % (jint)f2) : (jfloat)0;
+#else
+#ifdef JCGO_FASTMATH
+ return (jfloat)JCGO_FP_FMODF(f1, f2);
 #else
  jfloat f;
  if (f2 != (jfloat)0.0 && JCGO_FP_FINITEF(f1))
@@ -227,6 +246,7 @@ jcgo_fmodf( jfloat f1, jfloat f2 )
    return f1;
  }
  return (jfloat)jcgo_fpNaN;
+#endif
 #endif
 }
 
