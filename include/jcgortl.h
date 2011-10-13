@@ -14,10 +14,11 @@
 
 /*
  * Used control macros: JCGO_ASSERTION, JCGO_CHKCAST, JCGO_CLINITCHK,
- * JCGO_CVOLATILE, JCGO_FASTMATH, JCGO_HUGEARR, JCGO_HWNULLZ, JCGO_INDEXCHK,
- * JCGO_JNIUSCORE, JCGO_NOFLDCONST, JCGO_NOFP, JCGO_NOFRWINL, JCGO_NOJNI,
- * JCGO_NOSEGV, JCGO_PARALLEL, JCGO_SEHTRY, JCGO_SEPARATED, JCGO_SFTNULLP,
- * JCGO_STDCLINIT, JCGO_THREADS, JCGO_UNIX, JCGO_USEGCJ, JCGO_USELONG.
+ * JCGO_CVOLATILE, JCGO_FASTMATH, JCGO_FPFAST, JCGO_HUGEARR, JCGO_HWNULLZ,
+ * JCGO_INDEXCHK, JCGO_JNIUSCORE, JCGO_NOFLDCONST, JCGO_NOFP, JCGO_NOFRWINL,
+ * JCGO_NOJNI, JCGO_NOSEGV, JCGO_PARALLEL, JCGO_SEHTRY, JCGO_SEPARATED,
+ * JCGO_SFTNULLP, JCGO_STDCLINIT, JCGO_THREADS, JCGO_UNIX, JCGO_USEGCJ,
+ * JCGO_USELONG.
  * Macros for tuning: ATTRIBGCBSS, ATTRIBGCDATA, ATTRIBMALLOC, ATTRIBNONGC,
  * CFASTCALL, DECLSPECNORET, GCSTATICDATA, EXTRASTATIC, INLINE, STATIC,
  * STATICDATA.
@@ -383,12 +384,21 @@
 #define JCGO_JDOUBLE_TOJINT(d) jcgo_jdouble2jint(d)
 #define JCGO_JDOUBLE_TOJLONG(d) jcgo_jdouble2jlong(d)
 #define JCGO_JDOUBLE_TOJFLOAT(d) jcgo_jdouble2jfloat(d)
+#ifdef JCGO_FPFAST
+#define JCGO_FP_EQU(d1, d2) ((d1) == (d2))
+#define JCGO_FP_EQUF(f1, f2) ((f1) == (f2))
+#define JCGO_FP_LQ(d1, d2) ((d1) <= (d2))
+#define JCGO_FP_LQF(f1, f2) ((f1) <= (f2))
+#define JCGO_FP_LT(d1, d2) ((d1) < (d2))
+#define JCGO_FP_LTF(f1, f2) ((f1) < (f2))
+#else
 #define JCGO_FP_EQU(d1, d2) jcgo_fequal(d1, d2)
 #define JCGO_FP_EQUF(f1, f2) jcgo_fequalf(f1, f2)
 #define JCGO_FP_LQ(d1, d2) jcgo_flessequ(d1, d2)
 #define JCGO_FP_LQF(f1, f2) jcgo_flessequf(f1, f2)
 #define JCGO_FP_LT(d1, d2) jcgo_flessthan(d1, d2)
 #define JCGO_FP_LTF(f1, f2) jcgo_flessthanf(f1, f2)
+#endif
 #define JCGO_FP_ZERO jcgo_fpZero /* (jdouble)0.0 */
 #define JCGO_FP_ZEROF jcgo_fpZeroF /* (jfloat)0.0 */
 #endif
@@ -1000,10 +1010,9 @@ JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_mod( jint v1, jint v2 );
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_ldiv( jlong v1, jlong v2 );
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_lmod( jlong v1, jlong v2 );
 
+#ifdef JCGO_NOFP
 JCGO_NOSEP_STATIC jdouble CFASTCALL jcgo_fdiv( jdouble d1, jdouble d2 );
 JCGO_NOSEP_STATIC jfloat CFASTCALL jcgo_fdivf( jfloat f1, jfloat f2 );
-
-#ifdef JCGO_NOFP
 JCGO_NOSEP_INLINE jdouble JCGO_INLFRW_FASTCALL jcgo_fmod( jdouble d1,
  jdouble d2 );
 JCGO_NOSEP_INLINE jfloat JCGO_INLFRW_FASTCALL jcgo_fmodf( jfloat f1,
@@ -1024,12 +1033,19 @@ JCGO_NOSEP_EXTRASTATIC jint CFASTCALL jcgo_jdouble2jint( jdouble d );
 JCGO_NOSEP_EXTRASTATIC jlong CFASTCALL jcgo_jdouble2jlong( jdouble d );
 JCGO_NOSEP_INLINE jfloat JCGO_INLFRW_FASTCALL jcgo_jdouble2jfloat(
  jdouble d );
+#ifdef JCGO_FPFAST
+#define jcgo_fdiv(d1, d2) ((jdouble)((d1) / (jdouble)(d2)))
+#define jcgo_fdivf(f1, f2) ((jfloat)((f1) / (jfloat)(f2)))
+#else
+JCGO_NOSEP_STATIC jdouble CFASTCALL jcgo_fdiv( jdouble d1, jdouble d2 );
+JCGO_NOSEP_STATIC jfloat CFASTCALL jcgo_fdivf( jfloat f1, jfloat f2 );
 JCGO_NOSEP_STATIC int CFASTCALL jcgo_fequal( jdouble d1, jdouble d2 );
 JCGO_NOSEP_STATIC int CFASTCALL jcgo_fequalf( jfloat f1, jfloat f2 );
 JCGO_NOSEP_STATIC int CFASTCALL jcgo_flessequ( jdouble d1, jdouble d2 );
 JCGO_NOSEP_STATIC int CFASTCALL jcgo_flessequf( jfloat f1, jfloat f2 );
 JCGO_NOSEP_STATIC int CFASTCALL jcgo_flessthan( jdouble d1, jdouble d2 );
 JCGO_NOSEP_STATIC int CFASTCALL jcgo_flessthanf( jfloat f1, jfloat f2 );
+#endif
 #endif
 
 #endif
