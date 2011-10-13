@@ -696,6 +696,10 @@ Appendix D: C macros used to control compilation
  (cbrt, expm1, floorf, fmodf, log1p) usage where necessary */
 #define JCGO_MATHEXT
 
+/* Only if JCGO_NOFP is not defined: assume C math.h functions behavior
+ match Java Math class methods specification */
+#define JCGO_FASTMATH
+
 /* Define (or allow to define if used for compiling C files of the JCGO
  "native" library) Unicode "wmain" function as the program entry point
  (instead of "main") */

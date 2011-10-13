@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -54,6 +54,13 @@ java_lang_VMMath__sin__D( jdouble a )
 #ifdef JCGO_NOFP
  return (jdouble)0;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return sinl(a);
+#else
+ return sin(a);
+#endif
+#else
  jdouble v;
  if (JCGO_FP_FINITE(a))
  {
@@ -78,6 +85,7 @@ java_lang_VMMath__sin__D( jdouble a )
  }
  return jcgo_fpNaN;
 #endif
+#endif
 }
 #endif
 
@@ -87,6 +95,13 @@ java_lang_VMMath__cos__D( jdouble a )
 {
 #ifdef JCGO_NOFP
  return a == (jdouble)0 ? (jdouble)1 : (jdouble)0;
+#else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return cosl(a);
+#else
+ return cos(a);
+#endif
 #else
  jdouble v;
  if (JCGO_FP_FINITE(a))
@@ -105,6 +120,7 @@ java_lang_VMMath__cos__D( jdouble a )
  }
  return jcgo_fpNaN;
 #endif
+#endif
 }
 #endif
 
@@ -112,8 +128,8 @@ java_lang_VMMath__cos__D( jdouble a )
 JCGO_NOSEP_STATIC jdouble CFASTCALL
 java_lang_VMMath__tan__D( jdouble a )
 {
- jdouble v;
 #ifdef JCGO_NOFP
+ jdouble v;
  jdouble vf;
  jdouble dd;
  jdouble df;
@@ -272,6 +288,14 @@ java_lang_VMMath__tan__D( jdouble a )
  }
  return v;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return tanl(a);
+#else
+ return tan(a);
+#endif
+#else
+ jdouble v;
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
@@ -295,6 +319,7 @@ java_lang_VMMath__tan__D( jdouble a )
  }
  return jcgo_fpNaN;
 #endif
+#endif
 }
 #endif
 
@@ -304,6 +329,13 @@ java_lang_VMMath__asin__D( jdouble a )
 {
 #ifdef JCGO_NOFP
  return a == (jdouble)-1 || a == (jdouble)1 ? a : (jdouble)0;
+#else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return asinl(a);
+#else
+ return asin(a);
+#endif
 #else
  if (JCGO_FP_FINITE(a) && a >= (jdouble)-1.0 && a <= (jdouble)1.0)
  {
@@ -318,6 +350,7 @@ java_lang_VMMath__asin__D( jdouble a )
  }
  return jcgo_fpNaN;
 #endif
+#endif
 }
 #endif
 
@@ -329,6 +362,13 @@ java_lang_VMMath__acos__D( jdouble a )
  return a == (jdouble)0 ? (jdouble)1 : a == (jdouble)-1 ? (jdouble)3 :
          (jdouble)0;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return acosl(a);
+#else
+ return acos(a);
+#endif
+#else
  if (JCGO_FP_FINITE(a) && a >= (jdouble)-1.0 && a <= (jdouble)1.0)
  {
 #ifdef JCGO_LONGDBL
@@ -338,6 +378,7 @@ java_lang_VMMath__acos__D( jdouble a )
 #endif
  }
  return jcgo_fpNaN;
+#endif
 #endif
 }
 #endif
@@ -349,6 +390,13 @@ java_lang_VMMath__atan__D( jdouble a )
 #ifdef JCGO_NOFP
  return a >= (jdouble)2 ? (jdouble)1 : a <= (jdouble)-2 ? (jdouble)-1 :
          (jdouble)0;
+#else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return atanl(a);
+#else
+ return atan(a);
+#endif
 #else
  if (JCGO_FP_FINITE(a))
  {
@@ -371,6 +419,7 @@ java_lang_VMMath__atan__D( jdouble a )
  }
  return a;
 #endif
+#endif
 }
 #endif
 
@@ -378,8 +427,8 @@ java_lang_VMMath__atan__D( jdouble a )
 JCGO_NOSEP_STATIC jdouble CFASTCALL
 java_lang_VMMath__atan2__DD( jdouble y, jdouble x )
 {
- jdouble v;
 #ifdef JCGO_NOFP
+ jdouble v;
  if (y == (jdouble)0)
   return x < (jdouble)0 ? (jdouble)3 : (jdouble)0;
  if (x == (jdouble)0)
@@ -409,7 +458,16 @@ java_lang_VMMath__atan2__DD( jdouble y, jdouble x )
             (32 - (int)sizeof(jlong) * 4))) < y - x ? (jdouble)1 : (jdouble)0;
  if (v < (jdouble)0)
   y = -y;
+ return y;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return atan2l(y, x);
+#else
+ return atan2(y, x);
+#endif
+#else
+ jdouble v;
  if (JCGO_FP_FINITE(y))
  {
   if (JCGO_FP_FINITE(x))
@@ -511,8 +569,9 @@ java_lang_VMMath__atan2__DD( jdouble y, jdouble x )
   }
   return x;
  }
-#endif
  return y;
+#endif
+#endif
 }
 #endif
 
@@ -574,6 +633,13 @@ java_lang_VMMath__exp__D( jdouble a )
  }
  return v;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return expl(a);
+#else
+ return exp(a);
+#endif
+#else
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
@@ -593,6 +659,7 @@ java_lang_VMMath__exp__D( jdouble a )
  if (JCGO_FP_NOTNAN(a) && a < (jdouble)0.0)
   a = (jdouble)0.0;
  return a;
+#endif
 #endif
 }
 #endif
@@ -667,6 +734,13 @@ java_lang_VMMath__log__D( jdouble a )
  }
  return (jdouble)k;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return logl(a);
+#else
+ return log(a);
+#endif
+#else
  if (a < (jdouble)-0.0)
   return jcgo_fpNaN;
  if (JCGO_FP_FINITE(a))
@@ -683,6 +757,7 @@ java_lang_VMMath__log__D( jdouble a )
    else a = -jcgo_fpInf;
  }
  return a;
+#endif
 #endif
 }
 #endif
@@ -723,6 +798,13 @@ java_lang_VMMath__sqrt__D( jdouble a )
  } while ((r = (jdouble)((jlong)r >> 1)) > (jdouble)0);
  return (jdouble)((jlong)q >> k);
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return sqrtl(a);
+#else
+ return sqrt(a);
+#endif
+#else
  if (a < (jdouble)-0.0)
   return jcgo_fpNaN;
  if (JCGO_FP_FINITE(a) && a != (jdouble)0.0)
@@ -737,6 +819,7 @@ java_lang_VMMath__sqrt__D( jdouble a )
  }
  return a;
 #endif
+#endif
 }
 #endif
 
@@ -744,8 +827,8 @@ java_lang_VMMath__sqrt__D( jdouble a )
 JCGO_NOSEP_STATIC jdouble CFASTCALL
 java_lang_VMMath__pow__DD( jdouble a, jdouble b )
 {
- jdouble v;
 #ifdef JCGO_NOFP
+ jdouble v;
  int sign = 0;
  if (b <= (jdouble)0)
  {
@@ -785,6 +868,14 @@ java_lang_VMMath__pow__DD( jdouble a, jdouble b )
   v = -v;
  return v;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return powl(a, b);
+#else
+ return pow(a, b);
+#endif
+#else
+ jdouble v;
  jdouble d;
  if (JCGO_FP_FINITE(b))
  {
@@ -878,6 +969,7 @@ java_lang_VMMath__pow__DD( jdouble a, jdouble b )
   return a;
  }
  return b;
+#endif
 #endif
 }
 #endif
@@ -1407,6 +1499,13 @@ java_lang_VMMath__log10__D( jdouble a )
   a = a / (jdouble)10;
  return (jdouble)k;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return log10l(a);
+#else
+ return log10(a);
+#endif
+#else
  if (a < (jdouble)-0.0)
   return jcgo_fpNaN;
  if (JCGO_FP_FINITE(a))
@@ -1424,6 +1523,7 @@ java_lang_VMMath__log10__D( jdouble a )
    else a = -jcgo_fpInf;
  }
  return a;
+#endif
 #endif
 }
 #endif
@@ -1538,8 +1638,8 @@ java_lang_VMMath__log1p__D( jdouble a )
 JCGO_NOSEP_STATIC jdouble CFASTCALL
 java_lang_VMMath__sinh__D( jdouble a )
 {
- int sign;
 #ifdef JCGO_NOFP
+ int sign;
  jdouble v;
  jdouble vf;
  jdouble m;
@@ -1605,6 +1705,14 @@ java_lang_VMMath__sinh__D( jdouble a )
  }
  return sign ? -v : v;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return sinhl(a);
+#else
+ return sinh(a);
+#endif
+#else
+ int sign;
  if (JCGO_FP_FINITE(a) && a != (jdouble)-0.0)
  {
   sign = 0;
@@ -1625,6 +1733,7 @@ java_lang_VMMath__sinh__D( jdouble a )
    a = -a;
  }
  return a;
+#endif
 #endif
 }
 #endif
@@ -1692,6 +1801,13 @@ java_lang_VMMath__cosh__D( jdouble a )
  }
  return v;
 #else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return coshl(a);
+#else
+ return cosh(a);
+#endif
+#else
  if (a < (jdouble)0.0)
   a = -a;
  if (JCGO_FP_FINITE(a))
@@ -1707,6 +1823,7 @@ java_lang_VMMath__cosh__D( jdouble a )
  }
  return a;
 #endif
+#endif
 }
 #endif
 
@@ -1717,6 +1834,13 @@ java_lang_VMMath__tanh__D( jdouble a )
 #ifdef JCGO_NOFP
  return a >= (jdouble)20 ? (jdouble)1 : a <= (jdouble)-20 ?
          (jdouble)-1 : (jdouble)0;
+#else
+#ifdef JCGO_FASTMATH
+#ifdef JCGO_LONGDBL
+ return tanhl(a);
+#else
+ return tanh(a);
+#endif
 #else
  if (JCGO_FP_FINITE(a))
  {
@@ -1733,6 +1857,7 @@ java_lang_VMMath__tanh__D( jdouble a )
  if (JCGO_FP_NOTNAN(a))
   a = a > (jdouble)0.0 ? (jdouble)1.0 : (jdouble)-1.0;
  return a;
+#endif
 #endif
 }
 #endif
