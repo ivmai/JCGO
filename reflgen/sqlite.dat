@@ -1,0 +1,55 @@
+# @(#) $(JCGO)/reflgen/sqlite.dat --
+# JNI method/field reflection dependency for "SqliteJDBC" library v056
+# (data file for JCGO "GenRefl" utility).
+##
+# Project: JCGO (http://www.ivmaisoft.com/jcgo/)
+# Copyright (C) 2001-2011 Ivan Maidanski <ivmai@mail.ru>
+# Use is subject to license terms. No warranties. All rights reserved.
+##
+
+# Revised for library VERSION: 056
+
+# Note: this native library has a JNI_OnLoad() entry.
+
+org.sqlite.NativeDB._close(*):pointer
+org.sqlite.NativeDB._close(*):throwex()
+org.sqlite.NativeDB._open(*):pointer
+org.sqlite.NativeDB._open(*):throwex()
+org.sqlite.NativeDB._open(*):throwex(Ljava/lang/String;)
+org.sqlite.NativeDB.busy_timeout(*):pointer
+org.sqlite.NativeDB.changes(*):pointer
+org.sqlite.NativeDB.column_metadata(*):pointer
+org.sqlite.NativeDB.create_function(*):java.lang.Throwable.toString()
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function$Aggregate.clone()
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function$Aggregate.xFinal()
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function$Aggregate.xStep()
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function.args
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function.context
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function.value
+org.sqlite.NativeDB.create_function(*):org.sqlite.Function.xFunc()
+org.sqlite.NativeDB.create_function(*):pointer
+org.sqlite.NativeDB.create_function(*):udfdatalist
+org.sqlite.NativeDB.destroy_function(*):pointer
+org.sqlite.NativeDB.errmsg(*):pointer
+org.sqlite.NativeDB.free_functions(*):udfdatalist
+org.sqlite.NativeDB.interrupt(*):pointer
+org.sqlite.NativeDB.prepare(*):pointer
+org.sqlite.NativeDB.prepare(*):throwex()
+org.sqlite.NativeDB.value_blob(*):org.sqlite.Function.args
+org.sqlite.NativeDB.value_blob(*):org.sqlite.Function.value
+org.sqlite.NativeDB.value_blob(*):throwex(Ljava/lang/String;)
+org.sqlite.NativeDB.value_double(*):org.sqlite.Function.args
+org.sqlite.NativeDB.value_double(*):org.sqlite.Function.value
+org.sqlite.NativeDB.value_double(*):throwex(Ljava/lang/String;)
+org.sqlite.NativeDB.value_int(*):org.sqlite.Function.args
+org.sqlite.NativeDB.value_int(*):org.sqlite.Function.value
+org.sqlite.NativeDB.value_int(*):throwex(Ljava/lang/String;)
+org.sqlite.NativeDB.value_long(*):org.sqlite.Function.args
+org.sqlite.NativeDB.value_long(*):org.sqlite.Function.value
+org.sqlite.NativeDB.value_long(*):throwex(Ljava/lang/String;)
+org.sqlite.NativeDB.value_text(*):org.sqlite.Function.args
+org.sqlite.NativeDB.value_text(*):org.sqlite.Function.value
+org.sqlite.NativeDB.value_text(*):throwex(Ljava/lang/String;)
+org.sqlite.NativeDB.value_type(*):org.sqlite.Function.args
+org.sqlite.NativeDB.value_type(*):org.sqlite.Function.value
+org.sqlite.NativeDB.value_type(*):throwex(Ljava/lang/String;)
