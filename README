@@ -418,6 +418,8 @@ re-distributive pack for Windows/x86 targets);
 - src.zip from the Sun J2SE v1.4.2_19 SDK (Sun Java core API class
 sources).
 
+JCGO also supports SQLite database connectivity via SqliteJDBC library.
+
 Entirely for the purpose of the distributive files unpacking, you need
 some tar+gz/bz2 unpacker tool (e.g., tar and ungzip/bzip2 for Unix-like
 OS, or "7-Zip" for Windows).
