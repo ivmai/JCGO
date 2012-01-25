@@ -6,7 +6,7 @@
                                User's Guide
                                ------------
 
-Copyright (C) 2001-2011 Ivan Maidanski <ivmai@mail.ru>
+Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
 Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com
 All rights reserved.
 
@@ -1078,12 +1078,19 @@ Appendix D: C macros used to control compilation
 /* Use "dllexport" declaration modifier for exported functions */
 #define JNIEXPORT __declspec(dllexport)
 
+/* Explicitly use "dllexport" for Java VM Invocation API functions */
+#define JNIEXPORT_INVOKE __declspec(dllexport)
+
 /* Use "static" declaration modifier for some (considerable) JNU
  functions (instead of JNIEXPORT modifier) */
 #define JNUBIGEXPORT static
 
 /* Use "stdcall" calling convention for JNI library */
 #define JNICALL __stdcall
+
+/* Explicitly specify "stdcall" calling convention for Java VM
+ Invocation API functions */
+#define JNICALL_INVOKE __stdcall
 
 /* Do not use "fast calling" convention explicitly */
 #define CFASTCALL /**/

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -14,7 +14,8 @@
 
 /*
  * Used control macros: JCGO_NOCREATJVM, JCGO_NOGC, JCGO_SEHTRY, JCGO_THREADS.
- * Macros for tuning: JNIONLOADDECLS, JNIONLOADLIST, JNIONUNLOADLIST.
+ * Macros for tuning: JNICALL_INVOKE, JNIEXPORT_INVOKE, JNIONLOADDECLS,
+ * JNIONLOADLIST, JNIONUNLOADLIST.
  */
 
 /*
@@ -47,6 +48,14 @@
  */
 
 #ifdef JCGO_VER
+
+#ifndef JNICALL_INVOKE
+#define JNICALL_INVOKE JNICALL
+#endif
+
+#ifndef JNIEXPORT_INVOKE
+#define JNIEXPORT_INVOKE JNIEXPORT
+#endif
 
 STATICDATA int jcgo_jniOnLoadDone = 0;
 
@@ -603,7 +612,7 @@ jcgo_JniGetJavaVM( JNIEnv *pJniEnv, JavaVM **pvm )
 
 #ifndef JCGO_NOCREATJVM
 
-JNIEXPORT jint JNICALL
+JNIEXPORT_INVOKE jint JNICALL_INVOKE
 JNI_GetDefaultJavaVMInitArgs( void *args )
 {
  JavaVMInitArgs *pInitArgs = (JavaVMInitArgs *)args;
@@ -640,7 +649,7 @@ jcgo_jniTCreateJavaVM( void **targv )
  return 0;
 }
 
-JNIEXPORT jint JNICALL
+JNIEXPORT_INVOKE jint JNICALL_INVOKE
 JNI_CreateJavaVM( JavaVM **pvm, void **penv, void *args )
 {
 #ifdef JCGO_NOGC
@@ -681,7 +690,7 @@ JNI_CreateJavaVM( JavaVM **pvm, void **penv, void *args )
 
 #endif /* ! JCGO_NOCREATJVM */
 
-JNIEXPORT jint JNICALL
+JNIEXPORT_INVOKE jint JNICALL_INVOKE
 JNI_GetCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs )
 {
  if (((jcgo_initialized + 1) >> 1) == 0)
