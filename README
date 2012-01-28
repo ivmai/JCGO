@@ -1078,7 +1078,8 @@ Appendix D: C macros used to control compilation
 /* Use "dllexport" declaration modifier for exported functions */
 #define JNIEXPORT __declspec(dllexport)
 
-/* Explicitly use "dllexport" for Java VM Invocation API functions */
+/* Only if JCGO_NOJNI is not defined: explicitly use "dllexport" for
+ Java VM Invocation API functions */
 #define JNIEXPORT_INVOKE __declspec(dllexport)
 
 /* Use "static" declaration modifier for some (considerable) JNU
@@ -1088,8 +1089,8 @@ Appendix D: C macros used to control compilation
 /* Use "stdcall" calling convention for JNI library */
 #define JNICALL __stdcall
 
-/* Explicitly specify "stdcall" calling convention for Java VM
- Invocation API functions */
+/* Only if JCGO_NOJNI is not defined: explicitly specify "stdcall"
+ calling convention for Java VM Invocation API functions */
 #define JNICALL_INVOKE __stdcall
 
 /* Do not use "fast calling" convention explicitly */
