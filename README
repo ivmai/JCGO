@@ -1000,6 +1000,10 @@ Appendix D: C macros used to control compilation
  adjacent memory segments); only for "large" data address models */
 #define JCGO_HUGEARR
 
+/* Only if JCGO_NOGC is not defined and JCGO_THREADS is defined: use
+ (GC_get_parallel() + 1) value as the number of available CPUs */
+#define JCGO_GCGETPAR
+
 /* Do not use memory garbage collector, use the standard calloc
  instead, so that the allocated memory is never reclaimed (and
  finalizers are never executed) */

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -13,8 +13,8 @@
  */
 
 /*
- * Used control macros: JCGO_CREATHREAD, JCGO_OS2, JCGO_PARALLEL, JCGO_SOLTHR,
- * JCGO_TIMEHIRES, JCGO_UNIX, JCGO_WIN32.
+ * Used control macros: JCGO_CREATHREAD, JCGO_GCGETPAR, JCGO_OS2,
+ * JCGO_PARALLEL, JCGO_SOLTHR, JCGO_TIMEHIRES, JCGO_UNIX, JCGO_WIN32.
  * Macros for tuning: CLIBDECL.
  */
 
@@ -53,6 +53,16 @@
 
 #define JCGO_JTHREAD_MINPRIO 1
 #define JCGO_JTHREAD_MAXPRIO 10
+
+#ifdef JCGO_GCGETPAR
+#ifndef JCGO_NPROCS_STMT
+#ifndef JCGO_NOGC
+/* #include "gc.h" */
+/* int GC_get_parallel(void); */
+#define JCGO_NPROCS_STMT(pdata) { *(pdata) = GC_get_parallel() + 1; }
+#endif
+#endif
+#endif
 
 #ifdef JCGO_WIN32
 
@@ -180,12 +190,9 @@ struct jcgo_win32Mutex_s
 #define JCGO_THREAD_YIELD Sleep((DWORD)0)
 #endif
 
-#ifndef JCGO_NPROCS_T
+#ifndef JCGO_NPROCS_STMT
 #ifdef _WINBASE_NO_GETPROCESSAFFINITYMASK
-#ifdef _WINBASE_NO_GETSYSTEMINFO
-#define JCGO_NPROCS_T int
-#define JCGO_NPROCS_GET(pdata) (*(pdata))
-#else
+#ifndef _WINBASE_NO_GETSYSTEMINFO
 /* #include <windows.h> */
 /* void GetSystemInfo(SYSTEM_INFO *); */
 #define JCGO_NPROCS_T SYSTEM_INFO
@@ -577,9 +584,11 @@ struct jcgo_win32Mutex_s
 #endif
 
 #ifdef pthread_num_processors_np
+#ifndef JCGO_NPROCS_STMT
 /* #include <pthread.h> */
 /* int pthread_num_processors_np(void); */
 #define JCGO_NPROCS_STMT(pdata) { *(pdata) = pthread_num_processors_np(); }
+#endif
 #endif
 
 #endif /* ! JCGO_SOLTHR */
@@ -600,9 +609,6 @@ struct jcgo_win32Mutex_s
 #define JCGO_THREADT_ISEQUALIDENT(pthread, psrcthread) (*(pthread) == *(psrcthread))
 #endif
 
-#define JCGO_NPROCS_T int
-#define JCGO_NPROCS_GET(pdata) (*(pdata))
-
 #ifdef JCGO_UNIX
 #ifndef JCGO_NPROCS_STMT
 /* #include <unistd.h> */
@@ -618,6 +624,11 @@ struct jcgo_win32Mutex_s
 #endif
 
 #endif /* ! JCGO_WIN32 */
+
+#ifndef JCGO_NPROCS_T
+#define JCGO_NPROCS_T int
+#define JCGO_NPROCS_GET(pdata) (*(pdata))
+#endif
 
 #ifndef JCGO_NPROCS_STMT
 #define JCGO_NPROCS_STMT(pdata) { *(pdata) = 0; }
