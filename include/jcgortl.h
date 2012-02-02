@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -152,6 +152,7 @@
 #ifdef __GNUC__
 #define ATTRIBMALLOC __attribute__((__malloc__))
 #else
+/* #define ATTRIBMALLOC __declspec(noalias) __declspec(restrict) */
 #define ATTRIBMALLOC /* empty */
 #endif
 #endif
@@ -878,21 +879,21 @@ JCGO_NOSEP_STATIC DECLSPECNORET void CFASTCALL jcgo_throwNullPtrExc( void );
 JCGO_NOSEP_STATIC DECLSPECNORET void CFASTCALL jcgo_throwExc(
  jObject throwable );
 
-JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newObject(
- jvtable jcgo_methods ) ATTRIBMALLOC;
+JCGO_NOSEP_STATIC ATTRIBMALLOC jObject CFASTCALL jcgo_newObject(
+ jvtable jcgo_methods );
 
-JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
- int dims, jint len ) ATTRIBMALLOC;
-JCGO_NOSEP_INLINE jObjectArr JCGO_INLFRW_FASTCALL jcgo_new4DArray(
- java_lang_Class aclass, int cnt, int dims, jint len0, jint len1, jint len2,
- jint len3 ) ATTRIBMALLOC;
-JCGO_NOSEP_INLINE jObjectArr JCGO_INLFRW_FASTCALL jcgo_new16DArray(
- java_lang_Class aclass, int cnt, int dims, jint len0, jint len1, jint len2,
- jint len3, jint len4, jint len5, jint len6, jint len7, jint len8, jint len9,
- jint len10, jint len11, jint len12, jint len13, jint len14,
- jint len15 ) ATTRIBMALLOC;
-JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_arrayClone(
- jObject arr ) ATTRIBMALLOC;
+JCGO_NOSEP_STATIC ATTRIBMALLOC jObject CFASTCALL jcgo_newArray(
+ java_lang_Class aclass, int dims, jint len );
+JCGO_NOSEP_INLINE ATTRIBMALLOC jObjectArr JCGO_INLFRW_FASTCALL
+ jcgo_new4DArray( java_lang_Class aclass, int cnt, int dims, jint len0,
+ jint len1, jint len2, jint len3 );
+JCGO_NOSEP_INLINE ATTRIBMALLOC jObjectArr JCGO_INLFRW_FASTCALL
+ jcgo_new16DArray( java_lang_Class aclass, int cnt, int dims, jint len0,
+ jint len1, jint len2, jint len3, jint len4, jint len5, jint len6, jint len7,
+ jint len8, jint len9, jint len10, jint len11, jint len12, jint len13,
+ jint len14, jint len15 );
+JCGO_NOSEP_STATIC ATTRIBMALLOC jObject CFASTCALL jcgo_arrayClone(
+ jObject arr );
 
 JCGO_NOSEP_INLINE int JCGO_INLFRW_FASTCALL jcgo_instanceOf0( int objId,
  int maxId, jObject obj );
