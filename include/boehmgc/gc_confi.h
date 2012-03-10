@@ -164,8 +164,9 @@
 # endif
 #endif /* _WIN32_WCE */
 
-#if defined(_DLL) && !defined(GC_NOT_DLL) && !defined(GC_DLL) \
-        && !defined(__GNUC__)
+#if !defined(GC_NOT_DLL) && !defined(GC_DLL) \
+    && ((defined(_DLL) && !defined(__GNUC__)) \
+        || (defined(DLL_EXPORT) && defined(GC_BUILD)))
 # define GC_DLL
 #endif
 
@@ -220,9 +221,13 @@
   /* non-NULL pointer it returns cannot alias any other pointer valid   */
   /* when the function returns).  If the client code violates this rule */
   /* by using custom GC_oom_func then define GC_OOM_FUNC_RETURNS_ALIAS. */
-# if !defined(GC_OOM_FUNC_RETURNS_ALIAS) && defined(__GNUC__) \
-        && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+# ifdef GC_OOM_FUNC_RETURNS_ALIAS
+#   define GC_ATTR_MALLOC /* empty */
+# elif defined(__GNUC__) && (__GNUC__ > 3 \
+                             || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #   define GC_ATTR_MALLOC __attribute__((__malloc__))
+# elif defined(_MSC_VER) && _MSC_VER >= 14
+#   define GC_ATTR_MALLOC __declspec(noalias) __declspec(restrict)
 # else
 #   define GC_ATTR_MALLOC
 # endif
@@ -236,6 +241,27 @@
 #   define GC_ATTR_ALLOC_SIZE(argnum) __attribute__((__alloc_size__(argnum)))
 # else
 #   define GC_ATTR_ALLOC_SIZE(argnum)
+# endif
+#endif
+
+#ifndef GC_ATTR_NONNULL
+# if defined(__GNUC__) && __GNUC__ >= 4
+#   define GC_ATTR_NONNULL(argnum) __attribute__((__nonnull__(argnum)))
+# else
+#   define GC_ATTR_NONNULL(argnum) /* empty */
+# endif
+#endif
+
+#ifndef GC_ATTR_DEPRECATED
+# ifdef GC_BUILD
+#   undef GC_ATTR_DEPRECATED
+#   define GC_ATTR_DEPRECATED /* empty */
+# elif defined(__GNUC__) && __GNUC__ >= 4
+#   define GC_ATTR_DEPRECATED __attribute__((__deprecated__))
+# elif defined(_MSC_VER) && _MSC_VER >= 12
+#   define GC_ATTR_DEPRECATED __declspec(deprecated)
+# else
+#   define GC_ATTR_DEPRECATED /* empty */
 # endif
 #endif
 
