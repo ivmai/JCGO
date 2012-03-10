@@ -30,6 +30,10 @@ cd ..\fpvm
 javac -d %OUT_PATH% -source 1.3 -bootclasspath %OUT_PATH% java\lang\*
 if errorlevel 1 goto exit
 
+cd ..\noopmain
+javac -d %OUT_PATH% -source 1.3 *.j*
+if errorlevel 1 goto exit
+
 cd ..\vm_str
 javac -d %OUT_PATH% -source 1.3 -bootclasspath %OUT_PATH% java\lang\*
 if errorlevel 1 goto exit

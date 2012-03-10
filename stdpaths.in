@@ -28,6 +28,7 @@
 
 -src $~/goclsp/vm
 
+-src $~/goclsp/noopmain
 -src $~/goclsp/vm_str
 -src $~/miscsrc/jpropjav
 -src $~/rflg_out
