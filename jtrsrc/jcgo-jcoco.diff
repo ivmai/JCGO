@@ -9,14 +9,49 @@ diff -ruN jcgo-generated-by-jcoco115/ErrorStream.java jcgo-modified/ErrorStream.
  
 diff -ruN jcgo-generated-by-jcoco115/Parser.java jcgo-modified/Parser.java
 --- jcgo-generated-by-jcoco115/Parser.java	2009-12-29 12:01:38.000000000 +0300
-+++ jcgo-modified/Parser.java	2009-12-29 12:05:28.000000000 +0300
-@@ -1,4 +1,4 @@
++++ jcgo-modified/Parser.java	2012-03-12 19:21:11.000000000 +0400
+@@ -1,10 +1,7 @@
 -package comivmaisoftjcgo;
+-
+-import java.util.*;
 +package com.ivmaisoft.jcgo;
  
- import java.util.*;
+ public class Parser {
+ 	private static final int maxT = 104;
+-	private static final int maxP = 104;
  
-@@ -1847,7 +1847,7 @@
+ 	private static final boolean T = true;
+ 	private static final boolean x = false;
+@@ -69,28 +66,6 @@
+ 		return set[s][t.kind];
+ 	}
+ 
+-	private static void ExpectWeak(int n, int follow) {
+-		if (t.kind == n) Get();
+-		else {
+-			Error(n);
+-			while (!StartOf(follow)) Get();
+-		}
+-	}
+-
+-	private static boolean WeakSeparator(int n, int syFol, int repFol) {
+-		boolean[] s = new boolean[maxT+1];
+-		if (t.kind == n) {Get(); return true;}
+-		else if (StartOf(repFol)) return false;
+-		else {
+-			for (int i = 0; i <= maxT; i++) {
+-				s[i] = set[syFol][i] || set[repFol][i] || set[0][i];
+-			}
+-			Error(n);
+-			while (!s[t.kind]) Get();
+-			return StartOf(syFol);
+-		}
+-	}
+-
+ 	private static Term UnaryWithIdentTailOrDimExprs(Term a) {
+ 		Term z;
+ 		z = Empty.term;
+@@ -1847,7 +1822,7 @@
  			z = WhileStatement();
  			break;
  		}
@@ -25,9 +60,24 @@ diff -ruN jcgo-generated-by-jcoco115/Parser.java jcgo-modified/Parser.java
  			z = ExprOrLabeledStmntOrVarDecl();
  			break;
  		}
+@@ -2638,12 +2613,11 @@
+ 	}
+ 
+ 	private static void Annotation() {
+-		Term b;
+ 		Expect(10);
+-		b = QualifiedIdentifier();
++		QualifiedIdentifier();
+ 		if (t.kind == 11) {
+ 			Get();
+-			b = QualifiedIdentifierOrString();
++			QualifiedIdentifierOrString();
+ 			Expect(12);
+ 		}
+ 	}
 diff -ruN jcgo-generated-by-jcoco115/Scanner.java jcgo-modified/Scanner.java
 --- jcgo-generated-by-jcoco115/Scanner.java	2009-12-29 12:01:40.000000000 +0300
-+++ jcgo-modified/Scanner.java	2009-12-29 12:08:52.000000000 +0300
++++ jcgo-modified/Scanner.java	2012-03-12 19:15:41.000000000 +0400
 @@ -1,16 +1,16 @@
 -package comivmaisoftjcgo;
 +package com.ivmaisoft.jcgo;
@@ -102,7 +152,29 @@ diff -ruN jcgo-generated-by-jcoco115/Scanner.java jcgo-modified/Scanner.java
  		else if (ch == CR) {line++; lineStart = pos + 1;}
  		else if (ch == LF) {
  			if (lastCh != CR) line++;
-@@ -142,6 +165,7 @@
+@@ -115,7 +138,7 @@
+ 	}
+ 
+ 	private static boolean Comment0() {
+-		int level = 1, line0 = line, lineStart0 = lineStart; char startCh;
++		int level = 1; 
+ 		NextCh();
+ 		if (ch == '*') {
+ 			NextCh();
+@@ -131,17 +154,18 @@
+ 					else NextCh();
+ 				}
+ 		} else {
+-			if (ch == CR || ch == LF) {line--; lineStart = lineStart0;}
++			if (ch == CR || ch == LF) {line--;}
+ 			pos = pos - 2; Buffer.Set(pos+1); NextCh();
+ 		}
+ 		return false;
+ 	}
+ 	private static boolean Comment1() {
+-		int level = 1, line0 = line, lineStart0 = lineStart; char startCh;
++		int level = 1; 
+ 		NextCh();
  		if (ch == '/') {
  			NextCh();
  			for(;;) {
@@ -110,6 +182,23 @@ diff -ruN jcgo-generated-by-jcoco115/Scanner.java jcgo-modified/Scanner.java
  				if (ch == 10) {
  					level--;
  					if (level == 0) {NextCh(); return true;}
+@@ -150,7 +174,7 @@
+ 					else NextCh();
+ 				}
+ 		} else {
+-			if (ch == CR || ch == LF) {line--; lineStart = lineStart0;}
++			if (ch == CR || ch == LF) {line--;}
+ 			pos = pos - 2; Buffer.Set(pos+1); NextCh();
+ 		}
+ 		return false;
+@@ -250,7 +274,6 @@
+ 		t.pos = pos; t.col = pos - lineStart + 1; t.line = line;
+ 		StringBuffer buf = new StringBuffer();
+ 		int state = start[ch];
+-		int apx = 0;
+ 		loop: for (;;) {
+ 			buf.append(strCh);
+ 			NextCh();
 diff -ruN jcgo-generated-by-jcoco115/Token.java jcgo-modified/Token.java
 --- jcgo-generated-by-jcoco115/Token.java	1970-01-01 03:00:00.000000000 +0300
 +++ jcgo-modified/Token.java	2009-12-29 12:13:14.000000000 +0300

@@ -1,10 +1,7 @@
 package com.ivmaisoft.jcgo;
 
-import java.util.*;
-
 public class Parser {
 	private static final int maxT = 104;
-	private static final int maxP = 104;
 
 	private static final boolean T = true;
 	private static final boolean x = false;
@@ -67,28 +64,6 @@ public class Parser {
 
 	private static boolean StartOf(int s) {
 		return set[s][t.kind];
-	}
-
-	private static void ExpectWeak(int n, int follow) {
-		if (t.kind == n) Get();
-		else {
-			Error(n);
-			while (!StartOf(follow)) Get();
-		}
-	}
-
-	private static boolean WeakSeparator(int n, int syFol, int repFol) {
-		boolean[] s = new boolean[maxT+1];
-		if (t.kind == n) {Get(); return true;}
-		else if (StartOf(repFol)) return false;
-		else {
-			for (int i = 0; i <= maxT; i++) {
-				s[i] = set[syFol][i] || set[repFol][i] || set[0][i];
-			}
-			Error(n);
-			while (!s[t.kind]) Get();
-			return StartOf(syFol);
-		}
 	}
 
 	private static Term UnaryWithIdentTailOrDimExprs(Term a) {
@@ -2638,12 +2613,11 @@ d : new PrimaryFieldAccess(a, c));
 	}
 
 	private static void Annotation() {
-		Term b;
 		Expect(10);
-		b = QualifiedIdentifier();
+		QualifiedIdentifier();
 		if (t.kind == 11) {
 			Get();
-			b = QualifiedIdentifierOrString();
+			QualifiedIdentifierOrString();
 			Expect(12);
 		}
 	}

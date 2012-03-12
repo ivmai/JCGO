@@ -138,7 +138,7 @@ public class Scanner {
 	}
 
 	private static boolean Comment0() {
-		int level = 1, line0 = line, lineStart0 = lineStart; char startCh;
+		int level = 1; 
 		NextCh();
 		if (ch == '*') {
 			NextCh();
@@ -154,13 +154,13 @@ public class Scanner {
 					else NextCh();
 				}
 		} else {
-			if (ch == CR || ch == LF) {line--; lineStart = lineStart0;}
+			if (ch == CR || ch == LF) {line--;}
 			pos = pos - 2; Buffer.Set(pos+1); NextCh();
 		}
 		return false;
 	}
 	private static boolean Comment1() {
-		int level = 1, line0 = line, lineStart0 = lineStart; char startCh;
+		int level = 1; 
 		NextCh();
 		if (ch == '/') {
 			NextCh();
@@ -174,7 +174,7 @@ public class Scanner {
 					else NextCh();
 				}
 		} else {
-			if (ch == CR || ch == LF) {line--; lineStart = lineStart0;}
+			if (ch == CR || ch == LF) {line--;}
 			pos = pos - 2; Buffer.Set(pos+1); NextCh();
 		}
 		return false;
@@ -274,7 +274,6 @@ public class Scanner {
 		t.pos = pos; t.col = pos - lineStart + 1; t.line = line;
 		StringBuffer buf = new StringBuffer();
 		int state = start[ch];
-		int apx = 0;
 		loop: for (;;) {
 			buf.append(strCh);
 			NextCh();
