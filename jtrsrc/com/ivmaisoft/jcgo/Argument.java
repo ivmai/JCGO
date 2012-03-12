@@ -38,8 +38,6 @@
 
 package com.ivmaisoft.jcgo;
 
-import java.util.Enumeration;
-
 /**
  * Grammar production for a function argument.
  **

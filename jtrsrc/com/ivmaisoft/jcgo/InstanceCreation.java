@@ -470,7 +470,6 @@ final class InstanceCreation extends LexNode
 
  private String decodeArgAsString(int index)
  {
-  String str;
   Term t = terms[2].getArgumentTerm(index);
   return t != null ? t.strLiteralValueGuess() : null;
  }

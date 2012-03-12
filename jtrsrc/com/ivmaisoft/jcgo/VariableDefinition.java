@@ -114,8 +114,6 @@ final class VariableDefinition
 
  private boolean isNotNullSet;
 
- private boolean isImmutable;
-
  private boolean isLiteral;
 
  private boolean isImmutableValSet;

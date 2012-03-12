@@ -45,6 +45,8 @@ package com.ivmaisoft.jcgo;
 final class TranslateException extends RuntimeException
 {
 
+	private static final long serialVersionUID = 7942273872694019291L;
+
  TranslateException(String msg)
  {
   super(msg);

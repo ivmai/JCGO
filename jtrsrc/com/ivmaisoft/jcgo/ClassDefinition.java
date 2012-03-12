@@ -2089,7 +2089,6 @@ final class ClassDefinition extends ExpressionType
   if (size > 0)
   {
    names = sortStrings(names, size);
-   String[] sortednames = new String[size];
    for (int i = 0; i < size; i++)
    {
     String s = names[i];
@@ -4316,7 +4315,6 @@ final class ClassDefinition extends ExpressionType
  private void outputCoreClasses()
  {
   ClassDefinition classClassDefn = Main.dict.get(Names.JAVA_LANG_CLASS);
-  ClassDefinition stringClassDefn = Main.dict.get(Names.JAVA_LANG_STRING);
   ArrayLiteral noIfacesArr = Main.dict.addArrayLiteral(new ArrayLiteral(
                               classClassDefn, "", 0, false), this, false);
   StringBuffer sb = new StringBuffer();
@@ -4504,7 +4502,6 @@ final class ClassDefinition extends ExpressionType
      outputContext.cPrint(" (CFASTCALL*)(");
      outputContext.cPrint(Type.cName[Type.VOID]);
      outputContext.cPrint("))");
-     MethodDefinition md2;
      outputContext.cPrint(md.allowOverride() && !md.isConstructor() ?
       "JCGO_OFFSET_OF(struct " + vTableCName() + "_s, " + md.csign() + ")" :
       md.routineCName());

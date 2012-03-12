@@ -919,7 +919,6 @@ final class MethodInvocation extends LexNode
 
  private String decodeFirstArgAsString()
  {
-  String str;
   Term t = terms[2].getArgumentTerm(0);
   return t != null ? t.strLiteralValueGuess() : null;
  }

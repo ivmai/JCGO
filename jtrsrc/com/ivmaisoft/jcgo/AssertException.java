@@ -45,6 +45,8 @@ package com.ivmaisoft.jcgo;
 final class AssertException extends RuntimeException
 {
 
+ 	private static final long serialVersionUID = -7563450024130336533L;
+
  AssertException()
  {
   super("Assert failure");
