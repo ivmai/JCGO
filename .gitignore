@@ -27,3 +27,6 @@
 /*.tar
 /*.tar.bz2
 /*.tar.gz
+
+/.project
+/.settings/
