@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -45,124 +45,114 @@ import java.util.NoSuchElementException;
  * An ordered queue of objects (single-linked list).
  */
 
-final class ObjQueue
-{
+final class ObjQueue {
 
- private ObjQueueEntry first;
+    private ObjQueueEntry first;
 
- private ObjQueueEntry last;
+    private ObjQueueEntry last;
 
- ObjQueue() {}
+    ObjQueue() {
+    }
 
- boolean isEmpty()
- {
-  return first == null;
- }
+    boolean isEmpty() {
+        return first == null;
+    }
 
- void addLast(Object obj)
- {
-  ObjQueueEntry entry = new ObjQueueEntry(obj);
-  if (last != null)
-   last.next = entry;
-   else first = entry;
-  last = entry;
- }
+    void addLast(Object obj) {
+        ObjQueueEntry entry = new ObjQueueEntry(obj);
+        if (last != null) {
+            last.next = entry;
+        } else {
+            first = entry;
+        }
+        last = entry;
+    }
 
- Object removeFirst()
- {
-  ObjQueueEntry entry = first;
-  Term.assertCond(entry != null);
-  if ((first = entry.next) == null)
-   last = null;
-  return entry.value;
- }
+    Object removeFirst() {
+        ObjQueueEntry entry = first;
+        Term.assertCond(entry != null);
+        if ((first = entry.next) == null) {
+            last = null;
+        }
+        return entry.value;
+    }
 
- void addAllMovedFrom(ObjQueue queue)
- {
-  ObjQueueEntry entry = queue.first;
-  if (entry != null)
-  {
-   ObjQueueEntry last;
-   if ((last = this.last) != null)
-    last.next = entry;
-    else first = entry;
-   this.last = queue.last;
-   queue.first = null;
-   queue.last = null;
-  }
- }
+    void addAllMovedFrom(ObjQueue queue) {
+        ObjQueueEntry entry = queue.first;
+        if (entry != null) {
+            ObjQueueEntry last;
+            if ((last = this.last) != null) {
+                last.next = entry;
+            } else {
+                first = entry;
+            }
+            this.last = queue.last;
+            queue.first = null;
+            queue.last = null;
+        }
+    }
 
- boolean contains(Object obj)
- {
-  Term.assertCond(obj != null);
-  for (ObjQueueEntry entry = first; entry != null; entry = entry.next)
-   if (obj.equals(entry.value))
-    return true;
-  return false;
- }
+    boolean contains(Object obj) {
+        Term.assertCond(obj != null);
+        for (ObjQueueEntry entry = first; entry != null; entry = entry.next) {
+            if (obj.equals(entry.value))
+                return true;
+        }
+        return false;
+    }
 
- int countSize()
- {
-  int size = 0;
-  for (ObjQueueEntry entry = first; entry != null; entry = entry.next)
-   size++;
-  return size;
- }
+    int countSize() {
+        int size = 0;
+        for (ObjQueueEntry entry = first; entry != null; entry = entry.next) {
+            size++;
+        }
+        return size;
+    }
 
- void copyInto(Object[] anArray)
- {
-  ObjQueueEntry entry = first;
-  int len = anArray.length;
-  for (int i = 0; i < len; i++)
-  {
-   if (entry == null)
-    break;
-   anArray[i] = entry.value;
-   entry = entry.next;
-  }
- }
+    void copyInto(Object[] anArray) {
+        ObjQueueEntry entry = first;
+        int len = anArray.length;
+        for (int i = 0; i < len; i++) {
+            if (entry == null)
+                break;
+            anArray[i] = entry.value;
+            entry = entry.next;
+        }
+    }
 
- Enumeration elements()
- {
-  return new ObjQueueEnumerator(first);
- }
+    Enumeration elements() {
+        return new ObjQueueEnumerator(first);
+    }
 }
 
-final class ObjQueueEntry
-{
+final class ObjQueueEntry {
 
- /* final */ Object value;
+    /* final */Object value;
 
- ObjQueueEntry next;
+    ObjQueueEntry next;
 
- ObjQueueEntry(Object value)
- {
-  this.value = value;
- }
+    ObjQueueEntry(Object value) {
+        this.value = value;
+    }
 }
 
-final class ObjQueueEnumerator
- implements Enumeration
-{
+final class ObjQueueEnumerator implements Enumeration {
 
- private ObjQueueEntry entry;
+    private ObjQueueEntry entry;
 
- ObjQueueEnumerator(ObjQueueEntry first)
- {
-  entry = first;
- }
+    ObjQueueEnumerator(ObjQueueEntry first) {
+        entry = first;
+    }
 
- public boolean hasMoreElements()
- {
-  return entry != null;
- }
+    public boolean hasMoreElements() {
+        return entry != null;
+    }
 
- public Object nextElement()
- {
-  ObjQueueEntry entry = this.entry;
-  if (entry == null)
-   throw new NoSuchElementException();
-  this.entry = entry.next;
-  return entry.value;
- }
+    public Object nextElement() {
+        ObjQueueEntry entry = this.entry;
+        if (entry == null)
+            throw new NoSuchElementException();
+        this.entry = entry.next;
+        return entry.value;
+    }
 }

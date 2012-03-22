@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,48 +40,46 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a class definition.
- **
- * Format:
- * CLASS ID [Extends] [Implements] ClassBody
+ ** 
+ * Format: CLASS ID [Extends] [Implements] ClassBody
  */
 
-class ClassDeclaration extends LexNode
-{
+class ClassDeclaration extends LexNode {
 
- private ClassDefinition classDefn;
+    private ClassDefinition classDefn;
 
- ClassDeclaration(Term b, Term c, Term d, Term e)
- {
-  super(b, c, d, e);
- }
+    ClassDeclaration(Term b, Term c, Term d, Term e) {
+        super(b, c, d, e);
+    }
 
- final void processPass0(Context c)
- {
-  String id = terms[0].dottedName();
-  String name;
-  if (c.currentClass == null)
-   name = c.packageName + id;
-   else name = c.localScope != null ? c.currentClass.nextLocalClassName(id) :
-                c.currentClass.name() + "$" + id;
-  if ((c.modifiers & (AccModifier.SYNCHRONIZED | AccModifier.VOLATILE |
-      AccModifier.TRANSIENT | AccModifier.NATIVE)) != 0 ||
-      ((c.modifiers & AccModifier.STATIC) != 0 && c.currentClass == null))
-   fatalError(c, "Illegal modifier specified for class: " + name);
-  if ((c.modifiers & AccModifier.FINAL) != 0 && isInterface())
-   fatalError(c, "An interface cannot be final: " + name);
-  classDefn = Main.dict.get(name);
-  classDefn.definePass0(c, c.modifiers, id, terms[1], terms[2], terms[3],
-   isInterface());
- }
+    final void processPass0(Context c) {
+        String id = terms[0].dottedName();
+        String name;
+        if (c.currentClass == null) {
+            name = c.packageName + id;
+        } else {
+            name = c.localScope != null ? c.currentClass.nextLocalClassName(id)
+                    : c.currentClass.name() + "$" + id;
+        }
+        if ((c.modifiers & (AccModifier.SYNCHRONIZED | AccModifier.VOLATILE
+                | AccModifier.TRANSIENT | AccModifier.NATIVE)) != 0
+                || ((c.modifiers & AccModifier.STATIC) != 0 && c.currentClass == null)) {
+            fatalError(c, "Illegal modifier specified for class: " + name);
+        }
+        if ((c.modifiers & AccModifier.FINAL) != 0 && isInterface()) {
+            fatalError(c, "An interface cannot be final: " + name);
+        }
+        classDefn = Main.dict.get(name);
+        classDefn.definePass0(c, c.modifiers, id, terms[1], terms[2], terms[3],
+                isInterface());
+    }
 
- boolean isInterface()
- {
-  return false;
- }
+    boolean isInterface() {
+        return false;
+    }
 
- final void processPass1(Context c)
- {
-  assertCond(classDefn != null);
-  classDefn.processPass1(c);
- }
+    final void processPass1(Context c) {
+        assertCond(classDefn != null);
+        classDefn.processPass1(c);
+    }
 }

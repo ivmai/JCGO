@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,40 +40,34 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for an array type.
- **
- * Format:
- * PrimitiveType/ClassOrIfaceType Dims
+ ** 
+ * Format: PrimitiveType/ClassOrIfaceType Dims
  */
 
-final class TypeWithDims extends LexNode
-{
+final class TypeWithDims extends LexNode {
 
- private int dims = -1;
+    private int dims = -1;
 
- TypeWithDims(Term a, Term b)
- {
-  super(a, b);
- }
+    TypeWithDims(Term a, Term b) {
+        super(a, b);
+    }
 
- void processPass1(Context c)
- {
-  c.typeDims = 0;
-  terms[1].processPass1(c);
-  terms[0].processPass1(c);
-  assertCond(c.typeClassDefinition.objectSize() != Type.VOID);
-  dims = c.typeDims;
- }
+    void processPass1(Context c) {
+        c.typeDims = 0;
+        terms[1].processPass1(c);
+        terms[0].processPass1(c);
+        assertCond(c.typeClassDefinition.objectSize() != Type.VOID);
+        dims = c.typeDims;
+    }
 
- ExpressionType exprType()
- {
-  assertCond(dims >= 0);
-  ExpressionType exprType = terms[0].exprType();
-  return dims > 0 ? exprType.signatureClass().asExprType(
-          exprType.signatureDimensions() + dims) : exprType;
- }
+    ExpressionType exprType() {
+        assertCond(dims >= 0);
+        ExpressionType exprType = terms[0].exprType();
+        return dims > 0 ? exprType.signatureClass().asExprType(
+                exprType.signatureDimensions() + dims) : exprType;
+    }
 
- boolean isType()
- {
-  return true;
- }
+    boolean isType() {
+        return true;
+    }
 }

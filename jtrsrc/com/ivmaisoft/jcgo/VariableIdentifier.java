@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,106 +42,99 @@ import java.util.Enumeration;
 
 /**
  * Grammar production for the identifier in a variable definition.
- **
- * Format:
- * ID
+ ** 
+ * Format: ID
  */
 
-final class VariableIdentifier extends LexNode
-{
+final class VariableIdentifier extends LexNode {
 
- private VariableDefinition v;
+    private VariableDefinition v;
 
- VariableIdentifier(Term a)
- {
-  super(a);
- }
-
- void processPass1(Context c)
- {
-  if (v == null)
-  {
-   ClassDefinition ourClass = c.currentClass;
-   String name = terms[0].dottedName();
-   v = new VariableDefinition(ourClass, name, c.modifiers,
-        c.typeClassDefinition.asExprType(c.typeDims), c.varInitializer,
-        (c.modifiers & (AccModifier.STATIC | AccModifier.FINAL |
-        AccModifier.LOCALVAR | AccModifier.PARAMETER)) == AccModifier.FINAL &&
-        ourClass.name().equals(Names.JAVA_LANG_STRING) &&
-        name.equals(Names.fieldsOrderString[0]));
-   if (v.isLocalOrParam())
-   {
-    assertCond(c.currentMethod != null);
-    if (!c.currentMethod.addLocalVariable(v))
-     fatalError(c, "Duplicate local variable definition: " + name);
-    v.setLocalScope(c.localScope);
-    v.initializerPassOne(c);
-    if (v.hasInitializer())
-     v.setUnassigned(false);
-   }
-    else
-    {
-     if (!v.isClassVariable() && (ourClass.isInterface() ||
-         ourClass.name().equals(Names.JAVA_LANG_OBJECT)))
-      fatalError(c, "An interface cannot contain instance field: " + name);
-     VariableDefinition old = ourClass.addField(v);
-     if (old != null && old.definingClass() == ourClass)
-      fatalError(c, "Duplicate field definition: " + name);
+    VariableIdentifier(Term a) {
+        super(a);
     }
-  }
- }
 
- String dottedName()
- {
-  return terms[0].dottedName();
- }
+    void processPass1(Context c) {
+        if (v == null) {
+            ClassDefinition ourClass = c.currentClass;
+            String name = terms[0].dottedName();
+            v = new VariableDefinition(
+                    ourClass,
+                    name,
+                    c.modifiers,
+                    c.typeClassDefinition.asExprType(c.typeDims),
+                    c.varInitializer,
+                    (c.modifiers & (AccModifier.STATIC | AccModifier.FINAL
+                            | AccModifier.LOCALVAR | AccModifier.PARAMETER)) == AccModifier.FINAL
+                            && ourClass.name().equals(Names.JAVA_LANG_STRING)
+                            && name.equals(Names.fieldsOrderString[0]));
+            if (v.isLocalOrParam()) {
+                assertCond(c.currentMethod != null);
+                if (!c.currentMethod.addLocalVariable(v)) {
+                    fatalError(c, "Duplicate local variable definition: "
+                            + name);
+                }
+                v.setLocalScope(c.localScope);
+                v.initializerPassOne(c);
+                if (v.hasInitializer()) {
+                    v.setUnassigned(false);
+                }
+            } else {
+                if (!v.isClassVariable()
+                        && (ourClass.isInterface() || ourClass.name().equals(
+                                Names.JAVA_LANG_OBJECT))) {
+                    fatalError(c,
+                            "An interface cannot contain instance field: "
+                                    + name);
+                }
+                VariableDefinition old = ourClass.addField(v);
+                if (old != null && old.definingClass() == ourClass) {
+                    fatalError(c, "Duplicate field definition: " + name);
+                }
+            }
+        }
+    }
 
- ExpressionType exprType()
- {
-  assertCond(v != null);
-  return v.exprType();
- }
+    String dottedName() {
+        return terms[0].dottedName();
+    }
 
- boolean isLiteral()
- {
-  return v != null && v.isLiteral();
- }
+    ExpressionType exprType() {
+        assertCond(v != null);
+        return v.exprType();
+    }
 
- VariableDefinition getVariable(boolean allowInstance)
- {
-  return v;
- }
+    boolean isLiteral() {
+        return v != null && v.isLiteral();
+    }
 
- void processOutput(OutputContext oc)
- {
-  assertCond(v != null);
-  oc.cPrint(v.stringOutput(This.CNAME, 1, true));
- }
+    VariableDefinition getVariable(boolean allowInstance) {
+        return v;
+    }
 
- void parameterOutput(OutputContext oc, boolean asArg, int type)
- {
-  assertCond(v != null);
-  v.parameterOutput(oc, asArg, type);
- }
+    void processOutput(OutputContext oc) {
+        assertCond(v != null);
+        oc.cPrint(v.stringOutput(This.CNAME, 1, true));
+    }
 
- void storeSignature(ObjVector parmSig)
- {
-  assertCond(v != null);
-  parmSig.addElement(v.exprType());
- }
+    void parameterOutput(OutputContext oc, boolean asArg, int type) {
+        assertCond(v != null);
+        v.parameterOutput(oc, asArg, type);
+    }
 
- void setTraceExprType(Enumeration en)
- {
-  if (en != null)
-  {
-   boolean hasElements = en.hasMoreElements();
-   assertCond(v != null && hasElements);
-   v.setTraceExprType((ExpressionType) en.nextElement(), true);
-  }
-   else
-   {
-    assertCond(v != null);
-    v.setTraceExprType(v.exprType(), true);
-   }
- }
+    void storeSignature(ObjVector parmSig) {
+        assertCond(v != null);
+        parmSig.addElement(v.exprType());
+    }
+
+    void setTraceExprType(Enumeration en) {
+        if (en != null) {
+            boolean hasElements = en.hasMoreElements();
+            assertCond(v != null && hasElements);
+            v.setTraceExprType((ExpressionType) en.nextElement(), true);
+        } else {
+            assertCond(v != null);
+            v.setTraceExprType(v.exprType(), true);
+        }
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,33 +40,27 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for an array initializer elements.
- **
- * Format:
- * ArrElementInit COMMA ArrElementInit
- * ArrElementInit COMMA VariableInitializers
+ ** 
+ * Format: ArrElementInit COMMA ArrElementInit ArrElementInit COMMA
+ * VariableInitializers
  */
 
-final class VarInitializers extends LexNode
-{
+final class VarInitializers extends LexNode {
 
- VarInitializers(Term a, Term c)
- {
-  super(a, c);
- }
+    VarInitializers(Term a, Term c) {
+        super(a, c);
+    }
 
- boolean storeClassLiteralsGuess(ObjVector parmSig, boolean isActual)
- {
-  return terms[0].storeClassLiteralsGuess(parmSig, isActual) &&
-          terms[1].storeClassLiteralsGuess(parmSig, isActual);
- }
+    boolean storeClassLiteralsGuess(ObjVector parmSig, boolean isActual) {
+        return terms[0].storeClassLiteralsGuess(parmSig, isActual)
+                && terms[1].storeClassLiteralsGuess(parmSig, isActual);
+    }
 
- boolean isLiteral()
- {
-  return terms[0].isLiteral() && terms[1].isLiteral();
- }
+    boolean isLiteral() {
+        return terms[0].isLiteral() && terms[1].isLiteral();
+    }
 
- boolean isSafeWithThrow()
- {
-  return terms[0].isSafeWithThrow() && terms[1].isSafeWithThrow();
- }
+    boolean isSafeWithThrow() {
+        return terms[0].isSafeWithThrow() && terms[1].isSafeWithThrow();
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -44,45 +44,41 @@ import java.util.Enumeration;
  * Grammar production for the end of a block.
  */
 
-final class RightBrace extends LexNode
-{
+final class RightBrace extends LexNode {
 
- private String continueLabel;
+    private String continueLabel;
 
- RightBrace() {}
+    RightBrace() {
+    }
 
- void processPass0(Context c)
- {
-  c.localScope = c.localScope.outerScope();
- }
+    void processPass0(Context c) {
+        c.localScope = c.localScope.outerScope();
+    }
 
- int tokenCount()
- {
-  return 0;
- }
+    int tokenCount() {
+        return 0;
+    }
 
- void processPass1(Context c)
- {
-  LeftBrace scope = c.localScope;
-  c.localScope = scope.outerScope();
-  continueLabel = scope.continueLabel();
-  Enumeration en = scope.localElements();
-  if (en != null)
-  {
-   assertCond(c.currentMethod != null);
-   while (en.hasMoreElements())
-    c.currentMethod.delLocalVar(((VariableDefinition) en.nextElement()).id());
-  }
- }
+    void processPass1(Context c) {
+        LeftBrace scope = c.localScope;
+        c.localScope = scope.outerScope();
+        continueLabel = scope.continueLabel();
+        Enumeration en = scope.localElements();
+        if (en != null) {
+            assertCond(c.currentMethod != null);
+            while (en.hasMoreElements()) {
+                c.currentMethod.delLocalVar(((VariableDefinition) en
+                        .nextElement()).id());
+            }
+        }
+    }
 
- void processOutput(OutputContext oc)
- {
-  if (continueLabel != null)
-  {
-   oc.cPrint("\n");
-   oc.cPrint(continueLabel);
-   oc.cPrint(":;");
-  }
-  oc.cPrint("}");
- }
+    void processOutput(OutputContext oc) {
+        if (continueLabel != null) {
+            oc.cPrint("\n");
+            oc.cPrint(continueLabel);
+            oc.cPrint(":;");
+        }
+        oc.cPrint("}");
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,64 +40,58 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for super.
- **
- * Formats:
- * SUPER
- * Expression(QualifiedName) DOT SUPER
+ ** 
+ * Formats: SUPER Expression(QualifiedName) DOT SUPER
  */
 
-final class Super extends This
-{
+final class Super extends This {
 
- Super() {}
+    Super() {
+    }
 
- Super(Term a)
- {
-  super(a);
- }
+    Super(Term a) {
+        super(a);
+    }
 
- void processPass1(Context c)
- {
-  if (super.exprType() == null && terms[0].notEmpty())
-   terms[0] = new ClassOrIfaceType(new LexTerm(LexTerm.ID,
-               terms[0].dottedName()));
-  super.processPass1(c);
- }
+    void processPass1(Context c) {
+        if (super.exprType() == null && terms[0].notEmpty()) {
+            terms[0] = new ClassOrIfaceType(new LexTerm(LexTerm.ID,
+                    terms[0].dottedName()));
+        }
+        super.processPass1(c);
+    }
 
- ExpressionType exprType()
- {
-  ExpressionType classDefnExpr = super.exprType();
-  assertCond(classDefnExpr != null);
-  ClassDefinition classDefn = classDefnExpr.receiverClass();
-  ClassDefinition aclass = classDefn.superClass();
-  if (aclass == null)
-   aclass = classDefn;
-  return aclass;
- }
+    ExpressionType exprType() {
+        ExpressionType classDefnExpr = super.exprType();
+        assertCond(classDefnExpr != null);
+        ClassDefinition classDefn = classDefnExpr.receiverClass();
+        ClassDefinition aclass = classDefn.superClass();
+        if (aclass == null) {
+            aclass = classDefn;
+        }
+        return aclass;
+    }
 
- ExpressionType actualExprType()
- {
-  ExpressionType classDefnExpr = super.exprType();
-  assertCond(classDefnExpr != null);
-  ClassDefinition classDefn = classDefnExpr.receiverClass();
-  ClassDefinition aclass = classDefn.superClass();
-  if (aclass == null)
-   aclass = classDefn;
-  return aclass.asExactClassType();
- }
+    ExpressionType actualExprType() {
+        ExpressionType classDefnExpr = super.exprType();
+        assertCond(classDefnExpr != null);
+        ClassDefinition classDefn = classDefnExpr.receiverClass();
+        ClassDefinition aclass = classDefn.superClass();
+        if (aclass == null) {
+            aclass = classDefn;
+        }
+        return aclass.asExactClassType();
+    }
 
- boolean isSuper(boolean onlyEmpty)
- {
-  return !onlyEmpty || !terms[0].notEmpty();
- }
+    boolean isSuper(boolean onlyEmpty) {
+        return !onlyEmpty || !terms[0].notEmpty();
+    }
 
- int tokenCount()
- {
-  return 0;
- }
+    int tokenCount() {
+        return 0;
+    }
 
- ExpressionType traceClassInit()
- {
-  return null;
- }
+    ExpressionType traceClassInit() {
+        return null;
+    }
 }

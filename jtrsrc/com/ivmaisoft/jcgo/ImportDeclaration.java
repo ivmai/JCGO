@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,25 +40,23 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for the import statement.
- **
- * Format:
- * IMPORT QualifiedName [DOT TIMES] SEMI
+ ** 
+ * Format: IMPORT QualifiedName [DOT TIMES] SEMI
  */
 
-final class ImportDeclaration extends LexNode
-{
+final class ImportDeclaration extends LexNode {
 
- ImportDeclaration(Term b)
- {
-  super(b);
- }
+    ImportDeclaration(Term b) {
+        super(b);
+    }
 
- void processPass0(Context c)
- {
-  c.addImport(terms[0].dottedName());
- }
+    void processPass0(Context c) {
+        c.addImport(terms[0].dottedName());
+    }
 
- void processPass1(Context c) {}
+    void processPass1(Context c) {
+    }
 
- void processOutput(OutputContext oc) {}
+    void processOutput(OutputContext oc) {
+    }
 }

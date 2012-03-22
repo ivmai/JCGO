@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -44,42 +44,33 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
 /**
- * This class is for writing the output files.
- * A file may be closed and re-opened again many times.
+ * This class is for writing the output files. A file may be closed and
+ * re-opened again many times.
  */
 
-final class FileAppendOutput extends OutputStream
-{
+final class FileAppendOutput extends OutputStream {
 
- private RandomAccessFile raf;
+    private RandomAccessFile raf;
 
- FileAppendOutput(File f, boolean opened)
-  throws IOException
- {
-  raf = new RandomAccessFile(f, "rw");
-  long len = raf.length();
-  if ((len == 0L) == opened)
-   throw new IOException();
-  raf.seek(len);
- }
+    FileAppendOutput(File f, boolean opened) throws IOException {
+        raf = new RandomAccessFile(f, "rw");
+        long len = raf.length();
+        if ((len == 0L) == opened)
+            throw new IOException();
+        raf.seek(len);
+    }
 
- public void write(int v)
-  throws IOException
- {
-  raf.write(v);
-  Main.dict.outBytesCount++;
- }
+    public void write(int v) throws IOException {
+        raf.write(v);
+        Main.dict.outBytesCount++;
+    }
 
- public void write(byte[] b, int off, int len)
-  throws IOException
- {
-  raf.write(b, off, len);
-  Main.dict.outBytesCount += len;
- }
+    public void write(byte[] b, int off, int len) throws IOException {
+        raf.write(b, off, len);
+        Main.dict.outBytesCount += len;
+    }
 
- public void close()
-  throws IOException
- {
-  raf.close();
- }
+    public void close() throws IOException {
+        raf.close();
+    }
 }

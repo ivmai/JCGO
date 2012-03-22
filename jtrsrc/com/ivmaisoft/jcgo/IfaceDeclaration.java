@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,21 +40,17 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for the definition of an interface.
- **
- * Format:
- * INTERFACE ID [ExtendsTypes] InterfaceBody
+ ** 
+ * Format: INTERFACE ID [ExtendsTypes] InterfaceBody
  */
 
-final class IfaceDeclaration extends ClassDeclaration
-{
+final class IfaceDeclaration extends ClassDeclaration {
 
- IfaceDeclaration(Term b, Term c, Term d)
- {
-  super(b, Empty.newTerm(), c, d);
- }
+    IfaceDeclaration(Term b, Term c, Term d) {
+        super(b, Empty.newTerm(), c, d);
+    }
 
- boolean isInterface()
- {
-  return true;
- }
+    boolean isInterface() {
+        return true;
+    }
 }

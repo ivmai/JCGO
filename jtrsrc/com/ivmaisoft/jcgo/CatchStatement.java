@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,149 +40,143 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a catch clause.
- **
- * Format:
- * CATCH LPAREN AccModifier/Empty ClassOrIfaceType VariableIdentifier RPAREN LBRACE [BlockStatements] RBRACE
+ ** 
+ * Format: CATCH LPAREN AccModifier/Empty ClassOrIfaceType VariableIdentifier
+ * RPAREN LBRACE [BlockStatements] RBRACE
  */
 
-final class CatchStatement extends LexNode
-{
+final class CatchStatement extends LexNode {
 
- private ClassDefinition cd;
+    private ClassDefinition cd;
 
- private VariableDefinition v;
+    private VariableDefinition v;
 
- CatchStatement(Term c, Term d, Term e, Term h)
- {
-  super(c, d, e, new LeftBrace(), h, new RightBrace());
- }
+    CatchStatement(Term c, Term d, Term e, Term h) {
+        super(c, d, e, new LeftBrace(), h, new RightBrace());
+    }
 
- ClassDefinition defineClass(Context c, ObjVector vec)
- {
-  terms[1].processPass1(c);
-  cd = c.typeClassDefinition;
-  assertCond(vec == null && cd.objectSize() == Type.CLASSINTERFACE);
-  return null;
- }
+    ClassDefinition defineClass(Context c, ObjVector vec) {
+        terms[1].processPass1(c);
+        cd = c.typeClassDefinition;
+        assertCond(vec == null && cd.objectSize() == Type.CLASSINTERFACE);
+        return null;
+    }
 
- void processPass1(Context c)
- {
-  assertCond(cd != null);
-  c.isConditional = true;
-  terms[3].processPass1(c);
-  int oldModifiers = c.modifiers;
-  c.modifiers = AccModifier.LOCALVAR | AccModifier.PARAMETER;
-  terms[0].processPass1(c);
-  c.varInitializer = Empty.newTerm();
-  c.typeDims = 0;
-  c.typeClassDefinition = cd;
-  terms[2].processPass1(c);
-  c.modifiers = oldModifiers;
-  v = terms[2].getVariable(false);
-  assertCond(v != null);
-  if (cd.isInterface() || (cd.defined() && !cd.isThrowable()))
-   fatalError(c,
-    "Interfaces and non-Throwable classes are not allowed in catches: " +
-    cd.name());
-  if (!cd.used() && binaryStrSearch(Names.specVmExceptions, cd.name()) >= 0)
-  {
-   cd.predefineClass(c.forClass);
-   cd.markUsed();
-  }
-  boolean oldHasBreakSimple = c.hasBreakSimple;
-  c.hasBreakSimple = false;
-  boolean oldHasBreakDeep = c.hasBreakDeep;
-  c.hasBreakDeep = false;
-  boolean oldHasContinueSimple = c.hasContinueSimple;
-  c.hasContinueSimple = false;
-  boolean oldHasContinueDeep = c.hasContinueDeep;
-  c.hasContinueDeep = false;
-  BranchContext oldBranch = c.saveBranch();
-  c.addAccessedClass(cd);
-  c.setVarNotNull(v);
-  v.setUnassigned(false);
-  terms[4].processPass1(c);
-  if (!c.hasBreakSimple && !c.hasBreakDeep && !c.hasContinueSimple &&
-      !c.hasContinueDeep && terms[4].hasTailReturnOrThrow())
-   c.swapBranch(oldBranch);
-   else c.intersectBranch(oldBranch);
-  c.hasContinueSimple |= oldHasContinueSimple;
-  c.hasContinueDeep |= oldHasContinueDeep;
-  c.hasBreakSimple |= oldHasBreakSimple;
-  c.hasBreakDeep |= oldHasBreakDeep;
-  terms[5].processPass1(c);
- }
+    void processPass1(Context c) {
+        assertCond(cd != null);
+        c.isConditional = true;
+        terms[3].processPass1(c);
+        int oldModifiers = c.modifiers;
+        c.modifiers = AccModifier.LOCALVAR | AccModifier.PARAMETER;
+        terms[0].processPass1(c);
+        c.varInitializer = Empty.newTerm();
+        c.typeDims = 0;
+        c.typeClassDefinition = cd;
+        terms[2].processPass1(c);
+        c.modifiers = oldModifiers;
+        v = terms[2].getVariable(false);
+        assertCond(v != null);
+        if (cd.isInterface() || (cd.defined() && !cd.isThrowable())) {
+            fatalError(c,
+                    "Interfaces and non-Throwable classes are not allowed in catches: "
+                            + cd.name());
+        }
+        if (!cd.used()
+                && binaryStrSearch(Names.specVmExceptions, cd.name()) >= 0) {
+            cd.predefineClass(c.forClass);
+            cd.markUsed();
+        }
+        boolean oldHasBreakSimple = c.hasBreakSimple;
+        c.hasBreakSimple = false;
+        boolean oldHasBreakDeep = c.hasBreakDeep;
+        c.hasBreakDeep = false;
+        boolean oldHasContinueSimple = c.hasContinueSimple;
+        c.hasContinueSimple = false;
+        boolean oldHasContinueDeep = c.hasContinueDeep;
+        c.hasContinueDeep = false;
+        BranchContext oldBranch = c.saveBranch();
+        c.addAccessedClass(cd);
+        c.setVarNotNull(v);
+        v.setUnassigned(false);
+        terms[4].processPass1(c);
+        if (!c.hasBreakSimple && !c.hasBreakDeep && !c.hasContinueSimple
+                && !c.hasContinueDeep && terms[4].hasTailReturnOrThrow()) {
+            c.swapBranch(oldBranch);
+        } else {
+            c.intersectBranch(oldBranch);
+        }
+        c.hasContinueSimple |= oldHasContinueSimple;
+        c.hasContinueDeep |= oldHasContinueDeep;
+        c.hasBreakSimple |= oldHasBreakSimple;
+        c.hasBreakDeep |= oldHasBreakDeep;
+        terms[5].processPass1(c);
+    }
 
- private static int binaryStrSearch(String[] arr, String value)
- {
-  int low = 0;
-  int high = arr.length - 1;
-  while (low <= high)
-  {
-   int mid = (low + high) >>> 1;
-   int cmp = arr[mid].compareTo(value);
-   if (cmp > 0)
-    high = mid - 1;
-    else if (cmp < 0)
-     low = mid + 1;
-     else return mid;
-  }
-  return -1;
- }
+    private static int binaryStrSearch(String[] arr, String value) {
+        int low = 0;
+        int high = arr.length - 1;
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            int cmp = arr[mid].compareTo(value);
+            if (cmp > 0) {
+                high = mid - 1;
+            } else if (cmp < 0) {
+                low = mid + 1;
+            } else {
+                return mid;
+            }
+        }
+        return -1;
+    }
 
- void storeSignature(ObjVector parmSig)
- {
-  assertCond(cd != null);
-  parmSig.addElement(cd);
- }
+    void storeSignature(ObjVector parmSig) {
+        assertCond(cd != null);
+        parmSig.addElement(cd);
+    }
 
- boolean isSwitchMapAssign(boolean isMethodCall)
- {
-  assertCond(cd != null);
-  return !terms[4].notEmpty() &&
-          cd.name().equals(Names.JAVA_LANG_NOSUCHFIELDERROR);
- }
+    boolean isSwitchMapAssign(boolean isMethodCall) {
+        assertCond(cd != null);
+        return !terms[4].notEmpty()
+                && cd.name().equals(Names.JAVA_LANG_NOSUCHFIELDERROR);
+    }
 
- boolean hasTailReturnOrThrow()
- {
-  return terms[4].hasTailReturnOrThrow();
- }
+    boolean hasTailReturnOrThrow() {
+        return terms[4].hasTailReturnOrThrow();
+    }
 
- void allocRcvr(int[] curRcvrs) {}
+    void allocRcvr(int[] curRcvrs) {
+    }
 
- void writeStackObjs(OutputContext oc, Term scopeTerm) {}
+    void writeStackObjs(OutputContext oc, Term scopeTerm) {
+    }
 
- void processOutput(OutputContext oc)
- {
-  assertCond(cd != null && v != null);
-  if (cd.hasRealInstances())
-  {
-   int[] curRcvrs = new int[Type.VOID];
-   terms[4].allocRcvr(curRcvrs);
-   String cname = cd.castName();
-   oc.cPrint("JCGO_TRY_CATCH(OBJT_");
-   oc.cPrint(cname);
-   oc.cPrint(", MAXT_");
-   oc.cPrint(cname);
-   oc.cPrint(")");
-   terms[3].processOutput(oc);
-   oc.writeRcvrsVar(curRcvrs);
-   terms[4].writeStackObjs(oc, terms[3]);
-   if (v.used())
-   {
-    terms[2].processOutput(oc);
-    oc.cPrint("= (");
-    oc.cPrint(cname);
-    oc.cPrint(")JCGO_TRY_THROWABLE(0);");
-   }
-   terms[4].processOutput(oc);
-   terms[5].processOutput(oc);
-  }
- }
+    void processOutput(OutputContext oc) {
+        assertCond(cd != null && v != null);
+        if (cd.hasRealInstances()) {
+            int[] curRcvrs = new int[Type.VOID];
+            terms[4].allocRcvr(curRcvrs);
+            String cname = cd.castName();
+            oc.cPrint("JCGO_TRY_CATCH(OBJT_");
+            oc.cPrint(cname);
+            oc.cPrint(", MAXT_");
+            oc.cPrint(cname);
+            oc.cPrint(")");
+            terms[3].processOutput(oc);
+            oc.writeRcvrsVar(curRcvrs);
+            terms[4].writeStackObjs(oc, terms[3]);
+            if (v.used()) {
+                terms[2].processOutput(oc);
+                oc.cPrint("= (");
+                oc.cPrint(cname);
+                oc.cPrint(")JCGO_TRY_THROWABLE(0);");
+            }
+            terms[4].processOutput(oc);
+            terms[5].processOutput(oc);
+        }
+    }
 
- ExpressionType traceClassInit()
- {
-  terms[4].traceClassInit();
-  return null;
- }
+    ExpressionType traceClassInit() {
+        terms[4].traceClassInit();
+        return null;
+    }
 }

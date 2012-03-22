@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,47 +40,40 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a statement prefixed with a label.
- **
- * Format:
- * Expression(QualifiedName) COLON Statement/StatementNoShortIf
+ ** 
+ * Format: Expression(QualifiedName) COLON Statement/StatementNoShortIf
  */
 
-final class LabeledStatement extends BreakableStmt
-{
+final class LabeledStatement extends BreakableStmt {
 
- LabeledStatement(Term a, Term c)
- {
-  super(a, c);
- }
+    LabeledStatement(Term a, Term c) {
+        super(a, c);
+    }
 
- void processPass1(Context c)
- {
-  if (!terms[0].isName() || terms[0].dottedName().indexOf('.', 0) >= 0)
-   fatalError(c, "ID is expected");
-  processPassOneBegin(c);
-  terms[1].processPass1(c);
-  processPassOneEnd(c);
- }
+    void processPass1(Context c) {
+        if (!terms[0].isName() || terms[0].dottedName().indexOf('.', 0) >= 0) {
+            fatalError(c, "ID is expected");
+        }
+        processPassOneBegin(c);
+        terms[1].processPass1(c);
+        processPassOneEnd(c);
+    }
 
- BreakableStmt find(String label)
- {
-  return terms[0].dottedName().equals(label) ? this : super.find(label);
- }
+    BreakableStmt find(String label) {
+        return terms[0].dottedName().equals(label) ? this : super.find(label);
+    }
 
- void setContinueLabel(String label)
- {
-  terms[1].setContinueLabel(label);
- }
+    void setContinueLabel(String label) {
+        terms[1].setContinueLabel(label);
+    }
 
- void processOutput(OutputContext oc)
- {
-  terms[1].processOutput(oc);
-  outputBreakLabel(oc);
- }
+    void processOutput(OutputContext oc) {
+        terms[1].processOutput(oc);
+        outputBreakLabel(oc);
+    }
 
- ExpressionType traceClassInit()
- {
-  terms[1].traceClassInit();
-  return null;
- }
+    ExpressionType traceClassInit() {
+        terms[1].traceClassInit();
+        return null;
+    }
 }

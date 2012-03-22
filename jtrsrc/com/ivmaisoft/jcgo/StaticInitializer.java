@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,63 +40,60 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a static or instance initializer.
- **
- * Format:
- * STATIC/Empty Block
+ ** 
+ * Format: STATIC/Empty Block
  */
 
-final class StaticInitializer extends LexNode
-{
+final class StaticInitializer extends LexNode {
 
- private InitializerPart init;
+    private InitializerPart init;
 
- private MethodDefinition md;
+    private MethodDefinition md;
 
- StaticInitializer(Term b)
- {
-  super(b);
- }
+    StaticInitializer(Term b) {
+        super(b);
+    }
 
- void processPass0(Context c)
- {
-  assertCond(c.currentClass != null);
-  if ((c.modifiers & AccModifier.STATIC) != 0)
-   c.currentClass.setMayContainClinit();
-  c.passZeroMethodDefnTerm = this;
-  terms[0].processPass0(c);
-  c.passZeroMethodDefnTerm = null;
- }
+    void processPass0(Context c) {
+        assertCond(c.currentClass != null);
+        if ((c.modifiers & AccModifier.STATIC) != 0) {
+            c.currentClass.setMayContainClinit();
+        }
+        c.passZeroMethodDefnTerm = this;
+        terms[0].processPass0(c);
+        c.passZeroMethodDefnTerm = null;
+    }
 
- void processPass1(Context c)
- {
-  assertCond(c.currentClass != null);
-  if ((c.modifiers & (AccModifier.PUBLIC | AccModifier.PRIVATE |
-      AccModifier.PROTECTED | AccModifier.FINAL | AccModifier.SYNCHRONIZED |
-      AccModifier.VOLATILE | AccModifier.TRANSIENT | AccModifier.NATIVE |
-      AccModifier.INTERFACE | AccModifier.ABSTRACT |
-      AccModifier.STRICT)) != 0)
-   fatalError(c, "Illegal modifier specified for the block");
-  md = new MethodDefinition(c, (c.modifiers & AccModifier.STATIC) != 0 ?
-        "<clinit>" : "<init0>", c.modifiers, Main.dict.classTable[Type.VOID],
-        Empty.newTerm(), Empty.newTerm(), terms[0]);
-  init = c.currentClass.addInitializer(terms[0], md.isClassMethod());
- }
+    void processPass1(Context c) {
+        assertCond(c.currentClass != null);
+        if ((c.modifiers & (AccModifier.PUBLIC | AccModifier.PRIVATE
+                | AccModifier.PROTECTED | AccModifier.FINAL
+                | AccModifier.SYNCHRONIZED | AccModifier.VOLATILE
+                | AccModifier.TRANSIENT | AccModifier.NATIVE
+                | AccModifier.INTERFACE | AccModifier.ABSTRACT | AccModifier.STRICT)) != 0) {
+            fatalError(c, "Illegal modifier specified for the block");
+        }
+        md = new MethodDefinition(c,
+                (c.modifiers & AccModifier.STATIC) != 0 ? "<clinit>"
+                        : "<init0>", c.modifiers,
+                Main.dict.classTable[Type.VOID], Empty.newTerm(),
+                Empty.newTerm(), terms[0]);
+        init = c.currentClass.addInitializer(terms[0], md.isClassMethod());
+    }
 
- MethodDefinition superMethodCall()
- {
-  return md;
- }
+    MethodDefinition superMethodCall() {
+        return md;
+    }
 
- BranchContext staticInitializerPass(BranchContext prevBranch,
-   boolean isStatic)
- {
-  if (md.isClassMethod() == isStatic)
-  {
-   assertCond(init != null);
-   prevBranch = md.producePassOne(prevBranch);
-   if (md.hasNonEmptyBody())
-    init.setCode("", null);
-  }
-  return prevBranch;
- }
+    BranchContext staticInitializerPass(BranchContext prevBranch,
+            boolean isStatic) {
+        if (md.isClassMethod() == isStatic) {
+            assertCond(init != null);
+            prevBranch = md.producePassOne(prevBranch);
+            if (md.hasNonEmptyBody()) {
+                init.setCode("", null);
+            }
+        }
+        return prevBranch;
+    }
 }

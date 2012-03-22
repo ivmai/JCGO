@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -43,23 +43,22 @@ package com.ivmaisoft.jcgo;
  * parameters).
  */
 
-final class VerInfo
-{
+final class VerInfo {
 
- /*
-  * Note 1: odd version numbers are used for inner snapshots.
-  * Note 2: This version should match that in README and in
-  * include/jcgover.h (JCGO_1xx).
-  */
- static /* final */ int VER_NUM = 112;
+    /*
+     * Note 1: odd version numbers are used for inner snapshots. Note 2: This
+     * version should match that in README and in include/jcgover.h (JCGO_1xx).
+     */
+    static/* final */int VER_NUM = 112;
 
- static final String COPYRIGHT_AUTHOR =
-  "Copyright (C) 2001-2011 Ivan Maidanski".toString();
+    static final String COPYRIGHT_AUTHOR = "Copyright (C) 2001-2011 Ivan Maidanski"
+            .toString();
 
- static final String COPYRIGHT =
-  "Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com/jcgo/".toString();
+    static final String COPYRIGHT = "Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com/jcgo/"
+            .toString();
 
- static final boolean ASSERT_ENABLED = true;
+    static final boolean ASSERT_ENABLED = true;
 
- private VerInfo() {}
+    private VerInfo() {
+    }
 }

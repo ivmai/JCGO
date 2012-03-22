@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,75 +42,68 @@ package com.ivmaisoft.jcgo;
  * Lexical term for a floating-point literal.
  */
 
-final class FloatLiteral extends LexTerm
-{
+final class FloatLiteral extends LexTerm {
 
- private boolean asLiteral;
+    private boolean asLiteral;
 
- private boolean insideArith;
+    private boolean insideArith;
 
- FloatLiteral(String tokenval)
- {
-  super(LexTerm.FLOATINGPOINT, tokenval);
- }
+    FloatLiteral(String tokenval) {
+        super(LexTerm.FLOATINGPOINT, tokenval);
+    }
 
- ExpressionType exprType()
- {
-  String s = dottedName();
-  char ch = s.charAt(s.length() - 1);
-  return Main.dict.classTable[ch != 'F' && ch != 'f' ? Type.DOUBLE :
-          Type.FLOAT];
- }
+    ExpressionType exprType() {
+        String s = dottedName();
+        char ch = s.charAt(s.length() - 1);
+        return Main.dict.classTable[ch != 'F' && ch != 'f' ? Type.DOUBLE
+                : Type.FLOAT];
+    }
 
- void requireLiteral()
- {
-  asLiteral = true;
- }
+    void requireLiteral() {
+        asLiteral = true;
+    }
 
- void insideArithOp()
- {
-  insideArith = true;
- }
+    void insideArithOp() {
+        insideArith = true;
+    }
 
- int tokenCount()
- {
-  return 2;
- }
+    int tokenCount() {
+        return 2;
+    }
 
- String stringOutput()
- {
-  String s = dottedName();
-  int len = s.length();
-  char ch = s.charAt(len - 1);
-  int type = Type.DOUBLE;
-  if (ch == 'F' || ch == 'f')
-   type = Type.FLOAT;
-  if (type == Type.FLOAT || ch == 'D' || ch == 'd')
-   s = s.substring(0, len - 1);
-  if (!asLiteral && insideArith && isFPZero(s))
-   return type == Type.FLOAT ? "JCGO_FP_ZEROF" : "JCGO_FP_ZERO";
-  if (s.indexOf('.', 0) < 0 && s.lastIndexOf('E') < 0 &&
-      s.lastIndexOf('e') < 0)
-   s = s + ".0";
-  return "(" + Type.cName[type] + ")" + s;
- }
+    String stringOutput() {
+        String s = dottedName();
+        int len = s.length();
+        char ch = s.charAt(len - 1);
+        int type = Type.DOUBLE;
+        if (ch == 'F' || ch == 'f') {
+            type = Type.FLOAT;
+        }
+        if (type == Type.FLOAT || ch == 'D' || ch == 'd') {
+            s = s.substring(0, len - 1);
+        }
+        if (!asLiteral && insideArith && isFPZero(s))
+            return type == Type.FLOAT ? "JCGO_FP_ZEROF" : "JCGO_FP_ZERO";
+        if (s.indexOf('.', 0) < 0 && s.lastIndexOf('E') < 0
+                && s.lastIndexOf('e') < 0) {
+            s = s + ".0";
+        }
+        return "(" + Type.cName[type] + ")" + s;
+    }
 
- boolean isFPZero()
- {
-  return isFPZero(dottedName());
- }
+    boolean isFPZero() {
+        return isFPZero(dottedName());
+    }
 
- private static boolean isFPZero(String s)
- {
-  int len = s.length();
-  for (int i = 0; i < len; i++)
-  {
-   char ch = s.charAt(i);
-   if (ch == 'E' || ch == 'e')
-    break;
-   if (ch >= '1' && ch <= '9')
-    return false;
-  }
-  return true;
- }
+    private static boolean isFPZero(String s) {
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char ch = s.charAt(i);
+            if (ch == 'E' || ch == 'e')
+                break;
+            if (ch >= '1' && ch <= '9')
+                return false;
+        }
+        return true;
+    }
 }

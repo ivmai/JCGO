@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,44 +42,36 @@ package com.ivmaisoft.jcgo;
  * Grammar production for a synchronized method.
  */
 
-class SynchroMethod extends TryStatement
-{
+class SynchroMethod extends TryStatement {
 
- SynchroMethod(Term b)
- {
-  super(b, Empty.newTerm(), Empty.newTerm());
- }
+    SynchroMethod(Term b) {
+        super(b, Empty.newTerm(), Empty.newTerm());
+    }
 
- boolean allowInline(int tokenLimit)
- {
-  return terms[0].allowInline(tokenLimit - 3);
- }
+    boolean allowInline(int tokenLimit) {
+        return terms[0].allowInline(tokenLimit - 3);
+    }
 
- void discoverObjLeaks()
- {
-  terms[0].discoverObjLeaks();
- }
+    void discoverObjLeaks() {
+        terms[0].discoverObjLeaks();
+    }
 
- final boolean isReturnAtEnd(boolean allowBreakThrow)
- {
-  return terms[0].isReturnAtEnd(allowBreakThrow);
- }
+    final boolean isReturnAtEnd(boolean allowBreakThrow) {
+        return terms[0].isReturnAtEnd(allowBreakThrow);
+    }
 
- MethodDefinition superMethodCall()
- {
-  return terms[0].superMethodCall();
- }
+    MethodDefinition superMethodCall() {
+        return terms[0].superMethodCall();
+    }
 
- final boolean outputFinallyCode(OutputContext oc)
- {
-  oc.cPrint("JCGO_SYNC_JUMPLEAVE(0);");
-  return false;
- }
+    final boolean outputFinallyCode(OutputContext oc) {
+        oc.cPrint("JCGO_SYNC_JUMPLEAVE(0);");
+        return false;
+    }
 
- void processOutput(OutputContext oc)
- {
-  terms[0].processOutput(oc);
-  oc.cPrint(terms[0].isReturnAtEnd(true) ? "JCGO_SYNC_ENDUNREACH\010" :
-   "JCGO_SYNC_END\010");
- }
+    void processOutput(OutputContext oc) {
+        terms[0].processOutput(oc);
+        oc.cPrint(terms[0].isReturnAtEnd(true) ? "JCGO_SYNC_ENDUNREACH\010"
+                : "JCGO_SYNC_END\010");
+    }
 }

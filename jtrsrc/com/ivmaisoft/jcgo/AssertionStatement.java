@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,79 +40,75 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for the assertion statement.
- **
- * Formats:
- * ASSERT ConditionalExpression SEMI
- * ASSERT ConditionalExpression COLON Argument SEMI
+ ** 
+ * Formats: ASSERT ConditionalExpression SEMI ASSERT ConditionalExpression COLON
+ * Argument SEMI
  */
 
-final class AssertionStatement extends LexNode
-{
+final class AssertionStatement extends LexNode {
 
- private ClassDefinition topClinitClass;
+    private ClassDefinition topClinitClass;
 
- AssertionStatement(Term b, Term d)
- {
-  super(b, (new InstanceCreation(new ClassOrIfaceType(
-   Main.dict.get(Names.JAVA_LANG_ASSERTIONERROR)), d,
-   Empty.newTerm())).setLineInfoFrom(d));
- }
+    AssertionStatement(Term b, Term d) {
+        super(b, (new InstanceCreation(new ClassOrIfaceType(
+                Main.dict.get(Names.JAVA_LANG_ASSERTIONERROR)), d,
+                Empty.newTerm())).setLineInfoFrom(d));
+    }
 
- void processPass1(Context c)
- {
-  topClinitClass = c.currentClass;
-  assertCond(topClinitClass != null);
-  ClassDefinition cd;
-  while ((cd = topClinitClass.outerClass()) != null && !cd.isInterface())
-   topClinitClass = cd;
-  topClinitClass.setHasAssertStmt();
-  if (c.addAccessedClass(topClinitClass))
-   topClinitClass = null;
-  c.insideAssertStmt = true;
-  BranchContext oldBranch = c.saveBranch();
-  terms[0].processPass1(c);
-  if (terms[0].exprType().objectSize() != Type.BOOLEAN)
-   fatalError(c, "The condition expression must be of boolean type");
-  terms[0].updateCondBranch(c, false);
-  terms[1].processPass1(c);
-  c.intersectBranch(oldBranch);
-  c.insideAssertStmt = false;
- }
+    void processPass1(Context c) {
+        topClinitClass = c.currentClass;
+        assertCond(topClinitClass != null);
+        ClassDefinition cd;
+        while ((cd = topClinitClass.outerClass()) != null && !cd.isInterface()) {
+            topClinitClass = cd;
+        }
+        topClinitClass.setHasAssertStmt();
+        if (c.addAccessedClass(topClinitClass)) {
+            topClinitClass = null;
+        }
+        c.insideAssertStmt = true;
+        BranchContext oldBranch = c.saveBranch();
+        terms[0].processPass1(c);
+        if (terms[0].exprType().objectSize() != Type.BOOLEAN) {
+            fatalError(c, "The condition expression must be of boolean type");
+        }
+        terms[0].updateCondBranch(c, false);
+        terms[1].processPass1(c);
+        c.intersectBranch(oldBranch);
+        c.insideAssertStmt = false;
+    }
 
- int tokenCount()
- {
-  return 1;
- }
+    int tokenCount() {
+        return 1;
+    }
 
- boolean allowInline(int tokenLimit)
- {
-  return true;
- }
+    boolean allowInline(int tokenLimit) {
+        return true;
+    }
 
- void discoverObjLeaks()
- {
-  terms[0].discoverObjLeaks();
-  terms[1].discoverObjLeaks();
-  terms[1].setObjLeaks(null);
- }
+    void discoverObjLeaks() {
+        terms[0].discoverObjLeaks();
+        terms[1].discoverObjLeaks();
+        terms[1].setObjLeaks(null);
+    }
 
- void processOutput(OutputContext oc)
- {
-  if (topClinitClass != null)
-   topClinitClass.writeTrigClinit(oc);
-  oc.cPrint("JCGO_ASSERT_STMT(");
-  terms[0].processOutput(oc);
-  oc.cPrint(", ");
-  terms[1].processOutput(oc);
-  oc.cPrint(");");
- }
+    void processOutput(OutputContext oc) {
+        if (topClinitClass != null) {
+            topClinitClass.writeTrigClinit(oc);
+        }
+        oc.cPrint("JCGO_ASSERT_STMT(");
+        terms[0].processOutput(oc);
+        oc.cPrint(", ");
+        terms[1].processOutput(oc);
+        oc.cPrint(");");
+    }
 
- ExpressionType traceClassInit()
- {
-  if (topClinitClass != null)
-   topClinitClass.classTraceClassInit(true);
-  terms[0].traceClassInit();
-  terms[1].traceClassInit();
-  return null;
- }
+    ExpressionType traceClassInit() {
+        if (topClinitClass != null) {
+            topClinitClass.classTraceClassInit(true);
+        }
+        terms[0].traceClassInit();
+        terms[1].traceClassInit();
+        return null;
+    }
 }

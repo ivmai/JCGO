@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,37 +42,31 @@ package com.ivmaisoft.jcgo;
  * Grammar production for an expression.
  */
 
-final class Expression extends ParenExpression
-{
+final class Expression extends ParenExpression {
 
- Expression(Term a)
- {
-  super(a);
- }
+    Expression(Term a) {
+        super(a);
+    }
 
- boolean isName()
- {
-  return terms[0].isName();
- }
+    boolean isName() {
+        return terms[0].isName();
+    }
 
- boolean isType()
- {
-  return terms[0].isType();
- }
+    boolean isType() {
+        return terms[0].isType();
+    }
 
- boolean isAtomary()
- {
-  return terms[0].isAtomary() && !terms[0].isBoolAssign();
- }
+    boolean isAtomary() {
+        return terms[0].isAtomary() && !terms[0].isBoolAssign();
+    }
 
- void processOutput(OutputContext oc)
- {
-  if (terms[0].isBoolAssign())
-  {
-   terms[0].atomaryOutput(oc);
-   oc.cPrint("!= ");
-   oc.cPrint(LexTerm.outputBoolean(false));
-  }
-   else terms[0].processOutput(oc);
- }
+    void processOutput(OutputContext oc) {
+        if (terms[0].isBoolAssign()) {
+            terms[0].atomaryOutput(oc);
+            oc.cPrint("!= ");
+            oc.cPrint(LexTerm.outputBoolean(false));
+        } else {
+            terms[0].processOutput(oc);
+        }
+    }
 }

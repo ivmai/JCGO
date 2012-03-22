@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,113 +42,103 @@ package com.ivmaisoft.jcgo;
  * This class is for an instance or static initializer code fragment.
  */
 
-final class InitializerPart
-{
+final class InitializerPart {
 
- private /* final */ InitializerPart prev;
+    private/* final */InitializerPart prev;
 
- private /* final */ Term term;
+    private/* final */Term term;
 
- private String code;
+    private String code;
 
- private VariableDefinition v;
+    private VariableDefinition v;
 
- private int[] curRcvrs0;
+    private int[] curRcvrs0;
 
- InitializerPart(InitializerPart prev, Term term)
- {
-  Term.assertCond(term != null);
-  this.prev = prev;
-  this.term = term;
- }
-
- boolean isJavaConstant(ClassDefinition ourClass)
- {
-  return term.isJavaConstant(ourClass) &&
-          (prev == null || prev.isJavaConstant(ourClass));
- }
-
- void setUsedVar(VariableDefinition v)
- {
-  this.v = v;
- }
-
- boolean isPrevSafeWithThrow()
- {
-  return prev == null || (prev.isSafeWithThrow() &&
-          prev.isPrevSafeWithThrow());
- }
-
- private boolean isSafeWithThrow()
- {
-  return v != null ? term.isSafeWithThrow() : !term.isBlock();
- }
-
- void setCode(String code, int[] curRcvrs)
- {
-  this.code = code;
-  curRcvrs0 = curRcvrs;
- }
-
- boolean hasSomeCode()
- {
-  return code != null || (v != null && v.hasSomeCode()) ||
-          (prev != null && prev.hasSomeCode());
- }
-
- void allocRcvr(int[] curRcvrs)
- {
-  if (prev != null)
-   prev.allocRcvr(curRcvrs);
-  if (curRcvrs0 != null)
-   OutputContext.joinRcvrs(curRcvrs, curRcvrs0);
- }
-
- void discoverObjLeaks()
- {
-  if (prev != null)
-   prev.discoverObjLeaks();
-  if (code != null || v != null)
-  {
-   term.discoverObjLeaks();
-   if (v != null && v.exprType().objectSize() >= Type.CLASSINTERFACE)
-    term.setObjLeaks(v);
-  }
- }
-
- void processOutput(OutputContext oc)
- {
-  if (prev != null)
-   prev.processOutput(oc);
-  if (code != null)
-  {
-   if (v != null)
-   {
-    if (v.used())
-    {
-     oc.cPrint(v.stringOutput(false, true));
-     oc.cPrint("= ");
-     oc.cPrint(code);
+    InitializerPart(InitializerPart prev, Term term) {
+        Term.assertCond(term != null);
+        this.prev = prev;
+        this.term = term;
     }
-     else
-     {
-      oc.cPrint("(");
-      oc.cPrint(Type.cName[Type.VOID]);
-      oc.cPrint(")(");
-      oc.cPrint(code);
-      oc.cPrint(")");
-     }
-    oc.cPrint(";");
-   }
-    else term.processOutput(oc);
-  }
- }
 
- void traceClassInit()
- {
-  if (prev != null)
-   prev.traceClassInit();
-  if (code != null)
-   term.traceClassInit();
- }
+    boolean isJavaConstant(ClassDefinition ourClass) {
+        return term.isJavaConstant(ourClass)
+                && (prev == null || prev.isJavaConstant(ourClass));
+    }
+
+    void setUsedVar(VariableDefinition v) {
+        this.v = v;
+    }
+
+    boolean isPrevSafeWithThrow() {
+        return prev == null
+                || (prev.isSafeWithThrow() && prev.isPrevSafeWithThrow());
+    }
+
+    private boolean isSafeWithThrow() {
+        return v != null ? term.isSafeWithThrow() : !term.isBlock();
+    }
+
+    void setCode(String code, int[] curRcvrs) {
+        this.code = code;
+        curRcvrs0 = curRcvrs;
+    }
+
+    boolean hasSomeCode() {
+        return code != null || (v != null && v.hasSomeCode())
+                || (prev != null && prev.hasSomeCode());
+    }
+
+    void allocRcvr(int[] curRcvrs) {
+        if (prev != null) {
+            prev.allocRcvr(curRcvrs);
+        }
+        if (curRcvrs0 != null) {
+            OutputContext.joinRcvrs(curRcvrs, curRcvrs0);
+        }
+    }
+
+    void discoverObjLeaks() {
+        if (prev != null) {
+            prev.discoverObjLeaks();
+        }
+        if (code != null || v != null) {
+            term.discoverObjLeaks();
+            if (v != null && v.exprType().objectSize() >= Type.CLASSINTERFACE) {
+                term.setObjLeaks(v);
+            }
+        }
+    }
+
+    void processOutput(OutputContext oc) {
+        if (prev != null) {
+            prev.processOutput(oc);
+        }
+        if (code != null) {
+            if (v != null) {
+                if (v.used()) {
+                    oc.cPrint(v.stringOutput(false, true));
+                    oc.cPrint("= ");
+                    oc.cPrint(code);
+                } else {
+                    oc.cPrint("(");
+                    oc.cPrint(Type.cName[Type.VOID]);
+                    oc.cPrint(")(");
+                    oc.cPrint(code);
+                    oc.cPrint(")");
+                }
+                oc.cPrint(";");
+            } else {
+                term.processOutput(oc);
+            }
+        }
+    }
+
+    void traceClassInit() {
+        if (prev != null) {
+            prev.traceClassInit();
+        }
+        if (code != null) {
+            term.traceClassInit();
+        }
+    }
 }

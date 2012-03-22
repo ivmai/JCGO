@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,80 +40,76 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a do-while statement.
- *
- * Format:
- * DO Statement WHILE LPAREN Expression RPAREN SEMI
+ * 
+ * Format: DO Statement WHILE LPAREN Expression RPAREN SEMI
  */
 
-final class DoStatement extends BreakableStmt
-{
+final class DoStatement extends BreakableStmt {
 
- DoStatement(Term b, Term e)
- {
-  super(b.isBlock() ? b : new Block(b), e);
- }
+    DoStatement(Term b, Term e) {
+        super(b.isBlock() ? b : new Block(b), e);
+    }
 
- void processPass1(Context c)
- {
-  ObjQueue names = new ObjQueue();
-  terms[0].assignedVarNames(names, true);
-  terms[1].assignedVarNames(names, true);
-  assertCond(c.currentMethod != null);
-  c.currentMethod.resetLocalsActualType(c, names, false);
-  TryStatement oldLastBreakableTry = c.lastBreakableTry;
-  c.lastBreakableTry = c.currentTry;
-  boolean oldHasBreakSimple = c.hasBreakSimple;
-  c.hasBreakSimple = false;
-  boolean oldHasBreakDeep = c.hasBreakDeep;
-  c.hasBreakDeep = false;
-  boolean oldHasContinueSimple = c.hasContinueSimple;
-  c.hasContinueSimple = false;
-  boolean oldHasContinueDeep = c.hasContinueDeep;
-  c.hasContinueDeep = false;
-  BranchContext oldBranch = c.saveBranch();
-  boolean oldBreakableHidden = c.breakableHidden;
-  c.breakableHidden = false;
-  processPassOneBegin(c);
-  terms[0].processPass1(c);
-  processPassOneEnd(c);
-  c.breakableHidden = oldBreakableHidden;
-  if (c.hasContinueSimple || c.hasContinueDeep)
-  {
-   c.intersectBranch(oldBranch);
-   if (c.hasBreakSimple || c.hasBreakDeep)
-    oldBranch = c.saveBranch();
-  }
-  c.hasContinueSimple = oldHasContinueSimple;
-  c.hasContinueDeep |= oldHasContinueDeep;
-  terms[1].processPass1(c);
-  if (terms[1].exprType().objectSize() != Type.BOOLEAN)
-   fatalError(c, "The condition expression must be of boolean type");
-  c.lastBreakableTry = oldLastBreakableTry;
-  if (c.hasBreakSimple || c.hasBreakDeep)
-   c.intersectBranch(oldBranch);
-   else terms[1].updateCondBranch(c, false);
-  c.hasBreakSimple = oldHasBreakSimple;
-  c.hasBreakDeep |= oldHasBreakDeep;
- }
+    void processPass1(Context c) {
+        ObjQueue names = new ObjQueue();
+        terms[0].assignedVarNames(names, true);
+        terms[1].assignedVarNames(names, true);
+        assertCond(c.currentMethod != null);
+        c.currentMethod.resetLocalsActualType(c, names, false);
+        TryStatement oldLastBreakableTry = c.lastBreakableTry;
+        c.lastBreakableTry = c.currentTry;
+        boolean oldHasBreakSimple = c.hasBreakSimple;
+        c.hasBreakSimple = false;
+        boolean oldHasBreakDeep = c.hasBreakDeep;
+        c.hasBreakDeep = false;
+        boolean oldHasContinueSimple = c.hasContinueSimple;
+        c.hasContinueSimple = false;
+        boolean oldHasContinueDeep = c.hasContinueDeep;
+        c.hasContinueDeep = false;
+        BranchContext oldBranch = c.saveBranch();
+        boolean oldBreakableHidden = c.breakableHidden;
+        c.breakableHidden = false;
+        processPassOneBegin(c);
+        terms[0].processPass1(c);
+        processPassOneEnd(c);
+        c.breakableHidden = oldBreakableHidden;
+        if (c.hasContinueSimple || c.hasContinueDeep) {
+            c.intersectBranch(oldBranch);
+            if (c.hasBreakSimple || c.hasBreakDeep) {
+                oldBranch = c.saveBranch();
+            }
+        }
+        c.hasContinueSimple = oldHasContinueSimple;
+        c.hasContinueDeep |= oldHasContinueDeep;
+        terms[1].processPass1(c);
+        if (terms[1].exprType().objectSize() != Type.BOOLEAN) {
+            fatalError(c, "The condition expression must be of boolean type");
+        }
+        c.lastBreakableTry = oldLastBreakableTry;
+        if (c.hasBreakSimple || c.hasBreakDeep) {
+            c.intersectBranch(oldBranch);
+        } else {
+            terms[1].updateCondBranch(c, false);
+        }
+        c.hasBreakSimple = oldHasBreakSimple;
+        c.hasBreakDeep |= oldHasBreakDeep;
+    }
 
- void setContinueLabel(String label)
- {
-  terms[0].setContinueLabel(label);
- }
+    void setContinueLabel(String label) {
+        terms[0].setContinueLabel(label);
+    }
 
- void processOutput(OutputContext oc)
- {
-  oc.cPrint("do");
-  terms[0].processOutput(oc);
-  oc.cPrint(" while (");
-  terms[1].processOutput(oc);
-  oc.cPrint(");");
-  outputBreakLabel(oc);
- }
+    void processOutput(OutputContext oc) {
+        oc.cPrint("do");
+        terms[0].processOutput(oc);
+        oc.cPrint(" while (");
+        terms[1].processOutput(oc);
+        oc.cPrint(");");
+        outputBreakLabel(oc);
+    }
 
- ExpressionType traceClassInit()
- {
-  ForStatement.traceLoop(terms[0], terms[1], Empty.newTerm());
-  return null;
- }
+    ExpressionType traceClassInit() {
+        ForStatement.traceLoop(terms[0], terms[1], Empty.newTerm());
+        return null;
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,26 +40,22 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a list of expressions.
- **
- * Format:
- * StatementExpression COMMA StatementExpression
- * StatementExpression COMMA StatementExpressionList
+ ** 
+ * Format: StatementExpression COMMA StatementExpression StatementExpression
+ * COMMA StatementExpressionList
  */
 
-final class ExpressionList extends LexNode
-{
+final class ExpressionList extends LexNode {
 
- ExpressionList(Term a, Term c)
- {
-  super(a, c);
- }
+    ExpressionList(Term a, Term c) {
+        super(a, c);
+    }
 
- void processOutput(OutputContext oc)
- {
-  terms[0].setVoidExpression();
-  terms[0].processOutput(oc);
-  oc.cPrint(", ");
-  terms[1].setVoidExpression();
-  terms[1].processOutput(oc);
- }
+    void processOutput(OutputContext oc) {
+        terms[0].setVoidExpression();
+        terms[0].processOutput(oc);
+        oc.cPrint(", ");
+        terms[1].setVoidExpression();
+        terms[1].processOutput(oc);
+    }
 }

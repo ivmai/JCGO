@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,30 +42,30 @@ package com.ivmaisoft.jcgo;
  * The abstract superclass for ClassDefinition and ClassDefnWithDims.
  */
 
-abstract class ExpressionType
-{
+abstract class ExpressionType {
 
- ExpressionType() {}
+    ExpressionType() {
+    }
 
- abstract ExpressionType indirectedType();
+    abstract ExpressionType indirectedType();
 
- abstract String getJniName();
+    abstract String getJniName();
 
- abstract String name();
+    abstract String name();
 
- abstract String getJavaSignature();
+    abstract String getJavaSignature();
 
- abstract String csign();
+    abstract String csign();
 
- abstract ClassDefinition receiverClass();
+    abstract ClassDefinition receiverClass();
 
- abstract int objectSize();
+    abstract int objectSize();
 
- abstract String castName();
+    abstract String castName();
 
- abstract ClassDefinition signatureClass();
+    abstract ClassDefinition signatureClass();
 
- abstract int signatureDimensions();
+    abstract int signatureDimensions();
 
- abstract boolean hasRealInstances();
+    abstract boolean hasRealInstances();
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -44,58 +44,52 @@ import java.util.Enumeration;
  * An ordered hashtable (FIFO).
  */
 
-final class OrderedMap
-{
+final class OrderedMap {
 
- private final ObjHashtable map = new ObjHashtable();
+    private final ObjHashtable map = new ObjHashtable();
 
- private final ObjVector orderedKeys = new ObjVector();
+    private final ObjVector orderedKeys = new ObjVector();
 
- OrderedMap() {}
+    OrderedMap() {
+    }
 
- Object put(Object key, Object value)
- {
-  Object oldValue = map.put(key, value);
-  if (oldValue == null)
-   orderedKeys.addElement(key);
-  return oldValue;
- }
+    Object put(Object key, Object value) {
+        Object oldValue = map.put(key, value);
+        if (oldValue == null) {
+            orderedKeys.addElement(key);
+        }
+        return oldValue;
+    }
 
- Object remove(Object key)
- {
-  Object oldValue = map.remove(key);
-  if (oldValue != null)
-   orderedKeys.removeElementAt(orderedKeys.indexOf(key));
-  return oldValue;
- }
+    Object remove(Object key) {
+        Object oldValue = map.remove(key);
+        if (oldValue != null) {
+            orderedKeys.removeElementAt(orderedKeys.indexOf(key));
+        }
+        return oldValue;
+    }
 
- Object get(Object key)
- {
-  return map.get(key);
- }
+    Object get(Object key) {
+        return map.get(key);
+    }
 
- int size()
- {
-  return orderedKeys.size();
- }
+    int size() {
+        return orderedKeys.size();
+    }
 
- Object keyAt(int index)
- {
-  return orderedKeys.elementAt(index);
- }
+    Object keyAt(int index) {
+        return orderedKeys.elementAt(index);
+    }
 
- Enumeration keys()
- {
-  return orderedKeys.elements();
- }
+    Enumeration keys() {
+        return orderedKeys.elements();
+    }
 
- Enumeration unorderedElements()
- {
-  return map.elements();
- }
+    Enumeration unorderedElements() {
+        return map.elements();
+    }
 
- void copyKeysInto(Object[] anArray)
- {
-  orderedKeys.copyInto(anArray);
- }
+    void copyKeysInto(Object[] anArray) {
+        orderedKeys.copyInto(anArray);
+    }
 }

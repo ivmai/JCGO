@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,29 +40,24 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a group of catches.
- **
- * Format:
- * CatchStatement CatchStatement
- * CatchStatement CatchSeq
+ ** 
+ * Format: CatchStatement CatchStatement CatchStatement CatchSeq
  */
 
-final class CatchSeq extends LexNode
-{
+final class CatchSeq extends LexNode {
 
- CatchSeq(Term a, Term b)
- {
-  super(a, b);
- }
+    CatchSeq(Term a, Term b) {
+        super(a, b);
+    }
 
- ClassDefinition defineClass(Context c, ObjVector vec)
- {
-  assertCond(vec == null);
-  terms[0].defineClass(c, vec);
-  return terms[1].defineClass(c, vec);
- }
+    ClassDefinition defineClass(Context c, ObjVector vec) {
+        assertCond(vec == null);
+        terms[0].defineClass(c, vec);
+        return terms[1].defineClass(c, vec);
+    }
 
- boolean hasTailReturnOrThrow()
- {
-  return terms[0].hasTailReturnOrThrow() && terms[1].hasTailReturnOrThrow();
- }
+    boolean hasTailReturnOrThrow() {
+        return terms[0].hasTailReturnOrThrow()
+                && terms[1].hasTailReturnOrThrow();
+    }
 }

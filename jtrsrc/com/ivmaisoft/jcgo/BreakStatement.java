@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,88 +40,80 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for the break statement.
- **
- * Format:
- * BREAK [ID] SEMI
+ ** 
+ * Format: BREAK [ID] SEMI
  */
 
-class BreakStatement extends LexNode
-{
+class BreakStatement extends LexNode {
 
- private boolean analysisDone;
+    private boolean analysisDone;
 
- BreakableStmt labelStmt;
+    BreakableStmt labelStmt;
 
- private TryStatement curTry;
+    private TryStatement curTry;
 
- private TryStatement lastBreakableTry;
+    private TryStatement lastBreakableTry;
 
- BreakStatement(Term b)
- {
-  super(b);
- }
-
- void processPass1(Context c)
- {
-  if (!processPassOneCommon(c))
-  {
-   if (labelStmt != null)
-   {
-    labelStmt.makeBreakLabel(c.currentMethod);
-    c.hasBreakDeep = true;
-   }
-    else c.hasBreakSimple = true;
-  }
- }
-
- final boolean processPassOneCommon(Context c)
- {
-  if (analysisDone)
-   return true;
-  analysisDone = true;
-  curTry = c.currentTry;
-  if (terms[0].notEmpty())
-  {
-   if (c.currentLabelStmt != null)
-    labelStmt = c.currentLabelStmt.find(terms[0].dottedName());
-   if (labelStmt == null)
-    fatalError(c, "Undefined label: " + terms[0].dottedName());
-  }
-   else
-   {
-    lastBreakableTry = c.lastBreakableTry;
-    if (c.currentLabelStmt != null)
-    {
-     if (c.breakableHidden)
-      labelStmt = c.currentLabelStmt;
+    BreakStatement(Term b) {
+        super(b);
     }
-     else fatalError(c, "No breakable statement found");
-   }
-  return false;
- }
 
- final TryStatement curTry()
- {
-  assertCond(analysisDone);
-  return curTry;
- }
+    void processPass1(Context c) {
+        if (!processPassOneCommon(c)) {
+            if (labelStmt != null) {
+                labelStmt.makeBreakLabel(c.currentMethod);
+                c.hasBreakDeep = true;
+            } else {
+                c.hasBreakSimple = true;
+            }
+        }
+    }
 
- final TryStatement lastBreakableTry()
- {
-  return lastBreakableTry;
- }
+    final boolean processPassOneCommon(Context c) {
+        if (analysisDone)
+            return true;
+        analysisDone = true;
+        curTry = c.currentTry;
+        if (terms[0].notEmpty()) {
+            if (c.currentLabelStmt != null) {
+                labelStmt = c.currentLabelStmt.find(terms[0].dottedName());
+            }
+            if (labelStmt == null) {
+                fatalError(c, "Undefined label: " + terms[0].dottedName());
+            }
+        } else {
+            lastBreakableTry = c.lastBreakableTry;
+            if (c.currentLabelStmt != null) {
+                if (c.breakableHidden) {
+                    labelStmt = c.currentLabelStmt;
+                }
+            } else {
+                fatalError(c, "No breakable statement found");
+            }
+        }
+        return false;
+    }
 
- final boolean isReturnAtEnd(boolean allowBreakThrow)
- {
-  return allowBreakThrow;
- }
+    final TryStatement curTry() {
+        assertCond(analysisDone);
+        return curTry;
+    }
 
- void processOutput(OutputContext oc)
- {
-  assertCond(analysisDone);
-  if (labelStmt != null)
-   labelStmt.writeGoto(oc, curTry, true);
-   else if (!terms[0].notEmpty())
-    TryStatement.outputFinallyGroup(curTry, lastBreakableTry, oc, "break");
- }
+    final TryStatement lastBreakableTry() {
+        return lastBreakableTry;
+    }
+
+    final boolean isReturnAtEnd(boolean allowBreakThrow) {
+        return allowBreakThrow;
+    }
+
+    void processOutput(OutputContext oc) {
+        assertCond(analysisDone);
+        if (labelStmt != null) {
+            labelStmt.writeGoto(oc, curTry, true);
+        } else if (!terms[0].notEmpty()) {
+            TryStatement.outputFinallyGroup(curTry, lastBreakableTry, oc,
+                    "break");
+        }
+    }
 }

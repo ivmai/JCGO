@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,198 +42,176 @@ package com.ivmaisoft.jcgo;
  * An output context object for C source and header files.
  */
 
-final class OutputContext
-{
+final class OutputContext {
 
- private CFormattedStream cstream;
+    private CFormattedStream cstream;
 
- private CFormattedStream hStream;
+    private CFormattedStream hStream;
 
- private int stackObjCount;
+    private int stackObjCount;
 
- private final StringBuffer instanceSBuf = new StringBuffer();
+    private final StringBuffer instanceSBuf = new StringBuffer();
 
- int arrInitCount = -1;
+    int arrInitCount = -1;
 
- int arrInitLevel;
+    int arrInitLevel;
 
- boolean insideNotSehTry;
+    boolean insideNotSehTry;
 
- ExpressionType assignmentRightType;
+    ExpressionType assignmentRightType;
 
- VariableDefinition assignmentVar;
+    VariableDefinition assignmentVar;
 
- OutputContext() {}
+    OutputContext() {
+    }
 
- OutputContext(String shortname)
- {
-  cstream = new CFormattedStream(shortname + ".c");
-  hStream = new CFormattedStream(shortname + ".h");
- }
+    OutputContext(String shortname) {
+        cstream = new CFormattedStream(shortname + ".c");
+        hStream = new CFormattedStream(shortname + ".h");
+    }
 
- void arrayIndent()
- {
-  cPrint("\010");
-  int level = arrInitLevel;
-  for (int i = 0; i < level; i++)
-   cPrint(" ");
- }
+    void arrayIndent() {
+        cPrint("\010");
+        int level = arrInitLevel;
+        for (int i = 0; i < level; i++) {
+            cPrint(" ");
+        }
+    }
 
- void cPrint(String s)
- {
-  if (cstream != null)
-   cstream.print(s);
-   else instanceSBuf.append(s);
- }
+    void cPrint(String s) {
+        if (cstream != null) {
+            cstream.print(s);
+        } else {
+            instanceSBuf.append(s);
+        }
+    }
 
- void hPrint(String s)
- {
-  Term.assertCond(hStream != null);
-  hStream.print(s);
- }
+    void hPrint(String s) {
+        Term.assertCond(hStream != null);
+        hStream.print(s);
+    }
 
- void cAndHPrint(String s)
- {
-  cPrint(s);
-  hPrint(s);
- }
+    void cAndHPrint(String s) {
+        cPrint(s);
+        hPrint(s);
+    }
 
- void addIncludeCFile(String shortname)
- {
-  cPrint("#include \"");
-  cPrint(shortname);
-  cPrint(".c\"\010");
- }
+    void addIncludeCFile(String shortname) {
+        cPrint("#include \"");
+        cPrint(shortname);
+        cPrint(".c\"\010");
+    }
 
- void addIncludeHFile(String shortname)
- {
-  hPrint("#include \"");
-  hPrint(shortname);
-  hPrint(".h\"\010");
- }
+    void addIncludeHFile(String shortname) {
+        hPrint("#include \"");
+        hPrint(shortname);
+        hPrint(".h\"\010");
+    }
 
- static int[] copyRcvrs(int[] curRcvrs)
- {
-  int[] curRcvrs2 = new int[Type.VOID];
-  System.arraycopy(curRcvrs, 0, curRcvrs2, 0, Type.VOID);
-  return curRcvrs2;
- }
+    static int[] copyRcvrs(int[] curRcvrs) {
+        int[] curRcvrs2 = new int[Type.VOID];
+        System.arraycopy(curRcvrs, 0, curRcvrs2, 0, Type.VOID);
+        return curRcvrs2;
+    }
 
- static void joinRcvrs(int[] curRcvrs, int[] curRcvrs2)
- {
-  for (int i = 0; i < Type.VOID; i++)
-  {
-   int rcvr = curRcvrs2[i];
-   if (curRcvrs[i] < rcvr)
-    curRcvrs[i] = rcvr;
-  }
- }
+    static void joinRcvrs(int[] curRcvrs, int[] curRcvrs2) {
+        for (int i = 0; i < Type.VOID; i++) {
+            int rcvr = curRcvrs2[i];
+            if (curRcvrs[i] < rcvr) {
+                curRcvrs[i] = rcvr;
+            }
+        }
+    }
 
- void writeRcvrsVar(int[] curRcvrs)
- {
-  writeRcvrsVar(curRcvrs, Type.DOUBLE);
-  writeRcvrsVar(curRcvrs, Type.LONG);
-  writeRcvrsVar(curRcvrs, Type.NULLREF);
-  writeRcvrsVar(curRcvrs, Type.FLOAT);
-  int type = Type.INT;
-  do
-  {
-   writeRcvrsVar(curRcvrs, type);
-  } while (--type > Type.NULLREF);
- }
+    void writeRcvrsVar(int[] curRcvrs) {
+        writeRcvrsVar(curRcvrs, Type.DOUBLE);
+        writeRcvrsVar(curRcvrs, Type.LONG);
+        writeRcvrsVar(curRcvrs, Type.NULLREF);
+        writeRcvrsVar(curRcvrs, Type.FLOAT);
+        int type = Type.INT;
+        do {
+            writeRcvrsVar(curRcvrs, type);
+        } while (--type > Type.NULLREF);
+    }
 
- static String getRcvrName(int rcvr, int type)
- {
-  Term.assertCond(rcvr > 0);
-  return "jcgo_rcvr" + Type.sig[type < Type.CLASSINTERFACE &&
-          type != Type.NULLREF ? type : Type.CLASSINTERFACE] +
-          Integer.toString(rcvr);
- }
+    static String getRcvrName(int rcvr, int type) {
+        Term.assertCond(rcvr > 0);
+        return "jcgo_rcvr"
+                + Type.sig[type < Type.CLASSINTERFACE && type != Type.NULLREF ? type
+                        : Type.CLASSINTERFACE] + Integer.toString(rcvr);
+    }
 
- private void writeRcvrsVar(int[] curRcvrs, int type)
- {
-  int cnt = curRcvrs[type];
-  for (int rcvr = 1; rcvr <= cnt; rcvr++)
-  {
-   cPrint(Type.cName[type]);
-   cPrint(" ");
-   cPrint(getRcvrName(rcvr, type));
-   cPrint(";");
-  }
- }
+    private void writeRcvrsVar(int[] curRcvrs, int type) {
+        int cnt = curRcvrs[type];
+        for (int rcvr = 1; rcvr <= cnt; rcvr++) {
+            cPrint(Type.cName[type]);
+            cPrint(" ");
+            cPrint(getRcvrName(rcvr, type));
+            cPrint(";");
+        }
+    }
 
- void stackObjCountReset()
- {
-  stackObjCount = 0;
- }
+    void stackObjCountReset() {
+        stackObjCount = 0;
+    }
 
- String nextStackObjName()
- {
-  return "jcgo_stackobj" + Integer.toString(++stackObjCount);
- }
+    String nextStackObjName() {
+        return "jcgo_stackobj" + Integer.toString(++stackObjCount);
+    }
 
- private void parameterOutput(Term paramList, boolean asArg)
- {
-  paramList.parameterOutput(this, asArg, Type.NULLREF);
-  paramList.parameterOutput(this, asArg, Type.DOUBLE);
-  paramList.parameterOutput(this, asArg, Type.LONG);
-  paramList.parameterOutput(this, asArg, Type.FLOAT);
-  int type = Type.INT;
-  do
-  {
-   paramList.parameterOutput(this, asArg, type);
-  } while (--type > Type.NULLREF);
- }
+    private void parameterOutput(Term paramList, boolean asArg) {
+        paramList.parameterOutput(this, asArg, Type.NULLREF);
+        paramList.parameterOutput(this, asArg, Type.DOUBLE);
+        paramList.parameterOutput(this, asArg, Type.LONG);
+        paramList.parameterOutput(this, asArg, Type.FLOAT);
+        int type = Type.INT;
+        do {
+            paramList.parameterOutput(this, asArg, type);
+        } while (--type > Type.NULLREF);
+    }
 
- void parameterOutputAsArg(Term paramList)
- {
-  if (paramList.notEmpty())
-   parameterOutput(paramList, true);
- }
+    void parameterOutputAsArg(Term paramList) {
+        if (paramList.notEmpty()) {
+            parameterOutput(paramList, true);
+        }
+    }
 
- static String paramStringOutputNoComma(Term paramList, boolean asArg)
- {
-  if (paramList.notEmpty())
-  {
-   OutputContext oc = new OutputContext();
-   oc.parameterOutput(paramList, asArg);
-   String str = oc.instanceToString();
-   if (str.length() > 1)
-    return str.substring(2);
-  }
-  return "";
- }
+    static String paramStringOutputNoComma(Term paramList, boolean asArg) {
+        if (paramList.notEmpty()) {
+            OutputContext oc = new OutputContext();
+            oc.parameterOutput(paramList, asArg);
+            String str = oc.instanceToString();
+            if (str.length() > 1)
+                return str.substring(2);
+        }
+        return "";
+    }
 
- void instancePrint(String s)
- {
-  Term.assertCond(hStream != null);
-  instanceSBuf.append(s);
- }
+    void instancePrint(String s) {
+        Term.assertCond(hStream != null);
+        instanceSBuf.append(s);
+    }
 
- void fileClose()
- {
-  Term.assertCond(hStream != null);
-  cstream.fileClose();
-  hStream.fileClose();
- }
+    void fileClose() {
+        Term.assertCond(hStream != null);
+        cstream.fileClose();
+        hStream.fileClose();
+    }
 
- void hCloseOnly()
- {
-  Term.assertCond(hStream != null);
-  hStream.close();
- }
+    void hCloseOnly() {
+        Term.assertCond(hStream != null);
+        hStream.close();
+    }
 
- void close()
- {
-  Term.assertCond(hStream != null);
-  cstream.close();
-  hStream.close();
-  cstream = null;
-  hStream = null;
- }
+    void close() {
+        Term.assertCond(hStream != null);
+        cstream.close();
+        hStream.close();
+        cstream = null;
+        hStream = null;
+    }
 
- String instanceToString()
- {
-  return instanceSBuf.toString();
- }
+    String instanceToString() {
+        return instanceSBuf.toString();
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,106 +40,92 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a block.
- **
- * Format:
- * LBRACE [BlockStatements] RBRACE
+ ** 
+ * Format: LBRACE [BlockStatements] RBRACE
  */
 
-class Block extends LexNode
-{
+class Block extends LexNode {
 
- boolean analysisDone;
+    boolean analysisDone;
 
- Block()
- {
-  super(new LeftBrace(), Empty.newTerm(), new RightBrace());
- }
+    Block() {
+        super(new LeftBrace(), Empty.newTerm(), new RightBrace());
+    }
 
- Block(Term b)
- {
-  super(new LeftBrace(), b, new RightBrace());
- }
+    Block(Term b) {
+        super(new LeftBrace(), b, new RightBrace());
+    }
 
- final boolean isBlock()
- {
-  return true;
- }
+    final boolean isBlock() {
+        return true;
+    }
 
- void processPass1(Context c)
- {
-  if (!analysisDone)
-  {
-   analysisDone = true;
-   terms[0].processPass1(c);
-   boolean oldHasConstructor = c.hasConstructor;
-   c.hasConstructor = false;
-   terms[1].processPass1(c);
-   if (c.hasConstructor)
-    fatalError(c, "Constructor invocation is not allowed here");
-   c.hasConstructor = oldHasConstructor;
-   terms[2].processPass1(c);
-  }
- }
+    void processPass1(Context c) {
+        if (!analysisDone) {
+            analysisDone = true;
+            terms[0].processPass1(c);
+            boolean oldHasConstructor = c.hasConstructor;
+            c.hasConstructor = false;
+            terms[1].processPass1(c);
+            if (c.hasConstructor) {
+                fatalError(c, "Constructor invocation is not allowed here");
+            }
+            c.hasConstructor = oldHasConstructor;
+            terms[2].processPass1(c);
+        }
+    }
 
- final void setContinueLabel(String label)
- {
-  assertCond(analysisDone);
-  terms[0].setContinueLabel(label);
- }
+    final void setContinueLabel(String label) {
+        assertCond(analysisDone);
+        terms[0].setContinueLabel(label);
+    }
 
- final boolean isSwitchMapAssign(boolean isMethodCall)
- {
-  return terms[1].isSwitchMapAssign(isMethodCall);
- }
+    final boolean isSwitchMapAssign(boolean isMethodCall) {
+        return terms[1].isSwitchMapAssign(isMethodCall);
+    }
 
- final boolean allowInline(int tokenLimit)
- {
-  return terms[1].allowInline(tokenLimit);
- }
+    final boolean allowInline(int tokenLimit) {
+        return terms[1].allowInline(tokenLimit);
+    }
 
- final MethodDefinition superMethodCall()
- {
-  return terms[1].superMethodCall();
- }
+    final MethodDefinition superMethodCall() {
+        return terms[1].superMethodCall();
+    }
 
- final boolean hasTailReturnOrThrow()
- {
-  return terms[1].hasTailReturnOrThrow();
- }
+    final boolean hasTailReturnOrThrow() {
+        return terms[1].hasTailReturnOrThrow();
+    }
 
- final boolean isReturnAtEnd(boolean allowBreakThrow)
- {
-  return terms[1].isReturnAtEnd(allowBreakThrow);
- }
+    final boolean isReturnAtEnd(boolean allowBreakThrow) {
+        return terms[1].isReturnAtEnd(allowBreakThrow);
+    }
 
- int tokenCount()
- {
-  return terms[1].tokenCount();
- }
+    int tokenCount() {
+        return terms[1].tokenCount();
+    }
 
- final void allocRcvr(int[] curRcvrs) {}
+    final void allocRcvr(int[] curRcvrs) {
+    }
 
- final void writeStackObjs(OutputContext oc, Term scopeTerm)
- {
-  if (!terms[0].isBoolAssign())
-   terms[1].writeStackObjs(oc, scopeTerm);
- }
+    final void writeStackObjs(OutputContext oc, Term scopeTerm) {
+        if (!terms[0].isBoolAssign()) {
+            terms[1].writeStackObjs(oc, scopeTerm);
+        }
+    }
 
- final void processOutput(OutputContext oc)
- {
-  assertCond(analysisDone);
-  int[] curRcvrs = new int[Type.VOID];
-  terms[1].allocRcvr(curRcvrs);
-  terms[0].processOutput(oc);
-  oc.writeRcvrsVar(curRcvrs);
-  terms[1].writeStackObjs(oc, terms[0]);
-  terms[1].processOutput(oc);
-  terms[2].processOutput(oc);
- }
+    final void processOutput(OutputContext oc) {
+        assertCond(analysisDone);
+        int[] curRcvrs = new int[Type.VOID];
+        terms[1].allocRcvr(curRcvrs);
+        terms[0].processOutput(oc);
+        oc.writeRcvrsVar(curRcvrs);
+        terms[1].writeStackObjs(oc, terms[0]);
+        terms[1].processOutput(oc);
+        terms[2].processOutput(oc);
+    }
 
- final ExpressionType traceClassInit()
- {
-  terms[1].traceClassInit();
-  return null;
- }
+    final ExpressionType traceClassInit() {
+        terms[1].traceClassInit();
+        return null;
+    }
 }

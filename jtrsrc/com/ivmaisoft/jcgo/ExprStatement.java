@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -41,72 +41,59 @@ package com.ivmaisoft.jcgo;
 /**
  * Grammar production for the empty, expression or local variable declaration
  * statements.
- **
- * Formats:
+ ** 
+ * Formats: SEMI StatementExpression SEMI LocalVariableDecl SEMI ConstructorCall
  * SEMI
- * StatementExpression SEMI
- * LocalVariableDecl SEMI
- * ConstructorCall SEMI
  */
 
-final class ExprStatement extends LexNode
-{
+final class ExprStatement extends LexNode {
 
- ExprStatement()
- {
-  super(Empty.newTerm());
- }
+    ExprStatement() {
+        super(Empty.newTerm());
+    }
 
- ExprStatement(Term a)
- {
-  super(a);
- }
+    ExprStatement(Term a) {
+        super(a);
+    }
 
- void processPass1(Context c)
- {
-  assertCond(c.currentMethod != null);
-  if (c.currentMethod.id().equals("<clinit>"))
-  {
-   ObjQueue names = new ObjQueue();
-   terms[0].assignedVarNames(names, false);
-   if (names.contains(Names.ASSERTIONSDISABLED))
-   {
-    assertCond(c.currentClass != null);
-    VariableDefinition v =
-     c.currentClass.getField(Names.ASSERTIONSDISABLED, null);
-    if (v != null && v.isClassVariable() && v.isFinalVariable() &&
-        v.exprType().objectSize() == Type.BOOLEAN &&
-        v.definingClass() == c.currentClass)
-     terms[0] = Empty.newTerm();
-   }
-  }
-  terms[0].processPass1(c);
- }
+    void processPass1(Context c) {
+        assertCond(c.currentMethod != null);
+        if (c.currentMethod.id().equals("<clinit>")) {
+            ObjQueue names = new ObjQueue();
+            terms[0].assignedVarNames(names, false);
+            if (names.contains(Names.ASSERTIONSDISABLED)) {
+                assertCond(c.currentClass != null);
+                VariableDefinition v = c.currentClass.getField(
+                        Names.ASSERTIONSDISABLED, null);
+                if (v != null && v.isClassVariable() && v.isFinalVariable()
+                        && v.exprType().objectSize() == Type.BOOLEAN
+                        && v.definingClass() == c.currentClass) {
+                    terms[0] = Empty.newTerm();
+                }
+            }
+        }
+        terms[0].processPass1(c);
+    }
 
- boolean isSwitchMapAssign(boolean isMethodCall)
- {
-  return terms[0].isSwitchMapAssign(isMethodCall);
- }
+    boolean isSwitchMapAssign(boolean isMethodCall) {
+        return terms[0].isSwitchMapAssign(isMethodCall);
+    }
 
- boolean allowInline(int tokenLimit)
- {
-  return tokenCount() <= tokenLimit;
- }
+    boolean allowInline(int tokenLimit) {
+        return tokenCount() <= tokenLimit;
+    }
 
- int tokenCount()
- {
-  return terms[0].tokenCount();
- }
+    int tokenCount() {
+        return terms[0].tokenCount();
+    }
 
- MethodDefinition superMethodCall()
- {
-  return terms[0].superMethodCall();
- }
+    MethodDefinition superMethodCall() {
+        return terms[0].superMethodCall();
+    }
 
- void processOutput(OutputContext oc)
- {
-  terms[0].setVoidExpression();
-  terms[0].processOutput(oc);
-  oc.cPrint(";");
- }
+    void processOutput(OutputContext oc) {
+        terms[0].setVoidExpression();
+        terms[0].processOutput(oc);
+        oc.cPrint(";");
+    }
 }

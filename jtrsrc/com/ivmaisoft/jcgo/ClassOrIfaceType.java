@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,76 +42,66 @@ package com.ivmaisoft.jcgo;
  * Grammar production for class (and interface) types.
  */
 
-final class ClassOrIfaceType extends LexNode
-{
+final class ClassOrIfaceType extends LexNode {
 
- private static final String STRING_SHORTNAME =
-  Names.JAVA_LANG_STRING.substring(
-  Names.JAVA_LANG_STRING.lastIndexOf('.') + 1);
+    private static final String STRING_SHORTNAME = Names.JAVA_LANG_STRING
+            .substring(Names.JAVA_LANG_STRING.lastIndexOf('.') + 1);
 
- private Term nameTerm;
+    private Term nameTerm;
 
- private ClassDefinition cd;
+    private ClassDefinition cd;
 
- private boolean addedTo;
+    private boolean addedTo;
 
- ClassOrIfaceType(Term a)
- {
-  nameTerm = a;
- }
+    ClassOrIfaceType(Term a) {
+        nameTerm = a;
+    }
 
- ClassOrIfaceType(ClassDefinition cd)
- {
-  assertCond(cd != null);
-  this.cd = cd;
- }
+    ClassOrIfaceType(ClassDefinition cd) {
+        assertCond(cd != null);
+        this.cd = cd;
+    }
 
- boolean isJavaConstant(ClassDefinition ourClass)
- {
-  if (cd == null)
-  {
-   assertCond(ourClass != null);
-   String name = nameTerm.dottedName();
-   if (!name.equals(STRING_SHORTNAME) && !name.equals(Names.JAVA_LANG_STRING))
-    return false;
-   cd = ourClass.passOneContext().resolveClass(name, true, false);
-   if (cd == null)
-    return false;
-  }
-  return cd.isStringOrNull();
- }
+    boolean isJavaConstant(ClassDefinition ourClass) {
+        if (cd == null) {
+            assertCond(ourClass != null);
+            String name = nameTerm.dottedName();
+            if (!name.equals(STRING_SHORTNAME)
+                    && !name.equals(Names.JAVA_LANG_STRING))
+                return false;
+            cd = ourClass.passOneContext().resolveClass(name, true, false);
+            if (cd == null)
+                return false;
+        }
+        return cd.isStringOrNull();
+    }
 
- void processPass1(Context c)
- {
-  if (cd == null)
-   cd = c.resolveClass(nameTerm.dottedName(), true, false);
-  c.typeClassDefinition = cd;
- }
+    void processPass1(Context c) {
+        if (cd == null) {
+            cd = c.resolveClass(nameTerm.dottedName(), true, false);
+        }
+        c.typeClassDefinition = cd;
+    }
 
- ExpressionType exprType()
- {
-  assertCond(cd != null);
-  return cd;
- }
+    ExpressionType exprType() {
+        assertCond(cd != null);
+        return cd;
+    }
 
- void addFieldsTo(ClassDefinition cd)
- {
-  assertCond(this.cd != null);
-  if (!addedTo)
-  {
-   this.cd.addFieldsTo(cd);
-   addedTo = true;
-  }
- }
+    void addFieldsTo(ClassDefinition cd) {
+        assertCond(this.cd != null);
+        if (!addedTo) {
+            this.cd.addFieldsTo(cd);
+            addedTo = true;
+        }
+    }
 
- void storeSignature(ObjVector parmSig)
- {
-  assertCond(cd != null);
-  parmSig.addElement(cd);
- }
+    void storeSignature(ObjVector parmSig) {
+        assertCond(cd != null);
+        parmSig.addElement(cd);
+    }
 
- boolean isType()
- {
-  return true;
- }
+    boolean isType() {
+        return true;
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,58 +42,47 @@ package com.ivmaisoft.jcgo;
  * An empty token.
  */
 
-final class Empty extends Term
-{
+final class Empty extends Term {
 
- static final Empty term = new Empty();
+    static final Empty term = new Empty();
 
- private Empty()
- {
-  super(0);
- }
+    private Empty() {
+        super(0);
+    }
 
- static Term newTerm()
- {
-  return term;
- }
+    static Term newTerm() {
+        return term;
+    }
 
- boolean notEmpty()
- {
-  return false;
- }
+    boolean notEmpty() {
+        return false;
+    }
 
- Term joinParamLists(Term paramList)
- {
-  return paramList;
- }
+    Term joinParamLists(Term paramList) {
+        return paramList;
+    }
 
- int tokenCount()
- {
-  return 0;
- }
+    int tokenCount() {
+        return 0;
+    }
 
- boolean isLiteral()
- {
-  return true;
- }
+    boolean isLiteral() {
+        return true;
+    }
 
- boolean allowInline(int tokenLimit)
- {
-  return true;
- }
+    boolean allowInline(int tokenLimit) {
+        return true;
+    }
 
- Term copyParamList(int[] skip)
- {
-  return this;
- }
+    Term copyParamList(int[] skip) {
+        return this;
+    }
 
- Term makeArgumentList()
- {
-  return this;
- }
+    Term makeArgumentList() {
+        return this;
+    }
 
- String stringOutput()
- {
-  return "";
- }
+    String stringOutput() {
+        return "";
+    }
 }

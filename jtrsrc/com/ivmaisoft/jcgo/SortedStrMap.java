@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,250 +42,223 @@ package com.ivmaisoft.jcgo;
  * A sorted map with string keys.
  */
 
-final class SortedStrMap
-{
+final class SortedStrMap {
 
- static final SortedStrMapEntry NIL = new SortedStrMapEntry();
+    static final SortedStrMapEntry NIL = new SortedStrMapEntry();
 
- private SortedStrMapEntry root = NIL;
+    private SortedStrMapEntry root = NIL;
 
- SortedStrMap() {}
-
- Object addStartsWith(String key, Object value)
- {
-  SortedStrMapEntry entry = root;
-  int cmp = 0;
-  if (entry != NIL)
-   while ((cmp = key.compareTo(entry.key)) != 0)
-    if (cmp < 0)
-    {
-     if (entry.left == NIL)
-      break;
-     entry = entry.left;
+    SortedStrMap() {
     }
-     else
-     {
-      if (entry.right == NIL)
-       break;
-      entry = entry.right;
-     }
-  if (cmp == 0)
-  {
-   if (entry != NIL)
-   {
-    Object oldValue = entry.value;
-    entry.value = value;
-    return oldValue;
-   }
-   root = new SortedStrMapEntry(key, value, entry);
-  }
-   else
-   {
-    SortedStrMapEntry next = cmp < 0 ? entry : successor(entry);
-    if (next != null && next.key.startsWith(key))
-     return null;
-    next = cmp < 0 ? predecessor(entry) : entry;
-    if (next != null && key.startsWith(next.key))
-    {
-     next.key = key;
-     next.value = value;
+
+    Object addStartsWith(String key, Object value) {
+        SortedStrMapEntry entry = root;
+        int cmp = 0;
+        if (entry != NIL) {
+            while ((cmp = key.compareTo(entry.key)) != 0) {
+                if (cmp < 0) {
+                    if (entry.left == NIL)
+                        break;
+                    entry = entry.left;
+                } else {
+                    if (entry.right == NIL)
+                        break;
+                    entry = entry.right;
+                }
+            }
+        }
+        if (cmp == 0) {
+            if (entry != NIL) {
+                Object oldValue = entry.value;
+                entry.value = value;
+                return oldValue;
+            }
+            root = new SortedStrMapEntry(key, value, entry);
+        } else {
+            SortedStrMapEntry next = cmp < 0 ? entry : successor(entry);
+            if (next != null && next.key.startsWith(key))
+                return null;
+            next = cmp < 0 ? predecessor(entry) : entry;
+            if (next != null && key.startsWith(next.key)) {
+                next.key = key;
+                next.value = value;
+            } else if (cmp < 0) {
+                entry.left = new SortedStrMapEntry(key, value, entry);
+                fixAfterInsertion(entry.left);
+            } else {
+                entry.right = new SortedStrMapEntry(key, value, entry);
+                fixAfterInsertion(entry.right);
+            }
+        }
+        return null;
     }
-     else
-     {
-      if (cmp < 0)
-      {
-       entry.left = new SortedStrMapEntry(key, value, entry);
-       fixAfterInsertion(entry.left);
-      }
-       else
-       {
-        entry.right = new SortedStrMapEntry(key, value, entry);
-        fixAfterInsertion(entry.right);
-       }
-     }
-   }
-  return null;
- }
 
- Object getValueStartsWith(String key)
- {
-  SortedStrMapEntry entry = root;
-  int cmp = 0;
-  if (entry != NIL)
-   while ((cmp = key.compareTo(entry.key)) != 0)
-    if (cmp < 0)
-    {
-     if (entry.left == NIL)
-      break;
-     entry = entry.left;
+    Object getValueStartsWith(String key) {
+        SortedStrMapEntry entry = root;
+        int cmp = 0;
+        if (entry != NIL) {
+            while ((cmp = key.compareTo(entry.key)) != 0) {
+                if (cmp < 0) {
+                    if (entry.left == NIL)
+                        break;
+                    entry = entry.left;
+                } else {
+                    if (entry.right == NIL)
+                        break;
+                    entry = entry.right;
+                }
+            }
+        }
+        if (cmp > 0) {
+            entry = successor(entry);
+        }
+        return entry != null && entry.key.startsWith(key) ? entry.value : null;
     }
-     else
-     {
-      if (entry.right == NIL)
-       break;
-      entry = entry.right;
-     }
-  if (cmp > 0)
-   entry = successor(entry);
-  return entry != null && entry.key.startsWith(key) ? entry.value : null;
- }
 
- private SortedStrMapEntry predecessor(SortedStrMapEntry entry)
- {
-  SortedStrMapEntry child = entry.left;
-  if (child != NIL)
-  {
-   while (child.right != NIL)
-    child = child.right;
-   return child;
-  }
-  if (entry != NIL)
-   do
-   {
-    child = entry;
-    entry = entry.parent;
-   } while (entry.left == child);
-  return entry;
- }
-
- private SortedStrMapEntry successor(SortedStrMapEntry entry)
- {
-  SortedStrMapEntry child = entry.right;
-  if (child != NIL)
-  {
-   while (child.left != NIL)
-    child = child.left;
-   return child;
-  }
-  if (entry != NIL)
-   do
-   {
-    child = entry;
-    entry = entry.parent;
-   } while (entry.right == child);
-  return entry;
- }
-
- private void fixAfterInsertion(SortedStrMapEntry entry)
- {
-  SortedStrMapEntry pp;
-  entry.isRed = true;
-  while (entry != NIL && entry != root && entry.parent.isRed)
-   if ((pp = entry.parent.parent).left == entry.parent)
-   {
-    SortedStrMapEntry next = pp.right;
-    if (next.isRed)
-    {
-     entry.parent.isRed = false;
-     next.isRed = false;
-     entry = pp;
-     if (entry != NIL)
-      entry.isRed = true;
+    private SortedStrMapEntry predecessor(SortedStrMapEntry entry) {
+        SortedStrMapEntry child = entry.left;
+        if (child != NIL) {
+            while (child.right != NIL) {
+                child = child.right;
+            }
+            return child;
+        }
+        if (entry != NIL) {
+            do {
+                child = entry;
+                entry = entry.parent;
+            } while (entry.left == child);
+        }
+        return entry;
     }
-     else
-     {
-      if (entry.parent.right == entry)
-      {
-       entry = entry.parent;
-       rotateLeft(entry);
-       pp = entry.parent.parent;
-      }
-      entry.parent.isRed = false;
-      if (pp != NIL)
-      {
-       pp.isRed = true;
-       rotateRight(pp);
-      }
-     }
-   }
-    else
-    {
-     SortedStrMapEntry next = pp.left;
-     if (next.isRed)
-     {
-      entry.parent.isRed = false;
-      next.isRed = false;
-      entry = pp;
-      if (entry != NIL)
-       entry.isRed = true;
-     }
-      else
-      {
-       if (entry.parent.left == entry)
-       {
-        entry = entry.parent;
-        rotateRight(entry);
-        pp = entry.parent.parent;
-       }
-       entry.parent.isRed = false;
-       if (pp != NIL)
-       {
-        pp.isRed = true;
-        rotateLeft(pp);
-       }
-      }
+
+    private SortedStrMapEntry successor(SortedStrMapEntry entry) {
+        SortedStrMapEntry child = entry.right;
+        if (child != NIL) {
+            while (child.left != NIL) {
+                child = child.left;
+            }
+            return child;
+        }
+        if (entry != NIL) {
+            do {
+                child = entry;
+                entry = entry.parent;
+            } while (entry.right == child);
+        }
+        return entry;
     }
-  root.isRed = false;
- }
 
- private void rotateLeft(SortedStrMapEntry entry)
- {
-  SortedStrMapEntry next = entry.right;
-  entry.right = next.left;
-  if (next.left != NIL)
-   next.left.parent = entry;
-  next.parent = entry.parent;
-  if (entry.parent == NIL)
-   root = next;
-   else if (entry.parent.left == entry)
-    entry.parent.left = next;
-    else entry.parent.right = next;
-  next.left = entry;
-  entry.parent = next;
- }
+    private void fixAfterInsertion(SortedStrMapEntry entry) {
+        SortedStrMapEntry pp;
+        entry.isRed = true;
+        while (entry != NIL && entry != root && entry.parent.isRed) {
+            if ((pp = entry.parent.parent).left == entry.parent) {
+                SortedStrMapEntry next = pp.right;
+                if (next.isRed) {
+                    entry.parent.isRed = false;
+                    next.isRed = false;
+                    entry = pp;
+                    if (entry != NIL) {
+                        entry.isRed = true;
+                    }
+                } else {
+                    if (entry.parent.right == entry) {
+                        entry = entry.parent;
+                        rotateLeft(entry);
+                        pp = entry.parent.parent;
+                    }
+                    entry.parent.isRed = false;
+                    if (pp != NIL) {
+                        pp.isRed = true;
+                        rotateRight(pp);
+                    }
+                }
+            } else {
+                SortedStrMapEntry next = pp.left;
+                if (next.isRed) {
+                    entry.parent.isRed = false;
+                    next.isRed = false;
+                    entry = pp;
+                    if (entry != NIL) {
+                        entry.isRed = true;
+                    }
+                } else {
+                    if (entry.parent.left == entry) {
+                        entry = entry.parent;
+                        rotateRight(entry);
+                        pp = entry.parent.parent;
+                    }
+                    entry.parent.isRed = false;
+                    if (pp != NIL) {
+                        pp.isRed = true;
+                        rotateLeft(pp);
+                    }
+                }
+            }
+        }
+        root.isRed = false;
+    }
 
- private void rotateRight(SortedStrMapEntry entry)
- {
-  SortedStrMapEntry next = entry.left;
-  entry.left = next.right;
-  if (next.right != NIL)
-   next.right.parent = entry;
-  next.parent = entry.parent;
-  if (entry.parent == NIL)
-   root = next;
-   else if (entry.parent.right == entry)
-    entry.parent.right = next;
-    else entry.parent.left = next;
-  next.right = entry;
-  entry.parent = next;
- }
+    private void rotateLeft(SortedStrMapEntry entry) {
+        SortedStrMapEntry next = entry.right;
+        entry.right = next.left;
+        if (next.left != NIL) {
+            next.left.parent = entry;
+        }
+        next.parent = entry.parent;
+        if (entry.parent == NIL) {
+            root = next;
+        } else if (entry.parent.left == entry) {
+            entry.parent.left = next;
+        } else {
+            entry.parent.right = next;
+        }
+        next.left = entry;
+        entry.parent = next;
+    }
+
+    private void rotateRight(SortedStrMapEntry entry) {
+        SortedStrMapEntry next = entry.left;
+        entry.left = next.right;
+        if (next.right != NIL) {
+            next.right.parent = entry;
+        }
+        next.parent = entry.parent;
+        if (entry.parent == NIL) {
+            root = next;
+        } else if (entry.parent.right == entry) {
+            entry.parent.right = next;
+        } else {
+            entry.parent.left = next;
+        }
+        next.right = entry;
+        entry.parent = next;
+    }
 }
 
-final class SortedStrMapEntry
-{
+final class SortedStrMapEntry {
 
- String key;
+    String key;
 
- Object value;
+    Object value;
 
- SortedStrMapEntry left = SortedStrMap.NIL;
+    SortedStrMapEntry left = SortedStrMap.NIL;
 
- SortedStrMapEntry right = SortedStrMap.NIL;
+    SortedStrMapEntry right = SortedStrMap.NIL;
 
- SortedStrMapEntry parent;
+    SortedStrMapEntry parent;
 
- boolean isRed;
+    boolean isRed;
 
- SortedStrMapEntry()
- {
-  key = "";
-  parent = SortedStrMap.NIL;
- }
+    SortedStrMapEntry() {
+        key = "";
+        parent = SortedStrMap.NIL;
+    }
 
- SortedStrMapEntry(String key, Object value, SortedStrMapEntry parent)
- {
-  this.key = key;
-  this.value = value;
-  this.parent = parent;
- }
+    SortedStrMapEntry(String key, Object value, SortedStrMapEntry parent) {
+        this.key = key;
+        this.value = value;
+        this.parent = parent;
+    }
 }

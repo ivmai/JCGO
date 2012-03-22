@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -44,106 +44,96 @@ import java.util.Enumeration;
  * Grammar production for a block start ('{').
  */
 
-final class LeftBrace extends LexNode
-{
+final class LeftBrace extends LexNode {
 
- private LeftBrace outerScope;
+    private LeftBrace outerScope;
 
- private boolean isConditional;
+    private boolean isConditional;
 
- private ObjQueue localVars;
+    private ObjQueue localVars;
 
- private String continueLabel;
+    private String continueLabel;
 
- private ObjQueue classes;
+    private ObjQueue classes;
 
- LeftBrace() {}
+    LeftBrace() {
+    }
 
- void processPass0(Context c)
- {
-  outerScope = c.localScope;
-  c.localScope = this;
- }
+    void processPass0(Context c) {
+        outerScope = c.localScope;
+        c.localScope = this;
+    }
 
- int tokenCount()
- {
-  return 0;
- }
+    int tokenCount() {
+        return 0;
+    }
 
- void processPass1(Context c)
- {
-  outerScope = c.localScope;
-  isConditional = c.isConditional;
-  c.localScope = this;
-  c.isConditional = false;
- }
+    void processPass1(Context c) {
+        outerScope = c.localScope;
+        isConditional = c.isConditional;
+        c.localScope = this;
+        c.isConditional = false;
+    }
 
- LeftBrace outerScope()
- {
-  return outerScope;
- }
+    LeftBrace outerScope() {
+        return outerScope;
+    }
 
- boolean isBoolAssign()
- {
-  return isConditional;
- }
+    boolean isBoolAssign() {
+        return isConditional;
+    }
 
- void addLocalClass(ClassDefinition cd)
- {
-  if (classes == null)
-   classes = new ObjQueue();
-  if (cd != null)
-   classes.addLast(cd);
- }
+    void addLocalClass(ClassDefinition cd) {
+        if (classes == null) {
+            classes = new ObjQueue();
+        }
+        if (cd != null) {
+            classes.addLast(cd);
+        }
+    }
 
- String resolveLocalClass(String name)
- {
-  if (classes != null)
-  {
-   Enumeration en = classes.elements();
-   while (en.hasMoreElements())
-   {
-    ClassDefinition cd = (ClassDefinition) en.nextElement();
-    if (name.equals(cd.id()))
-     return cd.name();
-   }
-  }
-  return outerScope != null ? outerScope.resolveLocalClass(name) : null;
- }
+    String resolveLocalClass(String name) {
+        if (classes != null) {
+            Enumeration en = classes.elements();
+            while (en.hasMoreElements()) {
+                ClassDefinition cd = (ClassDefinition) en.nextElement();
+                if (name.equals(cd.id()))
+                    return cd.name();
+            }
+        }
+        return outerScope != null ? outerScope.resolveLocalClass(name) : null;
+    }
 
- void setContinueLabel(String label)
- {
-  assertCond(continueLabel == null);
-  continueLabel = label;
- }
+    void setContinueLabel(String label) {
+        assertCond(continueLabel == null);
+        continueLabel = label;
+    }
 
- String continueLabel()
- {
-  return continueLabel;
- }
+    String continueLabel() {
+        return continueLabel;
+    }
 
- void addLocal(VariableDefinition v)
- {
-  if (localVars == null)
-   localVars = new ObjQueue();
-  localVars.addLast(v);
- }
+    void addLocal(VariableDefinition v) {
+        if (localVars == null) {
+            localVars = new ObjQueue();
+        }
+        localVars.addLast(v);
+    }
 
- Enumeration localElements()
- {
-  return localVars != null ? localVars.elements() : null;
- }
+    Enumeration localElements() {
+        return localVars != null ? localVars.elements() : null;
+    }
 
- void processOutput(OutputContext oc)
- {
-  oc.cPrint("{");
-  if (localVars != null)
-  {
-   VariableDefinition[] vars = new VariableDefinition[localVars.countSize()];
-   localVars.copyInto(vars);
-   VariableDefinition.sortBySize(vars, vars.length);
-   for (int i = 0; i < vars.length; i++)
-    vars[i].cdefinition(oc);
-  }
- }
+    void processOutput(OutputContext oc) {
+        oc.cPrint("{");
+        if (localVars != null) {
+            VariableDefinition[] vars = new VariableDefinition[localVars
+                    .countSize()];
+            localVars.copyInto(vars);
+            VariableDefinition.sortBySize(vars, vars.length);
+            for (int i = 0; i < vars.length; i++) {
+                vars[i].cdefinition(oc);
+            }
+        }
+    }
 }

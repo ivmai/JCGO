@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,71 +42,60 @@ import java.util.Enumeration;
 
 /**
  * Grammar production for a list of formal parameters.
- **
- * Format:
- * FormalParameter COMMA FormalParameter
- * FormalParameter COMMA FormalParamList
+ ** 
+ * Format: FormalParameter COMMA FormalParameter FormalParameter COMMA
+ * FormalParamList
  */
 
-final class FormalParamList extends LexNode
-{
+final class FormalParamList extends LexNode {
 
- FormalParamList(Term a, Term c)
- {
-  super(a, c);
- }
+    FormalParamList(Term a, Term c) {
+        super(a, c);
+    }
 
- static Term prepend(Term param, Term paramList)
- {
-  return paramList.notEmpty() ? new FormalParamList(param, paramList) : param;
- }
+    static Term prepend(Term param, Term paramList) {
+        return paramList.notEmpty() ? new FormalParamList(param, paramList)
+                : param;
+    }
 
- Term joinParamLists(Term paramList)
- {
-  return paramList.notEmpty() ? new FormalParamList(terms[0],
-          terms[1].joinParamLists(paramList)) : this;
- }
+    Term joinParamLists(Term paramList) {
+        return paramList.notEmpty() ? new FormalParamList(terms[0],
+                terms[1].joinParamLists(paramList)) : this;
+    }
 
- Term getTermAt(int index)
- {
-  assertCond(index == 0 || index == 1);
-  return terms[index];
- }
+    Term getTermAt(int index) {
+        assertCond(index == 0 || index == 1);
+        return terms[index];
+    }
 
- Term getArgumentTerm(int index)
- {
-  return index > 0 ? terms[1].getArgumentTerm(index - 1) :
-          terms[0].getArgumentTerm(0);
- }
+    Term getArgumentTerm(int index) {
+        return index > 0 ? terms[1].getArgumentTerm(index - 1) : terms[0]
+                .getArgumentTerm(0);
+    }
 
- Term copyParamList(int[] skip)
- {
-  Term left = terms[0].copyParamList(skip);
-  Term right = terms[1].copyParamList(skip);
-  return left.notEmpty() ? (right.notEmpty() ?
-          new FormalParamList(left, right) : left) : right;
- }
+    Term copyParamList(int[] skip) {
+        Term left = terms[0].copyParamList(skip);
+        Term right = terms[1].copyParamList(skip);
+        return left.notEmpty() ? (right.notEmpty() ? new FormalParamList(left,
+                right) : left) : right;
+    }
 
- Term makeArgumentList()
- {
-  return new ParameterList(terms[0].makeArgumentList(),
-          terms[1].makeArgumentList());
- }
+    Term makeArgumentList() {
+        return new ParameterList(terms[0].makeArgumentList(),
+                terms[1].makeArgumentList());
+    }
 
- int tokenCount()
- {
-  return terms[0].tokenCount() + terms[1].tokenCount();
- }
+    int tokenCount() {
+        return terms[0].tokenCount() + terms[1].tokenCount();
+    }
 
- void parameterOutput(OutputContext oc, boolean asArg, int type)
- {
-  terms[0].parameterOutput(oc, asArg, type);
-  terms[1].parameterOutput(oc, asArg, type);
- }
+    void parameterOutput(OutputContext oc, boolean asArg, int type) {
+        terms[0].parameterOutput(oc, asArg, type);
+        terms[1].parameterOutput(oc, asArg, type);
+    }
 
- void setTraceExprType(Enumeration en)
- {
-  terms[0].setTraceExprType(en);
-  terms[1].setTraceExprType(en);
- }
+    void setTraceExprType(Enumeration en) {
+        terms[0].setTraceExprType(en);
+        terms[1].setTraceExprType(en);
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,104 +40,87 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for creating anonymous arrays.
- **
- * Format:
- * NEW ClassOrIfaceType/PrimitiveType Dims ArrayInitializer
+ ** 
+ * Format: NEW ClassOrIfaceType/PrimitiveType Dims ArrayInitializer
  */
 
-final class AnonymousArray extends LexNode
-{
+final class AnonymousArray extends LexNode {
 
- private ExpressionType resType;
+    private ExpressionType resType;
 
- AnonymousArray(Term b, Term c, Term d)
- {
-  super(b, c, d);
- }
+    AnonymousArray(Term b, Term c, Term d) {
+        super(b, c, d);
+    }
 
- void processPass1(Context c)
- {
-  if (resType == null)
-  {
-   int oldTypeDims = c.typeDims;
-   ClassDefinition oldTypeClassDefinition = c.typeClassDefinition;
-   c.typeDims = 0;
-   terms[1].processPass1(c);
-   terms[0].processPass1(c);
-   ClassDefinition cd = c.typeClassDefinition;
-   cd.predefineClass(c.forClass);
-   resType = cd.asExprType(c.typeDims);
-   c.typeDims = oldTypeDims;
-   c.typeClassDefinition = oldTypeClassDefinition;
-   ExpressionType oldCurrentVarType = c.currentVarType;
-   c.currentVarType = resType;
-   terms[2].processPass1(c);
-   c.currentVarType = oldCurrentVarType;
-   cd.markUsed();
-  }
- }
+    void processPass1(Context c) {
+        if (resType == null) {
+            int oldTypeDims = c.typeDims;
+            ClassDefinition oldTypeClassDefinition = c.typeClassDefinition;
+            c.typeDims = 0;
+            terms[1].processPass1(c);
+            terms[0].processPass1(c);
+            ClassDefinition cd = c.typeClassDefinition;
+            cd.predefineClass(c.forClass);
+            resType = cd.asExprType(c.typeDims);
+            c.typeDims = oldTypeDims;
+            c.typeClassDefinition = oldTypeClassDefinition;
+            ExpressionType oldCurrentVarType = c.currentVarType;
+            c.currentVarType = resType;
+            terms[2].processPass1(c);
+            c.currentVarType = oldCurrentVarType;
+            cd.markUsed();
+        }
+    }
 
- ExpressionType exprType()
- {
-  assertCond(resType != null);
-  return resType;
- }
+    ExpressionType exprType() {
+        assertCond(resType != null);
+        return resType;
+    }
 
- boolean storeClassLiteralsGuess(ObjVector parmSig, boolean isActual)
- {
-  assertCond(resType != null);
-  return terms[2].storeClassLiteralsGuess(parmSig, isActual);
- }
+    boolean storeClassLiteralsGuess(ObjVector parmSig, boolean isActual) {
+        assertCond(resType != null);
+        return terms[2].storeClassLiteralsGuess(parmSig, isActual);
+    }
 
- boolean isLiteral()
- {
-  return terms[2].isLiteral();
- }
+    boolean isLiteral() {
+        return terms[2].isLiteral();
+    }
 
- boolean isSafeWithThrow()
- {
-  return terms[2].isSafeWithThrow();
- }
+    boolean isSafeWithThrow() {
+        return terms[2].isSafeWithThrow();
+    }
 
- boolean isNotNull()
- {
-  return true;
- }
+    boolean isNotNull() {
+        return true;
+    }
 
- void setStackObjVolatile()
- {
-  terms[2].setStackObjVolatile();
- }
+    void setStackObjVolatile() {
+        terms[2].setStackObjVolatile();
+    }
 
- void setObjLeaks(VariableDefinition v)
- {
-  terms[2].setObjLeaks(v);
- }
+    void setObjLeaks(VariableDefinition v) {
+        terms[2].setObjLeaks(v);
+    }
 
- int tokenCount()
- {
-  return terms[2].tokenCount();
- }
+    int tokenCount() {
+        return terms[2].tokenCount();
+    }
 
- void allocRcvr(int[] curRcvrs)
- {
-  terms[2].allocRcvr(curRcvrs);
- }
+    void allocRcvr(int[] curRcvrs) {
+        terms[2].allocRcvr(curRcvrs);
+    }
 
- boolean isAtomary()
- {
-  return terms[2].isAtomary();
- }
+    boolean isAtomary() {
+        return terms[2].isAtomary();
+    }
 
- void processOutput(OutputContext oc)
- {
-  assertCond(resType != null);
-  terms[2].processOutput(oc);
- }
+    void processOutput(OutputContext oc) {
+        assertCond(resType != null);
+        terms[2].processOutput(oc);
+    }
 
- ExpressionType traceClassInit()
- {
-  terms[2].traceClassInit();
-  return null;
- }
+    ExpressionType traceClassInit() {
+        terms[2].traceClassInit();
+        return null;
+    }
 }

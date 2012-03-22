@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,61 +40,54 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for the declaration part of a variable definition.
- **
- * Formats:
- * VariableIdentifier [Dims] Empty Empty
- * VariableIdentifier [Dims] EQUALS VariableInitializer
+ ** 
+ * Formats: VariableIdentifier [Dims] Empty Empty VariableIdentifier [Dims]
+ * EQUALS VariableInitializer
  */
 
-final class VariableDeclarator extends LexNode
-{
+final class VariableDeclarator extends LexNode {
 
- private ExpressionType exprType0;
+    private ExpressionType exprType0;
 
- VariableDeclarator(Term a, Term b, Term d)
- {
-  super(a, b, d);
- }
+    VariableDeclarator(Term a, Term b, Term d) {
+        super(a, b, d);
+    }
 
- void processPass1(Context c)
- {
-  c.varInitializer = terms[2];
-  terms[1].processPass1(c);
-  terms[0].processPass1(c);
-  if ((c.modifiers & AccModifier.LOCALVAR) != 0 && terms[2].notEmpty())
-  {
-   exprType0 = terms[0].exprType();
-   if (exprType0 == terms[2].exprType())
-    exprType0 = null;
-  }
- }
+    void processPass1(Context c) {
+        c.varInitializer = terms[2];
+        terms[1].processPass1(c);
+        terms[0].processPass1(c);
+        if ((c.modifiers & AccModifier.LOCALVAR) != 0 && terms[2].notEmpty()) {
+            exprType0 = terms[0].exprType();
+            if (exprType0 == terms[2].exprType()) {
+                exprType0 = null;
+            }
+        }
+    }
 
- void discoverObjLeaks()
- {
-  if (terms[2].notEmpty())
-  {
-   terms[2].discoverObjLeaks();
-   VariableDefinition v = terms[0].getVariable(false);
-   assertCond(v != null);
-   if (v.exprType().objectSize() >= Type.CLASSINTERFACE)
-    terms[2].setObjLeaks(v);
-  }
- }
+    void discoverObjLeaks() {
+        if (terms[2].notEmpty()) {
+            terms[2].discoverObjLeaks();
+            VariableDefinition v = terms[0].getVariable(false);
+            assertCond(v != null);
+            if (v.exprType().objectSize() >= Type.CLASSINTERFACE) {
+                terms[2].setObjLeaks(v);
+            }
+        }
+    }
 
- void processOutput(OutputContext oc)
- {
-  if (terms[2].notEmpty() && !terms[0].isLiteral())
-  {
-   terms[0].processOutput(oc);
-   oc.cPrint("= ");
-   if (exprType0 != null)
-   {
-    oc.cPrint("(");
-    oc.cPrint(exprType0.castName());
-    oc.cPrint(")");
-    terms[2].atomaryOutput(oc);
-   }
-    else terms[2].processOutput(oc);
-  }
- }
+    void processOutput(OutputContext oc) {
+        if (terms[2].notEmpty() && !terms[0].isLiteral()) {
+            terms[0].processOutput(oc);
+            oc.cPrint("= ");
+            if (exprType0 != null) {
+                oc.cPrint("(");
+                oc.cPrint(exprType0.castName());
+                oc.cPrint(")");
+                terms[2].atomaryOutput(oc);
+            } else {
+                terms[2].processOutput(oc);
+            }
+        }
+    }
 }

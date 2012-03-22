@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,81 +42,69 @@ package com.ivmaisoft.jcgo;
  * The abstract superclass for all "breakable" statements.
  */
 
-abstract class BreakableStmt extends LexNode
-{
+abstract class BreakableStmt extends LexNode {
 
- private BreakableStmt currentLabelStmt;
+    private BreakableStmt currentLabelStmt;
 
- private TryStatement currentTry;
+    private TryStatement currentTry;
 
- private String breakLabel;
+    private String breakLabel;
 
- private String continueLabel;
+    private String continueLabel;
 
- BreakableStmt(Term a, Term c)
- {
-  super(a, c);
- }
+    BreakableStmt(Term a, Term c) {
+        super(a, c);
+    }
 
- BreakableStmt(Term a, Term b, Term c, Term d)
- {
-  super(a, b, c, d);
- }
+    BreakableStmt(Term a, Term b, Term c, Term d) {
+        super(a, b, c, d);
+    }
 
- BreakableStmt(Term a, Term b, Term c, Term d, Term e, Term f)
- {
-  super(a, b, c, d, e, f);
- }
+    BreakableStmt(Term a, Term b, Term c, Term d, Term e, Term f) {
+        super(a, b, c, d, e, f);
+    }
 
- final void processPassOneBegin(Context c)
- {
-  currentTry = c.currentTry;
-  currentLabelStmt = c.currentLabelStmt;
-  c.currentLabelStmt = this;
- }
+    final void processPassOneBegin(Context c) {
+        currentTry = c.currentTry;
+        currentLabelStmt = c.currentLabelStmt;
+        c.currentLabelStmt = this;
+    }
 
- final void processPassOneEnd(Context c)
- {
-  assertCond(c.currentLabelStmt == this);
-  c.currentLabelStmt = currentLabelStmt;
- }
+    final void processPassOneEnd(Context c) {
+        assertCond(c.currentLabelStmt == this);
+        c.currentLabelStmt = currentLabelStmt;
+    }
 
- BreakableStmt find(String label)
- {
-  return currentLabelStmt != null ? currentLabelStmt.find(label) : null;
- }
+    BreakableStmt find(String label) {
+        return currentLabelStmt != null ? currentLabelStmt.find(label) : null;
+    }
 
- final void makeBreakLabel(MethodDefinition currentMethod)
- {
-  assertCond(currentMethod != null);
-  if (breakLabel == null)
-   breakLabel = "jcgo_break" + currentMethod.nextLabelSuffix();
- }
+    final void makeBreakLabel(MethodDefinition currentMethod) {
+        assertCond(currentMethod != null);
+        if (breakLabel == null) {
+            breakLabel = "jcgo_break" + currentMethod.nextLabelSuffix();
+        }
+    }
 
- final void makeContinueLabel(MethodDefinition currentMethod)
- {
-  assertCond(currentMethod != null);
-  if (continueLabel == null)
-  {
-   continueLabel = "jcgo_continue" + currentMethod.nextLabelSuffix();
-   setContinueLabel(continueLabel);
-  }
- }
+    final void makeContinueLabel(MethodDefinition currentMethod) {
+        assertCond(currentMethod != null);
+        if (continueLabel == null) {
+            continueLabel = "jcgo_continue" + currentMethod.nextLabelSuffix();
+            setContinueLabel(continueLabel);
+        }
+    }
 
- final void writeGoto(OutputContext oc, TryStatement ts, boolean isBreak)
- {
-  String label = isBreak ? breakLabel : continueLabel;
-  assertCond(label != null);
-  TryStatement.outputFinallyGroup(ts, currentTry, oc, "goto " + label);
- }
+    final void writeGoto(OutputContext oc, TryStatement ts, boolean isBreak) {
+        String label = isBreak ? breakLabel : continueLabel;
+        assertCond(label != null);
+        TryStatement.outputFinallyGroup(ts, currentTry, oc, "goto " + label);
+    }
 
- final void outputBreakLabel(OutputContext oc)
- {
-  if (breakLabel != null)
-  {
-   oc.cPrint("\n");
-   oc.cPrint(breakLabel);
-   oc.cPrint(":;");
-  }
- }
+    final void outputBreakLabel(OutputContext oc) {
+        if (breakLabel != null) {
+            oc.cPrint("\n");
+            oc.cPrint(breakLabel);
+            oc.cPrint(":;");
+        }
+    }
 }

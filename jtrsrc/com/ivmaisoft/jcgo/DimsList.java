@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,45 +40,36 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a list of nested dimensioned expressions.
- **
- * Format:
- * DimExpr DimExpr
- * DimExprList DimExpr
+ ** 
+ * Format: DimExpr DimExpr DimExprList DimExpr
  */
 
-final class DimsList extends LexNode
-{
+final class DimsList extends LexNode {
 
- DimsList(Term a, Term b)
- {
-  super(a, b);
- }
+    DimsList(Term a, Term b) {
+        super(a, b);
+    }
 
- boolean isSafeWithThrow()
- {
-  return terms[1].isSafeWithThrow() && terms[0].isSafeWithThrow();
- }
+    boolean isSafeWithThrow() {
+        return terms[1].isSafeWithThrow() && terms[0].isSafeWithThrow();
+    }
 
- int tokenCount()
- {
-  return terms[0].tokenCount() + terms[1].tokenCount();
- }
+    int tokenCount() {
+        return terms[0].tokenCount() + terms[1].tokenCount();
+    }
 
- void allocRcvr(int[] curRcvrs)
- {
-  terms[0].allocParamRcvr(curRcvrs, null, null);
-  terms[1].allocRcvr(curRcvrs);
- }
+    void allocRcvr(int[] curRcvrs) {
+        terms[0].allocParamRcvr(curRcvrs, null, null);
+        terms[1].allocRcvr(curRcvrs);
+    }
 
- void allocParamRcvr(int[] curRcvrs, int[] curRcvrs1, int[] curRcvrs2)
- {
-  terms[0].allocParamRcvr(curRcvrs, curRcvrs1, curRcvrs2);
-  terms[1].allocParamRcvr(curRcvrs, curRcvrs1, curRcvrs2);
- }
+    void allocParamRcvr(int[] curRcvrs, int[] curRcvrs1, int[] curRcvrs2) {
+        terms[0].allocParamRcvr(curRcvrs, curRcvrs1, curRcvrs2);
+        terms[1].allocParamRcvr(curRcvrs, curRcvrs1, curRcvrs2);
+    }
 
- void produceRcvr(OutputContext oc)
- {
-  terms[0].produceRcvr(oc);
-  terms[1].produceRcvr(oc);
- }
+    void produceRcvr(OutputContext oc) {
+        terms[0].produceRcvr(oc);
+        terms[1].produceRcvr(oc);
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,43 +42,37 @@ package com.ivmaisoft.jcgo;
  * Lexical term for an integer literal.
  */
 
-final class IntLiteral extends LexTerm
-{
+final class IntLiteral extends LexTerm {
 
- private ConstValue constVal;
+    private ConstValue constVal;
 
- IntLiteral(String tokenval)
- {
-  super(LexTerm.NUMBER, tokenval);
- }
+    IntLiteral(String tokenval) {
+        super(LexTerm.NUMBER, tokenval);
+    }
 
- IntLiteral(ConstValue constVal)
- {
-  super(LexTerm.NUMBER, constVal.isLong() ? "0L" : "0");
-  this.constVal = constVal;
- }
+    IntLiteral(ConstValue constVal) {
+        super(LexTerm.NUMBER, constVal.isLong() ? "0L" : "0");
+        this.constVal = constVal;
+    }
 
- void processPass1(Context c)
- {
-  if (constVal == null)
-   constVal = new ConstValue(dottedName());
- }
+    void processPass1(Context c) {
+        if (constVal == null) {
+            constVal = new ConstValue(dottedName());
+        }
+    }
 
- ExpressionType exprType()
- {
-  assertCond(constVal != null);
-  return Main.dict.classTable[constVal.isLong() ? Type.LONG : Type.INT];
- }
+    ExpressionType exprType() {
+        assertCond(constVal != null);
+        return Main.dict.classTable[constVal.isLong() ? Type.LONG : Type.INT];
+    }
 
- ConstValue evaluateConstValue()
- {
-  assertCond(constVal != null);
-  return constVal;
- }
+    ConstValue evaluateConstValue() {
+        assertCond(constVal != null);
+        return constVal;
+    }
 
- String stringOutput()
- {
-  assertCond(constVal != null);
-  return constVal.stringOutput();
- }
+    String stringOutput() {
+        assertCond(constVal != null);
+        return constVal.stringOutput();
+    }
 }

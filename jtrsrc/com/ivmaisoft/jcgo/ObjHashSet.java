@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -44,40 +44,34 @@ import java.util.Enumeration;
  * An unordered set (hash set of objects).
  */
 
-final class ObjHashSet
-{
+final class ObjHashSet {
 
- private final ObjHashtable map = new ObjHashtable();
+    private final ObjHashtable map = new ObjHashtable();
 
- ObjHashSet() {}
+    ObjHashSet() {
+    }
 
- int size()
- {
-  return map.size();
- }
+    int size() {
+        return map.size();
+    }
 
- boolean contains(Object obj)
- {
-  return map.get(obj) != null;
- }
+    boolean contains(Object obj) {
+        return map.get(obj) != null;
+    }
 
- boolean remove(Object obj)
- {
-  return map.remove(obj) != null;
- }
+    boolean remove(Object obj) {
+        return map.remove(obj) != null;
+    }
 
- boolean add(Object obj)
- {
-  return map.put(obj, obj) == null;
- }
+    boolean add(Object obj) {
+        return map.put(obj, obj) == null;
+    }
 
- void clear()
- {
-  map.clear();
- }
+    void clear() {
+        map.clear();
+    }
 
- Enumeration elements()
- {
-  return map.elements();
- }
+    Enumeration elements() {
+        return map.elements();
+    }
 }

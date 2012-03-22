@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,38 +40,33 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for the continue statement.
- **
- * Format:
- * CONTINUE [ID] SEMI
+ ** 
+ * Format: CONTINUE [ID] SEMI
  */
 
-final class ContinueStatement extends BreakStatement
-{
+final class ContinueStatement extends BreakStatement {
 
- ContinueStatement(Term b)
- {
-  super(b);
- }
+    ContinueStatement(Term b) {
+        super(b);
+    }
 
- void processPass1(Context c)
- {
-  if (!processPassOneCommon(c))
-  {
-   if (labelStmt != null)
-   {
-    labelStmt.makeContinueLabel(c.currentMethod);
-    c.hasContinueDeep = true;
-   }
-    else c.hasContinueSimple = true;
-  }
- }
+    void processPass1(Context c) {
+        if (!processPassOneCommon(c)) {
+            if (labelStmt != null) {
+                labelStmt.makeContinueLabel(c.currentMethod);
+                c.hasContinueDeep = true;
+            } else {
+                c.hasContinueSimple = true;
+            }
+        }
+    }
 
- void processOutput(OutputContext oc)
- {
-  if (labelStmt != null)
-   labelStmt.writeGoto(oc, curTry(), false);
-   else if (!terms[0].notEmpty())
-    TryStatement.outputFinallyGroup(curTry(), lastBreakableTry(), oc,
-     "continue");
- }
+    void processOutput(OutputContext oc) {
+        if (labelStmt != null) {
+            labelStmt.writeGoto(oc, curTry(), false);
+        } else if (!terms[0].notEmpty()) {
+            TryStatement.outputFinallyGroup(curTry(), lastBreakableTry(), oc,
+                    "continue");
+        }
+    }
 }

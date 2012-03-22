@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,13 +42,11 @@ package com.ivmaisoft.jcgo;
  * Exception used to stop the translation.
  */
 
-final class TranslateException extends RuntimeException
-{
+final class TranslateException extends RuntimeException {
 
-	private static final long serialVersionUID = 7942273872694019291L;
+    private static final long serialVersionUID = 7942273872694019291L;
 
- TranslateException(String msg)
- {
-  super(msg);
- }
+    TranslateException(String msg) {
+        super(msg);
+    }
 }

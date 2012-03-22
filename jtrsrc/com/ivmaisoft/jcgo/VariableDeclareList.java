@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,35 +40,30 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a list of variables being defined.
- **
- * Format:
- * VariableDeclarator COMMA VariableDeclarator
- * VariableDeclarator COMMA VariableDeclarators
+ ** 
+ * Format: VariableDeclarator COMMA VariableDeclarator VariableDeclarator COMMA
+ * VariableDeclarators
  */
 
-final class VariableDeclareList extends LexNode
-{
+final class VariableDeclareList extends LexNode {
 
- VariableDeclareList(Term a, Term c)
- {
-  super(a, c);
- }
+    VariableDeclareList(Term a, Term c) {
+        super(a, c);
+    }
 
- void processPass1(Context c)
- {
-  ClassDefinition oldTypeClassDefinition = c.typeClassDefinition;
-  int dims = c.typeDims;
-  terms[0].processPass1(c);
-  c.typeDims = dims;
-  c.typeClassDefinition = oldTypeClassDefinition;
-  terms[1].processPass1(c);
-  c.typeDims = dims;
- }
+    void processPass1(Context c) {
+        ClassDefinition oldTypeClassDefinition = c.typeClassDefinition;
+        int dims = c.typeDims;
+        terms[0].processPass1(c);
+        c.typeDims = dims;
+        c.typeClassDefinition = oldTypeClassDefinition;
+        terms[1].processPass1(c);
+        c.typeDims = dims;
+    }
 
- void processOutput(OutputContext oc)
- {
-  terms[0].processOutput(oc);
-  oc.cPrint(";");
-  terms[1].processOutput(oc);
- }
+    void processOutput(OutputContext oc) {
+        terms[0].processOutput(oc);
+        oc.cPrint(";");
+        terms[1].processOutput(oc);
+    }
 }

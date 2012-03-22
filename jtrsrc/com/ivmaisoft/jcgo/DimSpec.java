@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,22 +40,18 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for making an array of some type.
- **
- * Format:
- * LBRACK RBRACK [Dims]
+ ** 
+ * Format: LBRACK RBRACK [Dims]
  */
 
-final class DimSpec extends LexNode
-{
+final class DimSpec extends LexNode {
 
- DimSpec(Term c)
- {
-  super(c);
- }
+    DimSpec(Term c) {
+        super(c);
+    }
 
- void processPass1(Context c)
- {
-  terms[0].processPass1(c);
-  c.typeDims++;
- }
+    void processPass1(Context c) {
+        terms[0].processPass1(c);
+        c.typeDims++;
+    }
 }

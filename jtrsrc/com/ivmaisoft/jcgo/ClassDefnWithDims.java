@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,91 +42,80 @@ package com.ivmaisoft.jcgo;
  * An array of a class type definition.
  */
 
-final class ClassDefnWithDims extends ExpressionType
-{
+final class ClassDefnWithDims extends ExpressionType {
 
- private /* final */ ClassDefinition aclass;
+    private/* final */ClassDefinition aclass;
 
- private /* final */ int dims;
+    private/* final */int dims;
 
- ClassDefnWithDims(ClassDefinition aclass, int dims)
- {
-  int s = aclass.objectSize();
-  Term.assertCond((s == Type.CLASSINTERFACE ||
-   (s >= Type.BOOLEAN && s <= Type.DOUBLE)) && dims > 0);
-  this.aclass = aclass;
-  this.dims = dims;
- }
+    ClassDefnWithDims(ClassDefinition aclass, int dims) {
+        int s = aclass.objectSize();
+        Term.assertCond((s == Type.CLASSINTERFACE || (s >= Type.BOOLEAN && s <= Type.DOUBLE))
+                && dims > 0);
+        this.aclass = aclass;
+        this.dims = dims;
+    }
 
- ExpressionType indirectedType()
- {
-  return aclass.asExprType(dims - 1);
- }
+    ExpressionType indirectedType() {
+        return aclass.asExprType(dims - 1);
+    }
 
- String getJniName()
- {
-  int s;
-  return Type.jniName[dims > 1 || (s = aclass.objectSize()) ==
-          Type.CLASSINTERFACE ? Type.OBJECTARRAY : s + Type.CLASSINTERFACE];
- }
+    String getJniName() {
+        int s;
+        return Type.jniName[dims > 1
+                || (s = aclass.objectSize()) == Type.CLASSINTERFACE ? Type.OBJECTARRAY
+                : s + Type.CLASSINTERFACE];
+    }
 
- String name()
- {
-  StringBuffer sb = new StringBuffer();
-  sb.append(aclass.name());
-  int i = dims;
-  while (i-- > 0)
-   sb.append("[]");
-  return sb.toString();
- }
+    String name() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(aclass.name());
+        int i = dims;
+        while (i-- > 0) {
+            sb.append("[]");
+        }
+        return sb.toString();
+    }
 
- String getJavaSignature()
- {
-  return fillString('[', dims) + aclass.getJavaSignature();
- }
+    String getJavaSignature() {
+        return fillString('[', dims) + aclass.getJavaSignature();
+    }
 
- String csign()
- {
-  return aclass.csign() + fillString('A', dims);
- }
+    String csign() {
+        return aclass.csign() + fillString('A', dims);
+    }
 
- static String fillString(char ch, int len)
- {
-  char[] chars = new char[len > 0 ? len : 0];
-  for (int i = 0; i < len; i++)
-   chars[i] = ch;
-  return new String(chars);
- }
+    static String fillString(char ch, int len) {
+        char[] chars = new char[len > 0 ? len : 0];
+        for (int i = 0; i < len; i++) {
+            chars[i] = ch;
+        }
+        return new String(chars);
+    }
 
- ClassDefinition receiverClass()
- {
-  return Main.dict.classTable[objectSize()];
- }
+    ClassDefinition receiverClass() {
+        return Main.dict.classTable[objectSize()];
+    }
 
- ClassDefinition signatureClass()
- {
-  return aclass;
- }
+    ClassDefinition signatureClass() {
+        return aclass;
+    }
 
- int signatureDimensions()
- {
-  return dims;
- }
+    int signatureDimensions() {
+        return dims;
+    }
 
- boolean hasRealInstances()
- {
-  return aclass.used();
- }
+    boolean hasRealInstances() {
+        return aclass.used();
+    }
 
- int objectSize()
- {
-  int type;
-  return dims > 1 || (type = aclass.objectSize()) == Type.CLASSINTERFACE ?
-          Type.OBJECTARRAY : type + Type.CLASSINTERFACE;
- }
+    int objectSize() {
+        int type;
+        return dims > 1 || (type = aclass.objectSize()) == Type.CLASSINTERFACE ? Type.OBJECTARRAY
+                : type + Type.CLASSINTERFACE;
+    }
 
- String castName()
- {
-  return Type.cName[objectSize()];
- }
+    String castName() {
+        return Type.cName[objectSize()];
+    }
 }

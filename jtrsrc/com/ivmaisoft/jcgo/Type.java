@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,65 +42,55 @@ package com.ivmaisoft.jcgo;
  * This class contains the base type names and their assigned numeric values.
  */
 
-final class Type
-{
+final class Type {
 
- static final int NULLREF = 0;
+    static final int NULLREF = 0;
 
- static final int BOOLEAN = 1;
+    static final int BOOLEAN = 1;
 
- static final int BYTE = 2;
+    static final int BYTE = 2;
 
- static final int CHAR = 3;
+    static final int CHAR = 3;
 
- static final int SHORT = 4;
+    static final int SHORT = 4;
 
- static final int INT = 5;
+    static final int INT = 5;
 
- static final int LONG = 6;
+    static final int LONG = 6;
 
- static final int FLOAT = 7;
+    static final int FLOAT = 7;
 
- static final int DOUBLE = 8;
+    static final int DOUBLE = 8;
 
- static final int VOID = 9;
+    static final int VOID = 9;
 
- static final int CLASSINTERFACE = 10;
+    static final int CLASSINTERFACE = 10;
 
- static final int OBJECTARRAY = CLASSINTERFACE + VOID;
+    static final int OBJECTARRAY = CLASSINTERFACE + VOID;
 
- static final String[] sig =
- {
-  "*", "Z", "B", "C", "S", "I", "J", "F", "D", "V",
-  "L", "[Z", "[B", "[C", "[S", "[I", "[J", "[F", "[D", "["
- };
+    static final String[] sig = {
+            "*", "Z", "B", "C", "S", "I", "J", "F", "D", "V", "L", "[Z", "[B",
+            "[C", "[S", "[I", "[J", "[F", "[D", "[" };
 
- static final String[] name =
- {
-  "<null>", "boolean", "byte", "char", "short", "int", "long",
-  "float", "double", "void"
- };
+    static final String[] name = {
+            "<null>", "boolean", "byte", "char", "short", "int", "long",
+            "float", "double", "void" };
 
- static final String[] cName =
- {
-  "jObject", "jboolean", "jbyte", "jchar", "jshort", "jint", "jlong",
-  "jfloat", "jdouble", "void", "jObject",
-  "jbooleanArr", "jbyteArr", "jcharArr", "jshortArr", "jintArr", "jlongArr",
-  "jfloatArr", "jdoubleArr", "jObjectArr"
- };
+    static final String[] cName = {
+            "jObject", "jboolean", "jbyte", "jchar", "jshort", "jint", "jlong",
+            "jfloat", "jdouble", "void", "jObject", "jbooleanArr", "jbyteArr",
+            "jcharArr", "jshortArr", "jintArr", "jlongArr", "jfloatArr",
+            "jdoubleArr", "jObjectArr" };
 
- static final String[] jniName =
- {
-  "jobject", "jboolean", "jbyte", "jchar", "jshort", "jint", "jlong",
-  "jfloat", "jdouble", "void", "jobject",
-  "jbooleanArray", "jbyteArray", "jcharArray", "jshortArray", "jintArray",
-  "jlongArray", "jfloatArray", "jdoubleArray", "jobjectArray"
- };
+    static final String[] jniName = {
+            "jobject", "jboolean", "jbyte", "jchar", "jshort", "jint", "jlong",
+            "jfloat", "jdouble", "void", "jobject", "jbooleanArray",
+            "jbyteArray", "jcharArray", "jshortArray", "jintArray",
+            "jlongArray", "jfloatArray", "jdoubleArray", "jobjectArray" };
 
- static final int[] sizeInBytes =
- {
-  4, 1, 1, 2, 2, 4, 8, 4, 8
- };
+    static final int[] sizeInBytes = {
+            4, 1, 1, 2, 2, 4, 8, 4, 8 };
 
- private Type() {}
+    private Type() {
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,33 +42,27 @@ package com.ivmaisoft.jcgo;
  * Grammar production for the primitive types.
  */
 
-final class PrimitiveType extends LexNode
-{
+final class PrimitiveType extends LexNode {
 
- private /* final */ int primtype;
+    private/* final */int primtype;
 
- PrimitiveType(int primtype)
- {
-  this.primtype = primtype;
- }
+    PrimitiveType(int primtype) {
+        this.primtype = primtype;
+    }
 
- boolean isJavaConstant(ClassDefinition ourClass)
- {
-  return true;
- }
+    boolean isJavaConstant(ClassDefinition ourClass) {
+        return true;
+    }
 
- void processPass1(Context c)
- {
-  c.typeClassDefinition = Main.dict.classTable[primtype];
- }
+    void processPass1(Context c) {
+        c.typeClassDefinition = Main.dict.classTable[primtype];
+    }
 
- ExpressionType exprType()
- {
-  return Main.dict.classTable[primtype];
- }
+    ExpressionType exprType() {
+        return Main.dict.classTable[primtype];
+    }
 
- boolean isType()
- {
-  return true;
- }
+    boolean isType() {
+        return true;
+    }
 }

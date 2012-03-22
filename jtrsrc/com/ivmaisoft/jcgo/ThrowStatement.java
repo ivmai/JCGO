@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,53 +40,45 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for 'throw'.
- **
- * Format:
- * THROW Expression SEMI
+ ** 
+ * Format: THROW Expression SEMI
  */
 
-final class ThrowStatement extends LexNode
-{
+final class ThrowStatement extends LexNode {
 
- ThrowStatement(Term b)
- {
-  super(b);
- }
+    ThrowStatement(Term b) {
+        super(b);
+    }
 
- void processPass1(Context c)
- {
-  c.currentMethod.setNeedsDummyRet();
-  terms[0].processPass1(c);
-  int s0 = terms[0].exprType().objectSize();
-  if (s0 != Type.CLASSINTERFACE && s0 != Type.NULLREF)
-   fatalError(c, "Illegal type of expression for 'throw'");
- }
+    void processPass1(Context c) {
+        c.currentMethod.setNeedsDummyRet();
+        terms[0].processPass1(c);
+        int s0 = terms[0].exprType().objectSize();
+        if (s0 != Type.CLASSINTERFACE && s0 != Type.NULLREF) {
+            fatalError(c, "Illegal type of expression for 'throw'");
+        }
+    }
 
- boolean allowInline(int tokenLimit)
- {
-  return terms[0].tokenCount() < tokenLimit;
- }
+    boolean allowInline(int tokenLimit) {
+        return terms[0].tokenCount() < tokenLimit;
+    }
 
- boolean hasTailReturnOrThrow()
- {
-  return true;
- }
+    boolean hasTailReturnOrThrow() {
+        return true;
+    }
 
- boolean isReturnAtEnd(boolean allowBreakThrow)
- {
-  return allowBreakThrow;
- }
+    boolean isReturnAtEnd(boolean allowBreakThrow) {
+        return allowBreakThrow;
+    }
 
- void discoverObjLeaks()
- {
-  terms[0].discoverObjLeaks();
-  terms[0].setObjLeaks(null);
- }
+    void discoverObjLeaks() {
+        terms[0].discoverObjLeaks();
+        terms[0].setObjLeaks(null);
+    }
 
- void processOutput(OutputContext oc)
- {
-  oc.cPrint("JCGO_THROW_EXC(");
-  terms[0].processOutput(oc);
-  oc.cPrint(");");
- }
+    void processOutput(OutputContext oc) {
+        oc.cPrint("JCGO_THROW_EXC(");
+        terms[0].processOutput(oc);
+        oc.cPrint(");");
+    }
 }

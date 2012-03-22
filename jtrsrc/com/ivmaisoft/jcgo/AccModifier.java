@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,44 +42,41 @@ package com.ivmaisoft.jcgo;
  * Grammar production for a class or method, or field modifier.
  */
 
-final class AccModifier extends LexNode
-{
+final class AccModifier extends LexNode {
 
- static final int PUBLIC = 0x1;
- static final int PRIVATE = 0x2;
- static final int PROTECTED = 0x4;
- static final int STATIC = 0x8;
- static final int FINAL = 0x10;
- static final int SYNCHRONIZED = 0x20;
- static final int VOLATILE = 0x40;
- static final int TRANSIENT = 0x80;
- static final int NATIVE = 0x100;
- static final int INTERFACE = 0x200;
- static final int ABSTRACT = 0x400;
- static final int STRICT = 0x800;
+    static final int PUBLIC = 0x1;
+    static final int PRIVATE = 0x2;
+    static final int PROTECTED = 0x4;
+    static final int STATIC = 0x8;
+    static final int FINAL = 0x10;
+    static final int SYNCHRONIZED = 0x20;
+    static final int VOLATILE = 0x40;
+    static final int TRANSIENT = 0x80;
+    static final int NATIVE = 0x100;
+    static final int INTERFACE = 0x200;
+    static final int ABSTRACT = 0x400;
+    static final int STRICT = 0x800;
 
- static final int SYNTHETIC = 0x1000;
- static final int ENUM = 0x4000;
+    static final int SYNTHETIC = 0x1000;
+    static final int ENUM = 0x4000;
 
- static final int LOCALVAR = 0x2000;
- static final int PARAMETER = 0x8000;
+    static final int LOCALVAR = 0x2000;
+    static final int PARAMETER = 0x8000;
 
- private int modifier;
+    private int modifier;
 
- AccModifier(int modifier)
- {
-  this.modifier = modifier;
- }
+    AccModifier(int modifier) {
+        this.modifier = modifier;
+    }
 
- void processPass0(Context c)
- {
-  c.modifiers |= modifier;
- }
+    void processPass0(Context c) {
+        c.modifiers |= modifier;
+    }
 
- void processPass1(Context c)
- {
-  if ((c.modifiers & modifier) != 0)
-   fatalError(c, "Repeated modifier found");
-  c.modifiers |= modifier;
- }
+    void processPass1(Context c) {
+        if ((c.modifiers & modifier) != 0) {
+            fatalError(c, "Repeated modifier found");
+        }
+        c.modifiers |= modifier;
+    }
 }

@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -45,125 +45,112 @@ import java.util.NoSuchElementException;
  * A resizable array (vector of objects).
  */
 
-final class ObjVector
-{
+final class ObjVector {
 
- private static final Object[] EMPTY_ELEMENT_DATA = {};
+    private static final Object[] EMPTY_ELEMENT_DATA = {};
 
- private Object[] elementData = EMPTY_ELEMENT_DATA;
+    private Object[] elementData = EMPTY_ELEMENT_DATA;
 
- private int elementCount;
+    private int elementCount;
 
- int modDelCnt;
+    int modDelCnt;
 
- ObjVector() {}
+    ObjVector() {
+    }
 
- private void growCapacity()
- {
-  Object[] elementData = this.elementData;
-  int len = elementData.length;
-  if (len != 0)
-  {
-   Object[] newElementData = new Object[((len * 3 + 15) >>> 3) + len];
-   System.arraycopy(elementData, 0, newElementData, 0, len);
-   this.elementData = newElementData;
-  }
-   else this.elementData = new Object[3];
- }
+    private void growCapacity() {
+        Object[] elementData = this.elementData;
+        int len = elementData.length;
+        if (len != 0) {
+            Object[] newElementData = new Object[((len * 3 + 15) >>> 3) + len];
+            System.arraycopy(elementData, 0, newElementData, 0, len);
+            this.elementData = newElementData;
+        } else {
+            this.elementData = new Object[3];
+        }
+    }
 
- int size()
- {
-  return elementCount;
- }
+    int size() {
+        return elementCount;
+    }
 
- Object elementAt(int index)
- {
-  return elementData[index];
- }
+    Object elementAt(int index) {
+        return elementData[index];
+    }
 
- void setElementAt(Object obj, int index)
- {
-  Term.assertCond(index < elementCount);
-  elementData[index] = obj;
- }
+    void setElementAt(Object obj, int index) {
+        Term.assertCond(index < elementCount);
+        elementData[index] = obj;
+    }
 
- void removeElementAt(int index)
- {
-  Term.assertCond(index < elementCount);
-  int cnt;
-  if ((cnt = elementCount - index - 1) > 0)
-  {
-   modDelCnt++;
-   System.arraycopy(elementData, index + 1, elementData, index, cnt);
-  }
-  elementData[--elementCount] = null;
- }
+    void removeElementAt(int index) {
+        Term.assertCond(index < elementCount);
+        int cnt;
+        if ((cnt = elementCount - index - 1) > 0) {
+            modDelCnt++;
+            System.arraycopy(elementData, index + 1, elementData, index, cnt);
+        }
+        elementData[--elementCount] = null;
+    }
 
- void copyInto(Object[] anArray)
- {
-  System.arraycopy(elementData, 0, anArray, 0, elementCount);
- }
+    void copyInto(Object[] anArray) {
+        System.arraycopy(elementData, 0, anArray, 0, elementCount);
+    }
 
- int identityLastIndexOf(Object obj)
- {
-  int i = elementCount;
-  Object[] elementData = this.elementData;
-  while (i-- > 0)
-   if (obj == elementData[i])
-    break;
-  return i;
- }
+    int identityLastIndexOf(Object obj) {
+        int i = elementCount;
+        Object[] elementData = this.elementData;
+        while (i-- > 0) {
+            if (obj == elementData[i])
+                break;
+        }
+        return i;
+    }
 
- int indexOf(Object obj)
- {
-  Term.assertCond(obj != null);
-  int cnt = elementCount;
-  Object[] elementData = this.elementData;
-  for (int i = 0; i < cnt; i++)
-   if (obj.equals(elementData[i]))
-    return i;
-  return -1;
- }
+    int indexOf(Object obj) {
+        Term.assertCond(obj != null);
+        int cnt = elementCount;
+        Object[] elementData = this.elementData;
+        for (int i = 0; i < cnt; i++) {
+            if (obj.equals(elementData[i]))
+                return i;
+        }
+        return -1;
+    }
 
- void addElement(Object obj)
- {
-  if (elementData.length <= elementCount)
-   growCapacity();
-  elementData[elementCount++] = obj;
- }
+    void addElement(Object obj) {
+        if (elementData.length <= elementCount) {
+            growCapacity();
+        }
+        elementData[elementCount++] = obj;
+    }
 
- Enumeration elements()
- {
-  return new ObjVectorEnumerator(this);
- }
+    Enumeration elements() {
+        return new ObjVectorEnumerator(this);
+    }
 }
 
-final class ObjVectorEnumerator
- implements Enumeration
-{
+final class ObjVectorEnumerator implements Enumeration {
 
- private /* final */ ObjVector vector;
+    private/* final */ObjVector vector;
 
- private int index;
+    private int index;
 
- private /* final */ int modCnt;
+    private/* final */int modCnt;
 
- ObjVectorEnumerator(ObjVector vector)
- {
-  this.vector = vector;
-  modCnt = vector.modDelCnt;
- }
+    ObjVectorEnumerator(ObjVector vector) {
+        this.vector = vector;
+        modCnt = vector.modDelCnt;
+    }
 
- public boolean hasMoreElements()
- {
-  return vector.size() > index;
- }
+    public boolean hasMoreElements() {
+        return vector.size() > index;
+    }
 
- public Object nextElement()
- {
-  Term.assertCond(modCnt == vector.modDelCnt);
-  if (vector.size() <= index)
-   throw new NoSuchElementException();
-  return vector.elementAt(index++);
- }
+    public Object nextElement() {
+        Term.assertCond(modCnt == vector.modDelCnt);
+        if (vector.size() <= index)
+            throw new NoSuchElementException();
+        return vector.elementAt(index++);
+    }
 }

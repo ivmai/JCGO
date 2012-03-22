@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,39 +42,32 @@ package com.ivmaisoft.jcgo;
  * A general grammar production with two terms.
  */
 
-final class Seq extends LexNode
-{
+final class Seq extends LexNode {
 
- Seq(Term a, Term b)
- {
-  super(a, b);
- }
+    Seq(Term a, Term b) {
+        super(a, b);
+    }
 
- BranchContext staticInitializerPass(BranchContext prevBranch,
-   boolean isStatic)
- {
-  return terms[1].staticInitializerPass(terms[0].staticInitializerPass(
-          prevBranch, isStatic), isStatic);
- }
+    BranchContext staticInitializerPass(BranchContext prevBranch,
+            boolean isStatic) {
+        return terms[1].staticInitializerPass(
+                terms[0].staticInitializerPass(prevBranch, isStatic), isStatic);
+    }
 
- void addFieldsTo(ClassDefinition cd)
- {
-  terms[0].addFieldsTo(cd);
-  terms[1].addFieldsTo(cd);
- }
+    void addFieldsTo(ClassDefinition cd) {
+        terms[0].addFieldsTo(cd);
+        terms[1].addFieldsTo(cd);
+    }
 
- int tokenCount()
- {
-  return terms[0].tokenCount() + terms[1].tokenCount();
- }
+    int tokenCount() {
+        return terms[0].tokenCount() + terms[1].tokenCount();
+    }
 
- boolean hasTailReturnOrThrow()
- {
-  return terms[1].hasTailReturnOrThrow();
- }
+    boolean hasTailReturnOrThrow() {
+        return terms[1].hasTailReturnOrThrow();
+    }
 
- boolean isReturnAtEnd(boolean allowBreakThrow)
- {
-  return terms[1].isReturnAtEnd(allowBreakThrow);
- }
+    boolean isReturnAtEnd(boolean allowBreakThrow) {
+        return terms[1].isReturnAtEnd(allowBreakThrow);
+    }
 }

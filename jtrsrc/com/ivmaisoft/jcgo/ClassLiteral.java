@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,114 +40,98 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a class literal reference.
- **
- * Formats:
- * ClassOrIfaceType DOT CLASS
- * TypeWithDims DOT CLASS
+ ** 
+ * Formats: ClassOrIfaceType DOT CLASS TypeWithDims DOT CLASS
  * PrimitiveType/VoidType DOT CLASS
  */
 
-final class ClassLiteral extends LexNode
-{
+final class ClassLiteral extends LexNode {
 
- private ExpressionType classLiteralValue;
+    private ExpressionType classLiteralValue;
 
- private MethodDefinition md;
+    private MethodDefinition md;
 
- ClassLiteral(Term a)
- {
-  super(a);
- }
-
- void processPass1(Context c)
- {
-  if (classLiteralValue == null)
-  {
-   terms[0].processPass1(c);
-   ExpressionType exprType0 = terms[0].exprType();
-   ClassDefinition cd = exprType0.signatureClass();
-   cd.predefineClass(c.forClass);
-   cd.markUsed();
-   classLiteralValue = exprType0.signatureDimensions() > 0 ? exprType0 :
-                        cd.asExactClassType();
-   if (exprType0.objectSize() == Type.OBJECTARRAY)
-   {
-    cd = Main.dict.get(Names.JAVA_LANG_VMCLASS);
-    cd.predefineClass(c.forClass);
-    MethodDefinition md = cd.getMethod(Names.SIGN_ARRAYCLASSOF0X);
-    if (md != null && md.isClassMethod())
-    {
-     md.markUsed(null);
-     this.md = md;
+    ClassLiteral(Term a) {
+        super(a);
     }
-   }
-   classLiteralValue.signatureClass().setVTableUsed(false);
-  }
- }
 
- ExpressionType exprType()
- {
-  assertCond(classLiteralValue != null);
-  return Main.dict.get(Names.JAVA_LANG_CLASS);
- }
+    void processPass1(Context c) {
+        if (classLiteralValue == null) {
+            terms[0].processPass1(c);
+            ExpressionType exprType0 = terms[0].exprType();
+            ClassDefinition cd = exprType0.signatureClass();
+            cd.predefineClass(c.forClass);
+            cd.markUsed();
+            classLiteralValue = exprType0.signatureDimensions() > 0 ? exprType0
+                    : cd.asExactClassType();
+            if (exprType0.objectSize() == Type.OBJECTARRAY) {
+                cd = Main.dict.get(Names.JAVA_LANG_VMCLASS);
+                cd.predefineClass(c.forClass);
+                MethodDefinition md = cd.getMethod(Names.SIGN_ARRAYCLASSOF0X);
+                if (md != null && md.isClassMethod()) {
+                    md.markUsed(null);
+                    this.md = md;
+                }
+            }
+            classLiteralValue.signatureClass().setVTableUsed(false);
+        }
+    }
 
- ExpressionType classLiteralValGuess()
- {
-  assertCond(classLiteralValue != null);
-  return classLiteralValue;
- }
+    ExpressionType exprType() {
+        assertCond(classLiteralValue != null);
+        return Main.dict.get(Names.JAVA_LANG_CLASS);
+    }
 
- boolean isLiteral()
- {
-  assertCond(classLiteralValue != null);
-  return classLiteralValue.objectSize() != Type.OBJECTARRAY;
- }
+    ExpressionType classLiteralValGuess() {
+        assertCond(classLiteralValue != null);
+        return classLiteralValue;
+    }
 
- boolean isImmutable()
- {
-  return true;
- }
+    boolean isLiteral() {
+        assertCond(classLiteralValue != null);
+        return classLiteralValue.objectSize() != Type.OBJECTARRAY;
+    }
 
- boolean isNotNull()
- {
-  return true;
- }
+    boolean isImmutable() {
+        return true;
+    }
 
- int tokenCount()
- {
-  return 1;
- }
+    boolean isNotNull() {
+        return true;
+    }
 
- boolean isAtomary()
- {
-  return true;
- }
+    int tokenCount() {
+        return 1;
+    }
 
- void processOutput(OutputContext oc)
- {
-  assertCond(classLiteralValue != null);
-  int s0 = classLiteralValue.objectSize();
-  if (s0 != Type.OBJECTARRAY)
-   oc.cPrint(classLiteralValue.signatureClass().getClassRefStr(
-    s0 > Type.CLASSINTERFACE));
-   else
-   {
-    oc.cPrint(md != null ? md.routineCName() : MethodDefinition.UNKNOWN_NAME);
-    Main.dict.normalCalls++;
-    oc.cPrint("(");
-    oc.cPrint(classLiteralValue.signatureClass().getClassRefStr(false));
-    oc.cPrint(", ");
-    oc.cPrint(Integer.toString(classLiteralValue.signatureDimensions()));
-    oc.cPrint(")");
-   }
- }
+    boolean isAtomary() {
+        return true;
+    }
 
- ExpressionType traceClassInit()
- {
-  assertCond(classLiteralValue != null);
-  Main.dict.addDynClassToTrace(classLiteralValue.signatureClass());
-  if (md != null)
-   md.methodTraceClassInit(false, null, null);
-  return null;
- }
+    void processOutput(OutputContext oc) {
+        assertCond(classLiteralValue != null);
+        int s0 = classLiteralValue.objectSize();
+        if (s0 != Type.OBJECTARRAY) {
+            oc.cPrint(classLiteralValue.signatureClass().getClassRefStr(
+                    s0 > Type.CLASSINTERFACE));
+        } else {
+            oc.cPrint(md != null ? md.routineCName()
+                    : MethodDefinition.UNKNOWN_NAME);
+            Main.dict.normalCalls++;
+            oc.cPrint("(");
+            oc.cPrint(classLiteralValue.signatureClass().getClassRefStr(false));
+            oc.cPrint(", ");
+            oc.cPrint(Integer.toString(classLiteralValue.signatureDimensions()));
+            oc.cPrint(")");
+        }
+    }
+
+    ExpressionType traceClassInit() {
+        assertCond(classLiteralValue != null);
+        Main.dict.addDynClassToTrace(classLiteralValue.signatureClass());
+        if (md != null) {
+            md.methodTraceClassInit(false, null, null);
+        }
+        return null;
+    }
 }

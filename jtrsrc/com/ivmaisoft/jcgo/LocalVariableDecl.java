@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -40,54 +40,50 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for a local variable definition.
- **
- * Formats:
- * PrimitiveType/TypeWithDims/Expression(QualifiedName) VariableDeclarators
- * AccModifier/Empty PrimitiveType/ClassOrIfaceType [Dims] VariableDeclarators
+ ** 
+ * Formats: PrimitiveType/TypeWithDims/Expression(QualifiedName)
+ * VariableDeclarators AccModifier/Empty PrimitiveType/ClassOrIfaceType [Dims]
+ * VariableDeclarators
  */
 
-final class LocalVariableDecl extends LexNode
-{
+final class LocalVariableDecl extends LexNode {
 
- LocalVariableDecl(Term a, Term b)
- {
-  super(Empty.newTerm(), a, Empty.newTerm(), b);
- }
+    LocalVariableDecl(Term a, Term b) {
+        super(Empty.newTerm(), a, Empty.newTerm(), b);
+    }
 
- LocalVariableDecl(Term a, Term b, Term c, Term d)
- {
-  super(a, b, c, d);
- }
+    LocalVariableDecl(Term a, Term b, Term c, Term d) {
+        super(a, b, c, d);
+    }
 
- boolean isBlock()
- {
-  return true;
- }
+    boolean isBlock() {
+        return true;
+    }
 
- void processPass1(Context c)
- {
-  int oldModifiers = c.modifiers;
-  c.modifiers = AccModifier.LOCALVAR;
-  terms[0].processPass1(c);
-  c.typeDims = 0;
-  terms[2].processPass1(c);
-  if (terms[1].isName())
-   c.typeClassDefinition = c.resolveClass(terms[1].dottedName(), true, false);
-   else if (terms[1].isType())
-    terms[1].processPass1(c);
-    else fatalError(c, "Type is expected");
-  terms[3].processPass1(c);
-  c.modifiers = oldModifiers;
- }
+    void processPass1(Context c) {
+        int oldModifiers = c.modifiers;
+        c.modifiers = AccModifier.LOCALVAR;
+        terms[0].processPass1(c);
+        c.typeDims = 0;
+        terms[2].processPass1(c);
+        if (terms[1].isName()) {
+            c.typeClassDefinition = c.resolveClass(terms[1].dottedName(), true,
+                    false);
+        } else if (terms[1].isType()) {
+            terms[1].processPass1(c);
+        } else {
+            fatalError(c, "Type is expected");
+        }
+        terms[3].processPass1(c);
+        c.modifiers = oldModifiers;
+    }
 
- void processOutput(OutputContext oc)
- {
-  terms[3].processOutput(oc);
- }
+    void processOutput(OutputContext oc) {
+        terms[3].processOutput(oc);
+    }
 
- ExpressionType traceClassInit()
- {
-  terms[3].traceClassInit();
-  return null;
- }
+    ExpressionType traceClassInit() {
+        terms[3].traceClassInit();
+        return null;
+    }
 }

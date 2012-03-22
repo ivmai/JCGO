@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,73 +42,60 @@ package com.ivmaisoft.jcgo;
  * An exact (not subclassed) class actual expression type.
  */
 
-final class ExactClassType extends ExpressionType
-{
+final class ExactClassType extends ExpressionType {
 
- private /* final */ ClassDefinition aclass;
+    private/* final */ClassDefinition aclass;
 
- ExactClassType(ClassDefinition aclass)
- {
-  int s = aclass.objectSize();
-  Term.assertCond(s == Type.CLASSINTERFACE);
-  this.aclass = aclass;
- }
+    ExactClassType(ClassDefinition aclass) {
+        int s = aclass.objectSize();
+        Term.assertCond(s == Type.CLASSINTERFACE);
+        this.aclass = aclass;
+    }
 
- ExpressionType indirectedType()
- {
-  return null;
- }
+    ExpressionType indirectedType() {
+        return null;
+    }
 
- String getJniName()
- {
-  Term.assertCond(false);
-  return null;
- }
+    String getJniName() {
+        Term.assertCond(false);
+        return null;
+    }
 
- String name()
- {
-  return aclass.name();
- }
+    String name() {
+        return aclass.name();
+    }
 
- String getJavaSignature()
- {
-  return "=" + aclass.getJavaSignature();
- }
+    String getJavaSignature() {
+        return "=" + aclass.getJavaSignature();
+    }
 
- String csign()
- {
-  Term.assertCond(false);
-  return null;
- }
+    String csign() {
+        Term.assertCond(false);
+        return null;
+    }
 
- ClassDefinition receiverClass()
- {
-  return aclass;
- }
+    ClassDefinition receiverClass() {
+        return aclass;
+    }
 
- ClassDefinition signatureClass()
- {
-  return aclass;
- }
+    ClassDefinition signatureClass() {
+        return aclass;
+    }
 
- int signatureDimensions()
- {
-  return 0;
- }
+    int signatureDimensions() {
+        return 0;
+    }
 
- boolean hasRealInstances()
- {
-  return aclass.hasRealInstances();
- }
+    boolean hasRealInstances() {
+        return aclass.hasRealInstances();
+    }
 
- int objectSize()
- {
-  return Type.CLASSINTERFACE;
- }
+    int objectSize() {
+        return Type.CLASSINTERFACE;
+    }
 
- String castName()
- {
-  Term.assertCond(false);
-  return null;
- }
+    String castName() {
+        Term.assertCond(false);
+        return null;
+    }
 }
