@@ -105,59 +105,24 @@ public final class Main {
             String mainClassName = null;
             ObjQueue classnames = new ObjQueue();
             for (int i = 0; i < argv.length; i++) {
-                if (argv[i].equals("-verbose") || argv[i].equals("-v")) {
-                    dict.verbose = true;
-                } else if (argv[i].equals("-sourcepath")
-                        || argv[i].equals("-src")) {
-                    if (i + 1 < argv.length) {
-                        dict.javaFiles.setClassPath(argv[++i], progBasePath);
-                    } else {
-                        System.err.println("-sourcepath requires an argument");
-                        System.exit(2);
-                    }
-                } else if (argv[i].equals("-d") && dict.outPath.length() == 0) {
-                    if (i + 1 < argv.length) {
-                        dict.outPath = argv[++i];
-                        if (!new File(dict.outPath).isDirectory()) {
+                if (argv[i].startsWith("-")) {
+                    if (argv[i].equals("-t")) {
+                        skipClinitTrace = true;
+                    } else if (!processSimpleOption(argv[i])) {
+                        if (i + 1 >= argv.length) {
                             System.err
-                                    .println("Output directory does not exist: "
-                                            + dict.outPath);
+                                    .println("missing argument for last option");
                             System.exit(2);
                         }
-                    } else {
-                        System.err.println("-d requires an argument");
-                        System.exit(2);
-                    }
-                } else if (argv[i].startsWith("-r")) {
-                    if (++i < argv.length) {
-                        processReflectOption(argv[i - 1].substring(2), argv[i]);
-                    } else {
-                        System.err.println("-r<flags> requires an argument");
-                        System.exit(2);
-                    }
-                } else if (argv[i].startsWith("-")) {
-                    if (argv[i].equals("-e")) {
-                        dict.ignoreErrs = true;
-                    } else if (argv[i].equals("-c") && i + 1 < argv.length
-                            && dict.failOnClassName == null) {
-                        dict.failOnClassName = argv[++i];
-                    } else if (argv[i].equals("-f") && i + 1 < argv.length
-                            && dict.failOnFieldName == null) {
-                        dict.failOnFieldName = argv[++i];
-                    } else if (argv[i].equals("-m") && i + 1 < argv.length
-                            && dict.failOnMethodId == null) {
-                        dict.failOnMethodId = argv[++i];
-                    } else if (argv[i].startsWith("-l")
-                            && dict.failOnClassLimit == 0) {
-                        dict.failOnClassLimit = (new ConstValue(
-                                argv[i].substring(2))).getIntValue();
-                    } else if (argv[i].equals("-t")) {
-                        skipClinitTrace = true;
-                    } else if (argv[i].equals("-v2")) {
-                        dict.verbose = dict.verboseTracing = true;
-                    } else {
-                        System.err.println("invalid option: " + argv[i]);
-                        System.exit(2);
+                        if (argv[i].equals("-sourcepath")
+                                || argv[i].equals("-src")) {
+                            dict.javaFiles.setClassPath(argv[i + 1],
+                                    progBasePath);
+                        } else if (!processOptionWithArg(argv[i], argv[i + 1])) {
+                            System.err.println("invalid option: " + argv[i]);
+                            System.exit(2);
+                        }
+                        i++;
                     }
                 } else {
                     String className = argv[i];
@@ -225,6 +190,50 @@ public final class Main {
             System.exit(255);
         }
         System.exit(0);
+    }
+
+    private static boolean processSimpleOption(String option) {
+        if (option.equals("-verbose") || option.equals("-v")) {
+            dict.verbose = true;
+            return true;
+        } else if (option.equals("-v2")) {
+            dict.verbose = dict.verboseTracing = true;
+            return true;
+        } else if (option.equals("-e")) {
+            dict.ignoreErrs = true;
+            return true;
+        } else if (option.startsWith("-l") && dict.failOnClassLimit == 0) {
+            dict.failOnClassLimit = (new ConstValue(option.substring(2)))
+                    .getIntValue();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean processOptionWithArg(String option, String value) {
+        if (option.equals("-d") && dict.outPath.length() == 0) {
+            if (!new File(value).isDirectory()) {
+                System.err.println("Output directory does not exist: " + value);
+                System.exit(2);
+            }
+            dict.outPath = value;
+            return true;
+        } else if (option.startsWith("-r")) {
+            processReflectOption(option.substring(2), value);
+            return true;
+        } else if (option.equals("-c") && dict.failOnClassName == null) {
+            dict.failOnClassName = value;
+            return true;
+        } else if (option.equals("-f") && dict.failOnFieldName == null) {
+            dict.failOnFieldName = value;
+            return true;
+        } else if (option.equals("-m") && dict.failOnMethodId == null) {
+            dict.failOnMethodId = value;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static void processReflectOption(String flags, String packageOrClass) {
