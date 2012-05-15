@@ -44,6 +44,7 @@
   extern "C" {
 #endif
 
+typedef void * GC_PTR;  /* preserved only for backward compatibility    */
 
 /* Define word and signed_word to be unsigned and signed types of the   */
 /* size as char * or void *.  There seems to be no way to do this       */
@@ -362,6 +363,14 @@ GC_API void GC_CALL GC_set_pages_executable(int);
 /* use or need synchronization (i.e. acquiring the allocator lock).     */
 GC_API int GC_CALL GC_get_pages_executable(void);
 
+/* Overrides the default handle-fork mode.  Non-zero value means GC     */
+/* should install proper pthread_atfork handlers.  Has effect only if   */
+/* called before GC_INIT.  Clients should invoke GC_set_handle_fork(1)  */
+/* only if going to use fork with GC functions called in the forked     */
+/* child.  (Note that such client and atfork handlers activities are    */
+/* not fully POSIX-compliant.)                                          */
+GC_API void GC_CALL GC_set_handle_fork(int);
+
 /* Initialize the collector.  Portable clients should call GC_INIT()    */
 /* from the main program instead.                                       */
 GC_API void GC_CALL GC_init(void);
@@ -584,10 +593,8 @@ GC_API size_t GC_CALL GC_get_total_bytes(void);
 /* the allocator lock thus preventing data racing and returning the     */
 /* consistent result.)  Passing NULL pointer is allowed for any         */
 /* argument.  Returned (filled in) values are of word type.             */
-/* (This API function and the accompanying macro were introduced in     */
-/* GC v7.2alpha7 at the moment when GC_get_heap_size and the friends    */
-/* were made lock-free again.)                                          */
-#define GC_HAVE_GET_HEAP_USAGE_SAFE 1
+/* (This API function was introduced in GC v7.2alpha7 at the same time  */
+/* when GC_get_heap_size and the friends were made lock-free again.)    */
 GC_API void GC_CALL GC_get_heap_usage_safe(GC_word * /* pheap_size */,
                                            GC_word * /* pfree_bytes */,
                                            GC_word * /* punmapped_bytes */,
@@ -1066,7 +1073,7 @@ typedef GC_word GC_hidden_pointer;
 /* allocator lock to avoid a race with the collector.                   */
 #define GC_REVEAL_POINTER(p) ((void *)GC_HIDE_POINTER(p))
 
-#ifdef I_HIDE_POINTERS
+#if defined(I_HIDE_POINTERS) || defined(GC_I_HIDE_POINTERS)
   /* This exists only for compatibility (the GC-prefixed symbols are    */
   /* preferred for new code).                                           */
 # define HIDE_POINTER(p) GC_HIDE_POINTER(p)
@@ -1571,6 +1578,10 @@ GC_API int GC_CALL GC_get_force_unmap_on_gcollect(void);
 /* win32S may not free all resources on process exit.   */
 /* This explicitly deallocates the heap.                */
 GC_API void GC_CALL GC_win32_free_heap(void);
+
+#if defined(__SYMBIAN32__)
+  void GC_init_global_static_roots(void);
+#endif
 
 #if defined(_AMIGA) && !defined(GC_AMIGA_MAKINGLIB)
   /* Allocation really goes through GC_amiga_allocwrapper_do.   */

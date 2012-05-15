@@ -125,8 +125,7 @@
 
 #undef GC_PTHREADS
 #if (!defined(GC_WIN32_THREADS) || defined(GC_WIN32_PTHREADS) \
-     || defined(GC_RTEMS_PTHREADS) || defined(__CYGWIN32__) \
-     || defined(__CYGWIN__)) && defined(GC_THREADS)
+     || defined(__CYGWIN32__) || defined(__CYGWIN__)) && defined(GC_THREADS)
   /* Posix threads. */
 # define GC_PTHREADS
 #endif
@@ -192,6 +191,13 @@
 #     define GC_API extern __declspec(dllexport)
 #   else
 #     define GC_API extern __declspec(dllimport)
+#   endif
+
+# elif defined(__SYMBIAN32__)
+#   ifdef GC_BUILD
+#     define GC_API extern EXPORT_C
+#   else
+#     define GC_API extern IMPORT_C
 #   endif
 
 # elif defined(__GNUC__)
