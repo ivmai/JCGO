@@ -185,7 +185,7 @@ STATIC java_lang_String CFASTCALL jcgo_utfMakeString( CONST char *utfstrz )
   (java_lang_String)jcgo_newObject((jvtable)&java_lang_String_methods);
  JCGO_FIELD_NZACCESS(str, value) = (void *)arr;
  JCGO_FIELD_NZACCESS(str, count) = count;
- jcgo_utfToChars(utfstrz, (jcharArr)arr, 0, count);
+ jcgo_utfToChars(utfstrz, arr, 0, count);
  return str;
 }
 
