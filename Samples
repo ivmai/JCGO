@@ -103,7 +103,7 @@ For iPhone/iPad (Darwin on embedded ARM):
 For PlayStation (embedded MIPS):
  devkitPSP release 11 (GCC v4.1.2, PSPDEV 20060507)
 
-Options for building 'gc' library (bdwgc - Boehm Garbage collecting storage allocator v7.2):
+Options for building 'gc' library (BDWGC - Boehm Garbage collecting storage allocator v7.2+ which uses libatomic_ops v7.2+ internally):
  linux gcc (libs/x86/linux/libgc.a): -O2 -fno-strict-aliasing -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DUSE_MMAP -I include -c
  linux gcc threads (libs/x86/linux/libgcmt.a): -O2 -fno-strict-aliasing -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DNO_DEBUGGING -DLARGE_CONFIG -DUSE_MMAP -DUSE_MUNMAP -DGC_THREADS -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -I include -I libatomic_ops/src -c
  linux gcc threads so (dlls/x86/linux/libgc.so): -O2 -fno-strict-aliasing -Wall -DNO_EXECUTE_PERMISSION -DALL_INTERIOR_POINTERS -DJAVA_FINALIZATION -DGC_GCJ_SUPPORT -DATOMIC_UNCOLLECTABLE -DNO_DEBUGGING -DLARGE_CONFIG -DUSE_MMAP -DUSE_MUNMAP -DGC_THREADS -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -I include -I libatomic_ops/src -DGC_DLL -shared -fPIC -o libgc.so -s

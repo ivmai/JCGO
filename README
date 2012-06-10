@@ -377,7 +377,7 @@ precompiled libraries, then its sources should be downloaded too and,
 then, compiled manually as required. At present, only two GC libraries
 are supported:
 - Boehm-Demers-Weiser Conservative GC (BDWGC, BoehmGC) version 7.2 or
-later (with built-in libatomic_ops library);
+later (with built-in or external libatomic_ops library);
 - TinyGC (Tiny Garbage Collector) - a binary-compatible small
 alternative to Boehm GC (normally, should be used only for targets
 where Boehm GC is not supported or is unappropriated).
