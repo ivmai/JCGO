@@ -1,0 +1,42 @@
+
+== [1.14] (development) ==
+
+* Add "tests" folder containing scripts for JCGO testing.
+* Add FAQ.txt file.
+* README: Add information about libatomic_ops package, about launching jcgo.jar, update SWT support section.
+* README: Refine JNIEXPORT/CALL_INVOKE documentation.
+* Samples: Add samples for iPhone/iPad, Android NDK; update libgcmt.a build command.
+* examples: add compilation information for TuxGuitar.
+* examples: jclPPro10_ui: fix Util.imageAllocated; embed font properties into class.
+
+* goclsp/clsp_fix: Add Collections.emptySet/List/Map methods.
+* goclsp/clsp_fix: Check read access permission in File.isHidden().
+* goclsp/clsp_fix: Disable compression support in GNU SSLSocket (as it does not work properly).
+* goclsp/clsp_fix: Do not throw exception if spinner or poll thread of GNU crypto CSPRNG cannot be created.
+* goclsp/clsp_fix: Fix InflaterHuffmanTree.
+* goclsp/clsp_fix: Fix PlainSocketImpl.setOption() to allow setting timeout even before native socket created.
+* goclsp/clsp_fix: Fix regex Matcher.find().
+* goclsp/noopmain: Add dummy (empty) main class to JCGO source path for convenience.
+
+* include (c_runtime): Allow alternative JNIEXPORT/JNICALL for Java Invocation API.
+* include (c_runtime): Fix ATTRIBMALLOC usage for MS VC.
+* include (c_runtime): Fix jcgo_pDataFirstSym definition.
+* include (c_runtime): Recognize JCGO_FASTMATH new macro to speed-up VMMath native methods and jcgo_fmod.
+* include (c_runtime): Recognize JCGO_FPFAST new macro to speed-up floating-point division and comparison operations.
+* include (c_runtime): Support obtaining availableProcessors() via GC_get_parallel().
+* include/boehmgc: Update from gc-7.3alpha2
+
+* jtrsrc: Main.java: Code refactoring of main().
+* jtrsrc: Reformat code in Eclipse IDE; resolve warnings reported by Eclipse.
+
+* native: Prevent C compiler "unused result" warning for mbtowc/wctomb.
+* native: Recognize new JCGO_UTFWCTOMB macro (useful for Android NDK).
+
+* reflgen: Add support SqliteJDBC library.
+* reflgen: Fix swt.dat for SWT v3.7M3 (add missing some Callback entries).
+* reflgen: Update swt.dat reflection to SWT v3.8M2.
+
+
+== [1.12] (2011-08-20) ==
+
+* The first Open Source release of JCGO.
