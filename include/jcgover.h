@@ -42,9 +42,9 @@
  */
 
 #ifdef JCGO_BUILDING_NATIVE
-#define JCGO_112
+#define JCGO_114
 #endif
 
-#ifdef JCGO_112 /* translator version */
+#ifdef JCGO_114 /* translator version */
 #define JCGO_VER 110 /* 1.10 - runtime/source version */
 #endif
