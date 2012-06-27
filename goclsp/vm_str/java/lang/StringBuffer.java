@@ -325,7 +325,7 @@ public final class StringBuffer /* hard-coded class name */
   return this;
  }
 
- public StringBuffer append(char[] data)
+ public synchronized StringBuffer append(char[] data)
  {
   int count = data.length;
   int oldCount = this.count;
