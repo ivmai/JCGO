@@ -472,7 +472,7 @@ output of the JCGO translator);
 with distinctive names for multiple dynamically-loaded "JNI_OnLoad" and
 "JNI_OnUnload" functions (for the case when these functions are
 residing in multiple dynamic libraries but used together);
-- "jtrsrc" - the JGCO translator source;
+- "jtrsrc" - the JCGO translator source;
 - "libs" - precompiled libraries (for "x86" and "amd64" platforms only,
 might be used by a C linker);
 - "minihdr" - minimal subset of the standard ISO/ANSI C compiler header

@@ -1254,11 +1254,11 @@ Java_java_io_VMFile_currentTime0)( JNIEnv *pJniEnv, jclass This, jint isNano )
 #endif
 #endif
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
- JGCO_CURTIME_GET(&curt);
+ JCGO_CURTIME_GET(&curt);
  JCGO_FILEIOCALL_END(pJniEnv)
  if (!(int)isNano)
-  return JGCO_CURTIME_ASMILLIS(jlong, &curt);
- return JGCO_CURTIME_ASNANOS(jlong, &curt);
+  return JCGO_CURTIME_ASMILLIS(jlong, &curt);
+ return JCGO_CURTIME_ASNANOS(jlong, &curt);
 #endif
 #endif
 }

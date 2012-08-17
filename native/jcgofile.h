@@ -225,16 +225,16 @@
 #ifdef _SVID_GETTOD
 /* #include <sys/time.h> */
 /* int gettimeofday(struct timeval *); */
-#define JGCO_CURTIME_GET(pcurt) (void)gettimeofday((void *)(pcurt))
+#define JCGO_CURTIME_GET(pcurt) (void)gettimeofday((void *)(pcurt))
 #else
 /* #include <sys/time.h> */
 /* int gettimeofday(struct timeval *, void *); */
-#define JGCO_CURTIME_GET(pcurt) (void)gettimeofday((void *)(pcurt), NULL)
+#define JCGO_CURTIME_GET(pcurt) (void)gettimeofday((void *)(pcurt), NULL)
 #endif
 
 #define JCGO_CURTIME_T struct timeval
-#define JGCO_CURTIME_ASMILLIS(type, pcurt) ((type)((unsigned long)(pcurt)->tv_sec) * (type)1000L + (type)((pcurt)->tv_usec / 1000L))
-#define JGCO_CURTIME_ASNANOS(type, pcurt) (((type)((unsigned long)(pcurt)->tv_sec) * ((type)1000L * (type)1000L) + (type)(pcurt)->tv_usec) * (type)1000L)
+#define JCGO_CURTIME_ASMILLIS(type, pcurt) ((type)((unsigned long)(pcurt)->tv_sec) * (type)1000L + (type)((pcurt)->tv_usec / 1000L))
+#define JCGO_CURTIME_ASNANOS(type, pcurt) (((type)((unsigned long)(pcurt)->tv_sec) * ((type)1000L * (type)1000L) + (type)(pcurt)->tv_usec) * (type)1000L)
 
 #endif /* ! JCGO_NOTIME */
 
@@ -248,9 +248,9 @@
 #endif
 
 #define JCGO_CURTIME_T struct timeb
-#define JGCO_CURTIME_GET(pcurt) ftime(pcurt)
-#define JGCO_CURTIME_ASMILLIS(type, pcurt) ((type)((unsigned long)(pcurt)->time) * (type)1000L + (type)(pcurt)->millitm)
-#define JGCO_CURTIME_ASNANOS(type, pcurt) (JGCO_CURTIME_ASMILLIS(type, pcurt) * ((type)1000L * (type)1000L))
+#define JCGO_CURTIME_GET(pcurt) ftime(pcurt)
+#define JCGO_CURTIME_ASMILLIS(type, pcurt) ((type)((unsigned long)(pcurt)->time) * (type)1000L + (type)(pcurt)->millitm)
+#define JCGO_CURTIME_ASNANOS(type, pcurt) (JCGO_CURTIME_ASMILLIS(type, pcurt) * ((type)1000L * (type)1000L))
 
 #endif /* ! JCGO_NOTIME */
 
