@@ -51,7 +51,9 @@ public final class StringBuffer /* hard-coded class name */
 {
 
  // StringBuilder class: replace all "StringBuffer" with "StringBuilder"
+ // except for append(StringBuffer).
  // StringBuilder class: remove all "synchronized" for StringBuilder
+ // except for that in append(StringBuffer).
  // StringBuilder class: serialVersionUID is 4383685877147921099L
 
  private static final long serialVersionUID = 3388685877147921107L;

@@ -264,12 +264,12 @@ public final class StringBuilder /* hard-coded class name */
   return this;
  }
 
- public StringBuilder append(StringBuilder sBuf)
+ public StringBuilder append(StringBuffer sBuf)
  {
   if (sBuf == null)
    return append("null");
   int count = this.count;
-  // (sBuf)
+  synchronized (sBuf)
   {
    int len = sBuf.length();
    ensureCapacityInner(count + len, len > 0 &&
