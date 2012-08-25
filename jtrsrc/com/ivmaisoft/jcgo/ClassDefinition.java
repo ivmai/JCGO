@@ -1711,7 +1711,9 @@ final class ClassDefinition extends ExpressionType {
     }
 
     void markForInstanceOf(boolean isArray) {
-        if (isArray && isInterface()) {
+        if (isObjectOrCloneable()) {
+            markUsed();
+        } else if (isArray && isInterface()) {
             if (!markIfImplemented) {
                 markIfImplemented = true;
                 Enumeration en = implementedBy.elements();
@@ -1722,7 +1724,7 @@ final class ClassDefinition extends ExpressionType {
                     }
                 }
             }
-        } else if (hasInstances || isObjectOrCloneable()) {
+        } else if (hasInstances) {
             markUsed();
         } else {
             markIfHasInstances = true;
