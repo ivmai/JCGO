@@ -40,7 +40,7 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for an expression cast.
- ** 
+ **
  * Formats: LPAREN Expression(Name) RPAREN UnaryExpressionNotPlusMinus LPAREN
  * Expression(PrimitiveType) RPAREN UnaryExpression LPAREN
  * Expression(TypeWithDims) RPAREN UnaryExpressionNotPlusMinus
@@ -278,6 +278,8 @@ final class CastExpression extends LexNode {
     }
 
     static void outputFloatCast(OutputContext oc, int s0, int s1) {
+        assertCond(s0 < Type.VOID);
+        assertCond(s1 < Type.VOID);
         oc.cPrint(s1 > Type.FLOAT ? (s0 <= Type.INT ? "JCGO_JDOUBLE_TOJINT"
                 : s0 < Type.FLOAT ? "JCGO_JDOUBLE_TOJLONG"
                         : "JCGO_JDOUBLE_TOJFLOAT")

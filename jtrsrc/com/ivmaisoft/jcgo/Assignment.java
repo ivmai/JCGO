@@ -40,7 +40,7 @@ package com.ivmaisoft.jcgo;
 
 /**
  * Grammar production for assignments (simple and compound).
- ** 
+ **
  * Formats: LeftHandSide EQUALS AssignmentExpression LeftHandSide FLSHIFT_EQUALS
  * AssignmentExpression LeftHandSide SHRIGHT_EQUALS AssignmentExpression
  * LeftHandSide SHLEFT_EQUALS AssignmentExpression LeftHandSide XOR_EQUALS
@@ -504,7 +504,8 @@ final class Assignment extends LexNode {
                         t0.processOutput(oc);
                     } else if (rcvr2 > 0) {
                         t1.processOutput(oc);
-                    } else if (s2 >= Type.FLOAT && s0 < s2) {
+                    } else if (s2 >= Type.FLOAT && s0 < s2
+                                && s0 <= Type.FLOAT) {
                         if (s0 < Type.INT) {
                             oc.cPrint("(");
                             oc.cPrint(Type.cName[s0]);
@@ -570,7 +571,8 @@ final class Assignment extends LexNode {
                             }
                         }
                         if (rcvr3 > 0) {
-                            if (s2 >= Type.FLOAT && s0 < s2) {
+                            if (s2 >= Type.FLOAT && s0 < s2
+                                    && s0 <= Type.FLOAT) {
                                 if (s0 < Type.INT) {
                                     oc.cPrint("(");
                                     oc.cPrint(Type.cName[s0]);
@@ -799,7 +801,7 @@ final class Assignment extends LexNode {
                 }
             }
         } else {
-            if (isString || (s2 >= Type.FLOAT && s0 < s2)
+            if (isString || (s2 >= Type.FLOAT && s0 < s2 && s0 <= Type.FLOAT)
                     || sym == LexTerm.DIVIDE_EQUALS
                     || sym == LexTerm.MOD_EQUALS
                     || sym == LexTerm.FLSHIFT_EQUALS
