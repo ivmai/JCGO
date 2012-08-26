@@ -256,7 +256,7 @@ JCGO_NOSEP_INLINE void CFASTCALL jcgo_jniHandleInstanceOfNullClass(
 STATIC jint JNICALL
 jcgo_JniGetVersion( JNIEnv *pJniEnv )
 {
- return (jint)JNI_VERSION_1_4;
+ return (jint)JNI_VERSION_1_6;
 }
 
 STATIC jclass JNICALL
@@ -1123,6 +1123,13 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
   JCGO_NATCBACK_END(pJniEnv)
  }
 #endif
+}
+
+STATIC jobjectRefType JNICALL
+jcgo_JniGetObjectRefType( JNIEnv *pJniEnv, jobject obj )
+{
+ /* Unimplemented. */
+ return JNIInvalidRefType;
 }
 
 STATIC jboolean JNICALL

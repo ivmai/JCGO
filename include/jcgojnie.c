@@ -316,7 +316,8 @@ STATICDATA CONST struct JNINativeInterface_ jcgo_jniNatIface =
  jcgo_JniExceptionCheck,
  jcgo_JniNewDirectByteBuffer,
  jcgo_JniGetDirectBufferAddress,
- jcgo_JniGetDirectBufferCapacity
+ jcgo_JniGetDirectBufferCapacity,
+ jcgo_JniGetObjectRefType
 };
 
 JCGO_NOSEP_INLINE void JCGO_INLFRW_FASTCALL jcgo_initJni( void )
@@ -368,7 +369,7 @@ STATIC JNIEnv *CFASTCALL jcgo_jniVmAttachThread( JavaVM *vm,
  if ((tcb = jcgo_getSelfTCB()) == NULL)
  {
   if (args != NULL && args->version != JNI_VERSION_1_2 &&
-      args->version != JNI_VERSION_1_4)
+      args->version != JNI_VERSION_1_4 && args->version != JNI_VERSION_1_6)
    return NULL;
   for (;;)
   {
@@ -579,8 +580,7 @@ jcgo_JniVmGetEnv( JavaVM *vm, void **penv, jint version )
 #else
  tcb = &jcgo_mainTCB;
 #endif
- if (version != (jint)JNI_VERSION_1_1 && version != (jint)JNI_VERSION_1_2 &&
-     version != (jint)JNI_VERSION_1_4)
+ if (version < (jint)JNI_VERSION_1_1 || version > (jint)JNI_VERSION_1_6)
  {
   *penv = NULL;
   return (jint)JNI_EVERSION;
@@ -617,7 +617,8 @@ JNI_GetDefaultJavaVMInitArgs( void *args )
 {
  JavaVMInitArgs *pInitArgs = (JavaVMInitArgs *)args;
  if (pInitArgs->version != (jint)JNI_VERSION_1_2 &&
-     pInitArgs->version != (jint)JNI_VERSION_1_4)
+     pInitArgs->version != (jint)JNI_VERSION_1_4 &&
+     pInitArgs->version != (jint)JNI_VERSION_1_6)
   return (jint)JNI_EVERSION;
  pInitArgs->version = (jint)JNI_VERSION_1_4;
  pInitArgs->nOptions = 0;

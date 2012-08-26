@@ -67,6 +67,7 @@ extern "C"
 #define JNI_VERSION_1_1 0x10001
 #define JNI_VERSION_1_2 0x10002
 #define JNI_VERSION_1_4 0x10004
+#define JNI_VERSION_1_6 0x10006
 
 #define JNI_COMMIT 1
 #define JNI_ABORT 2
@@ -129,6 +130,18 @@ typedef struct
  char *signature;
  void *fnPtr;
 } JNINativeMethod;
+
+#define JNIInvalidRefType 0
+#define JNILocalRefType 1
+#define JNIGlobalRefType 2
+#define JNIWeakGlobalRefType 3
+typedef int jobjectRefType;
+/*typedef enum _jobjectType {
+ JNIInvalidRefType = 0,
+ JNILocalRefType = 1,
+ JNIGlobalRefType = 2,
+ JNIWeakGlobalRefType = 3
+} jobjectRefType;*/
 
 struct JNINativeInterface_
 {
@@ -588,7 +601,13 @@ struct JNINativeInterface_
   jlong capacity );
  void *(JNICALL *GetDirectBufferAddress)( JNIEnv *pJniEnv, jobject buf );
  jlong (JNICALL *GetDirectBufferCapacity)( JNIEnv *pJniEnv, jobject buf );
+
+ jobjectRefType (JNICALL *GetObjectRefType)( JNIEnv *pJniEnv, jobject obj );
 #endif
+};
+
+struct JNIEnv_ {
+ CONST struct JNINativeInterface_ *functions;
 };
 
 struct JNIInvokeInterface_
@@ -604,6 +623,10 @@ struct JNIInvokeInterface_
  jint (JNICALL *AttachCurrentThreadAsDaemon)( JavaVM *vm, void **penv,
   void *args );
 #endif
+};
+
+struct JavaVM_ {
+ CONST struct JNIInvokeInterface_ *functions;
 };
 
 struct JavaVMAttachArgs
