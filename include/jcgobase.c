@@ -488,7 +488,10 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_clinitTrig( java_lang_Class aclass )
  int flags;
  if ((*(volatile jint *)&JCGO_FIELD_NZACCESS(aclass, modifiers) &
      (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) == 0)
+ {
+  /* FIXME: use atomic operation to read modifiers. */
   return;
+ }
  noerr = 0;
  {
   JCGO_SYNC_BLOCKSAFENZ(aclass)

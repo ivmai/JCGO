@@ -436,8 +436,8 @@
 #define JCGO_CLINIT_INIT(clinit) clinit,
 #define JCGO_CLINIT_BEGIN(clsvarname) (void)0
 #define JCGO_CLINIT_DONE(clsvarname) (void)0
-#ifdef JCGO_THREADS
-#define JCGO_CLINIT_TRIG(clsvarname) if ((*(volatile jint *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0) jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class))
+#ifdef JCGO_PARALLEL
+#define JCGO_CLINIT_TRIG(clsvarname) jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class))
 #else
 #define JCGO_CLINIT_TRIG(clsvarname) if ((JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0) jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class))
 #endif
