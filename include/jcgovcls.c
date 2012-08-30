@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -54,14 +54,10 @@ JCGO_NOSEP_STATIC jint CFASTCALL
 java_lang_VMClass__initialize0__Lc( java_lang_Class klass )
 {
 #ifdef JCGO_STDCLINIT
- if ((*(JCGO_THRD_VOLATILE jint *)&JCGO_FIELD_NZACCESS(klass, modifiers) &
-     (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0)
-  jcgo_clinitTrig(klass);
+ jcgo_clinitTrig(klass);
 #else
 #ifdef JCGO_CLINITCHK
- if ((*(JCGO_THRD_VOLATILE jint *)&JCGO_FIELD_NZACCESS(klass, modifiers) &
-     (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0)
-  jcgo_clinitCheckOrder(klass);
+ jcgo_clinitCheckOrder(klass);
 #endif
 #endif
  return 0;
