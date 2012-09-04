@@ -136,7 +136,6 @@ jcgo_JniNewString( JNIEnv *pJniEnv, CONST jchar *chars, jsize len )
   return NULL;
  if (chars == NULL)
  {
-  jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
  }
  jStr = jnull;
@@ -234,7 +233,6 @@ jcgo_JniNewStringUTF( JNIEnv *pJniEnv, CONST char *chars )
   return NULL;
  if (chars == NULL)
  {
-  jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
  }
  jStr = jnull;
