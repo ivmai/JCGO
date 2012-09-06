@@ -620,7 +620,7 @@ JNI_GetDefaultJavaVMInitArgs( void *args )
      pInitArgs->version != (jint)JNI_VERSION_1_4 &&
      pInitArgs->version != (jint)JNI_VERSION_1_6)
   return (jint)JNI_EVERSION;
- pInitArgs->version = (jint)JNI_VERSION_1_4;
+ pInitArgs->version = (jint)JNI_VERSION_1_6;
  pInitArgs->nOptions = 0;
  pInitArgs->options = NULL;
  pInitArgs->ignoreUnrecognized = (jboolean)JNI_TRUE;
