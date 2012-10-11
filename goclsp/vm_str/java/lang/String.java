@@ -1048,9 +1048,10 @@ public final class String /* hard-coded class name */ /* const data */
   }
    else chars = (char[]) value;
   ByteBuffer bbuf = cse.encode(CharBuffer.wrap(chars, offset, count));
-  if (bbuf.hasArray())
+  int bytesLen = bbuf.remaining();
+  if (bbuf.hasArray() && bbuf.capacity() == bytesLen)
    return bbuf.array();
-  byte[] newBytes = new byte[bbuf.remaining()];
+  byte[] newBytes = new byte[bytesLen];
   bbuf.get(newBytes);
   return newBytes;
  }
