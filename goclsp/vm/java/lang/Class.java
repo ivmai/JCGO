@@ -434,7 +434,7 @@ public final class Class /* hard-coded class name */ /* const data */
   do
   {
    Field field;
-   if ((field = VMAccessorJavaLangReflect.getDeclaredFieldVMField(this,
+   if ((field = VMAccessorJavaLangReflect.getDeclaredFieldVMField(klass,
        fieldName)) != null && Modifier.isPublic(field.getModifiers()))
     return field;
    /* Field[] fields = klass.getDeclaredFields(true);
