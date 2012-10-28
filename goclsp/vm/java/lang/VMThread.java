@@ -665,12 +665,11 @@ final class VMThread /* hard-coded class name */
   try
   {
    Thread thread = currentThread();
-   VMThread vmt;
-   if (thread != null && (vmt = thread.vmThread) != null &&
-       vmt.threadStatus != STATE_TERMINATED)
+   if (thread != null)
    {
-    vt = vmt;
-    if (throwableObj != null && !(throwableObj instanceof ThreadDeath))
+    vt = thread.vmThread;
+    if (throwableObj != null && !(throwableObj instanceof ThreadDeath) &&
+        vt != null && vt.threadStatus != STATE_TERMINATED)
     {
      printUncaughtException(thread, (Throwable) throwableObj);
     }
@@ -844,23 +843,26 @@ final class VMThread /* hard-coded class name */
  private void detachInner()
  {
   vmdata = null;
-  threadStatus = STATE_TERMINATED;
-  boolean died = false;
-  synchronized (nonDaemonLock)
+  if (threadStatus != STATE_TERMINATED)
   {
-   liveThreadCnt--;
-   if (!thread.daemon && --nonDaemonCnt == 0)
+   threadStatus = STATE_TERMINATED;
+   boolean died = false;
+   synchronized (nonDaemonLock)
    {
-    thread.die();
-    notify(nonDaemonLock, false);
-    died = true;
+    liveThreadCnt--;
+    if (!thread.daemon && --nonDaemonCnt == 0)
+    {
+     thread.die();
+     notify(nonDaemonLock, false);
+     died = true;
+    }
    }
-  }
-  if (!died)
-   thread.die();
-  synchronized (this)
-  {
-   notify(this, true);
+   if (!died)
+    thread.die();
+   synchronized (this)
+   {
+    notify(this, true);
+   }
   }
  }
 
