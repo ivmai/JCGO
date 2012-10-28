@@ -672,7 +672,6 @@ final class VMThread /* hard-coded class name */
     vt = vmt;
     if (throwableObj != null && !(throwableObj instanceof ThreadDeath))
     {
-     vt.threadStatus = STATE_TERMINATED;
      printUncaughtException(thread, (Throwable) throwableObj);
     }
    }
@@ -696,7 +695,6 @@ final class VMThread /* hard-coded class name */
        nonDaemonLock == null || mainVMThread == null ||
        Runtime.getRuntime() == null || ThreadGroup.root == null) /* hack */
     throw new InternalError("VMThread class not initialized");
-   vt.threadStatus = STATE_TERMINATED;
    if (throwableObj != null)
    {
     if (throwableObj instanceof ThreadDeath)
@@ -762,6 +760,7 @@ final class VMThread /* hard-coded class name */
     Runtime.getRuntime().runShutdownHooks();
     flushSystemOut();
    }
+   vt.threadStatus = STATE_TERMINATED;
    thread.die();
    if (cleanupThread != null)
    {
@@ -885,7 +884,6 @@ final class VMThread /* hard-coded class name */
    }
    catch (Throwable throwable)
    {
-    threadStatus = STATE_TERMINATED;
     printUncaughtException(thread, throwable);
    }
   }
