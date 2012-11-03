@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -79,7 +79,7 @@ java_lang_VMThrowable__getStackTraceFill0__LoLcALsAIA(
 JCGO_NOSEP_STATIC void CFASTCALL
 java_lang_VMThrowable__exit0__I( jint status )
 {
- jcgo_atExit(jnull);
+ jcgo_initialized = -2;
  exit((int)status);
 }
 
