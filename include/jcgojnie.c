@@ -522,10 +522,10 @@ jcgo_JniVmDetachCurrentThread( JavaVM *vm )
 #ifdef OBJT_java_lang_VMThread
  jObject ex;
 #endif
- if (((jcgo_initialized + 1) >> 1) != 0 &&
-     (tcb = jcgo_getSelfTCB()) != &jcgo_mainTCB)
+ if (((jcgo_initialized + 1) >> 1) != 0)
  {
-  if (tcb == NULL)
+  tcb = jcgo_getSelfTCB();
+  if (tcb == NULL || tcb == &jcgo_mainTCB)
    return 0;
   if (tcb->jniEnv == NULL)
    jcgo_abortOnJniEnvCorrupted();
