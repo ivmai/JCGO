@@ -1129,8 +1129,71 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
 STATIC jobjectRefType JNICALL
 jcgo_JniGetObjectRefType( JNIEnv *pJniEnv, jobject obj )
 {
- /* Unimplemented. */
- return JNIInvalidRefType;
+ jObjectArr localObjs;
+ jObjectArr listEntry;
+#ifndef JCGO_FNLZDATA_OMITREFQUE
+ struct jcgo_refexthidden_s *pexthidden;
+#endif
+ ptrdiff_t index;
+#ifdef JCGO_PARALLEL
+ jobjectRefType reftype;
+#else
+ jobjectRefType JCGO_TRY_VOLATILE reftype;
+#endif
+ reftype = JNIInvalidRefType;
+ if (obj != NULL)
+ {
+  localObjs = JCGO_JNI_GETTCB(pJniEnv)->localObjs;
+  while (localObjs != jnull)
+  {
+   index = (jObject *)obj - &JCGO_ARR_INTERNALACC(jObject, localObjs, 0);
+   if (index >= 2 && JCGO_ARRAY_NZLENGTH(localObjs) > index &&
+       (unsigned)((char *)obj - (char *)&JCGO_ARR_INTERNALACC(jObject,
+       localObjs, 0)) % sizeof(jObject) == 0)
+    return JNILocalRefType;
+   listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, localObjs, 0);
+   if ((jobject)&JCGO_ARR_INTERNALACC(jObject, localObjs, 1) == obj)
+    return (jObjectArr)JCGO_ARR_INTERNALACC(jObject,
+            localObjs, 1) != listEntry ? JNILocalRefType : JNIInvalidRefType;
+   localObjs = listEntry;
+  }
+#ifndef JCGO_PARALLEL
+  JCGO_NATCBACK_BEGIN(pJniEnv)
+#endif
+#ifndef JCGO_FNLZDATA_OMITREFQUE
+  JCGO_CRITMOD_BEGIN(jcgo_jniWeakRefsMutex)
+  listEntry = jcgo_globData.jniWeakRefsList;
+  while (listEntry != jnull)
+  {
+   pexthidden =
+    (struct jcgo_refexthidden_s *)JCGO_ARR_INTERNALACC(jObject, listEntry, 0);
+   if (pexthidden != NULL && (jobject)(&pexthidden->hidden.obj) == obj)
+    break;
+   listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
+  }
+  JCGO_CRITMOD_END(jcgo_jniWeakRefsMutex)
+  if (listEntry != jnull)
+   reftype = JNIWeakGlobalRefType;
+   else
+#endif
+  {
+   JCGO_CRITMOD_BEGIN(jcgo_jniGlobalRefsMutex)
+   listEntry = jcgo_globData.jniGlobalRefsQue;
+   while (listEntry != jnull)
+   {
+    if ((jobject)&JCGO_ARR_INTERNALACC(jObject, listEntry, 2) == obj)
+     break;
+    listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 0);
+   }
+   JCGO_CRITMOD_END(jcgo_jniGlobalRefsMutex)
+   if (listEntry != jnull)
+    reftype = JNIGlobalRefType;
+  }
+#ifndef JCGO_PARALLEL
+  JCGO_NATCBACK_END(pJniEnv)
+#endif
+ }
+ return reftype;
 }
 
 STATIC jboolean JNICALL
