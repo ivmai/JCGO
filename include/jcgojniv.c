@@ -1110,7 +1110,7 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
           (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
   }
   JCGO_CRITMOD_END(jcgo_jniWeakRefsMutex)
-  if (pexthidden != NULL)
+  if (listEntry != jnull)
    pexthidden->hidden.obj = jnull;
    else JCGO_FATAL_ABORT("Invalid JNI weak global reference!");
   JCGO_NATCBACK_END(pJniEnv)
