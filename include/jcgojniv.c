@@ -727,7 +727,9 @@ jcgo_JniDeleteGlobalRef( JNIEnv *pJniEnv, jobject globalref )
       JCGO_METHODS_OF(queEntry)->jcgo_typeid != OBJT_jarray + OBJT_void ||
       JCGO_ARR_INTERNALACC(jObject, queEntry, 2) == jnull)
    JCGO_FATAL_ABORT("Invalid JNI global reference!");
+#ifndef JCGO_PARALLEL
   JCGO_NATCBACK_BEGIN(pJniEnv)
+#endif
   JCGO_ARR_INTERNALACC(jObject, queEntry, 2) = jnull;
   JCGO_CRITMOD_BEGIN(jcgo_jniGlobalRefsMutex)
   nextEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, queEntry, 0);
@@ -738,7 +740,9 @@ jcgo_JniDeleteGlobalRef( JNIEnv *pJniEnv, jobject globalref )
    JCGO_ARR_INTERNALACC(jObject, prevEntry, 0) = (jObject)nextEntry;
    else jcgo_globData.jniGlobalRefsQue = nextEntry;
   JCGO_CRITMOD_END(jcgo_jniGlobalRefsMutex)
+#ifndef JCGO_PARALLEL
   JCGO_NATCBACK_END(pJniEnv)
+#endif
  }
 }
 
@@ -1087,7 +1091,9 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
  struct jcgo_refexthidden_s *pexthidden;
  if (weakref != NULL)
  {
+#ifndef JCGO_PARALLEL
   JCGO_NATCBACK_BEGIN(pJniEnv)
+#endif
   prevEntry = jnull;
   pexthidden = NULL;
   JCGO_CRITMOD_BEGIN(jcgo_jniWeakRefsMutex)
@@ -1113,7 +1119,9 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
   if (listEntry != jnull)
    pexthidden->hidden.obj = jnull;
    else JCGO_FATAL_ABORT("Invalid JNI weak global reference!");
+#ifndef JCGO_PARALLEL
   JCGO_NATCBACK_END(pJniEnv)
+#endif
  }
 #endif
 }

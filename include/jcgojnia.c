@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -74,7 +74,9 @@ STATIC void CFASTCALL jcgo_jniReleaseData( JNIEnv *pJniEnv, void *ptr )
 {
  jObjectArr listEntry;
  jObjectArr prevEntry;
+#ifndef JCGO_PARALLEL
  JCGO_NATCBACK_BEGIN(pJniEnv)
+#endif
  prevEntry = jnull;
  JCGO_CRITMOD_BEGIN(jcgo_jniAllocDataMutex)
  listEntry = jcgo_globData.jniAllocatedDataList;
@@ -95,7 +97,9 @@ STATIC void CFASTCALL jcgo_jniReleaseData( JNIEnv *pJniEnv, void *ptr )
  JCGO_CRITMOD_END(jcgo_jniAllocDataMutex)
  if (listEntry == jnull)
   JCGO_FATAL_ABORT("Invalid JNI allocated data pointer!");
+#ifndef JCGO_PARALLEL
  JCGO_NATCBACK_END(pJniEnv)
+#endif
 }
 
 STATIC void CFASTCALL jcgo_jniThrowArrayStoreException( JNIEnv *pJniEnv )
