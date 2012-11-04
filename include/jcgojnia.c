@@ -288,22 +288,19 @@ jcgo_JniGetStringUTFChars( JNIEnv *pJniEnv, jstring str, jboolean *isCopy )
  value = (jObject)JCGO_FIELD_NZACCESS(jStr, value);
  ofs = JCGO_FIELD_NZACCESS(jStr, offset);
  count = JCGO_FIELD_NZACCESS(jStr, count);
- if (JCGO_METHODS_OF(value)->jcgo_typeid == OBJT_jarray + OBJT_jbyte)
+ chars = (char *)jcgo_jniAllocData(pJniEnv,
+          (JCGO_ALLOCSIZE_T)(JCGO_METHODS_OF(value)->jcgo_typeid ==
+          OBJT_jarray + OBJT_jbyte ? jcgo_utfLenOfBytes((jbyteArr)value,
+          ofs, count) : jcgo_utfLenOfChars((jcharArr)value, ofs, count)) +
+          (JCGO_ALLOCSIZE_T)1L);
+ if (chars != NULL)
  {
-  chars = (char *)jcgo_jniAllocData(pJniEnv,
-           (JCGO_ALLOCSIZE_T)jcgo_utfLenOfBytes((jbyteArr)value, ofs,
-           count) + (JCGO_ALLOCSIZE_T)1L);
-  jcgo_utfFillFromBytes(chars, (jbyteArr)value, ofs, count);
+  if (JCGO_METHODS_OF(value)->jcgo_typeid == OBJT_jarray + OBJT_jbyte)
+   jcgo_utfFillFromBytes(chars, (jbyteArr)value, ofs, count);
+   else jcgo_utfFillFromChars(chars, (jcharArr)value, ofs, count);
+  if (isCopy != NULL)
+   *isCopy = (jboolean)JNI_TRUE;
  }
-  else
-  {
-   chars = (char *)jcgo_jniAllocData(pJniEnv,
-            (JCGO_ALLOCSIZE_T)jcgo_utfLenOfChars((jcharArr)value, ofs,
-            count) + (JCGO_ALLOCSIZE_T)1L);
-   jcgo_utfFillFromChars(chars, (jcharArr)value, ofs, count);
-  }
- if (isCopy != NULL)
-  *isCopy = (jboolean)JNI_TRUE;
  return chars;
 }
 
