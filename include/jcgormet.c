@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -49,7 +49,8 @@ java_lang_reflect_VMMethod__getMethodsName0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->methodsName : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->methodsName : jnull;
 }
 
 JCGO_NOSEP_STATIC jObjectArr CFASTCALL
@@ -58,7 +59,8 @@ java_lang_reflect_VMMethod__getMethodsDims0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->methodsDims : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->methodsDims : jnull;
 }
 
 JCGO_NOSEP_STATIC jObjectArr CFASTCALL
@@ -67,7 +69,8 @@ java_lang_reflect_VMMethod__getMethodsThrows0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->methodsThrows : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->methodsThrows : jnull;
 }
 
 JCGO_NOSEP_STATIC jshortArr CFASTCALL
@@ -76,7 +79,8 @@ java_lang_reflect_VMMethod__getMethodsModifiers0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->methodsModifiers : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->methodsModifiers : jnull;
 }
 
 JCGO_NOSEP_STATIC jObjectArr CFASTCALL
@@ -93,7 +97,7 @@ java_lang_reflect_VMMethod__getMethodsTypes0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL &&
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
          (methodsTypes = jcgo_reflect->methodsTypes) != jnull ?
          methodsTypes : ((jvtable)&JCGO_METHODS_OF(
          JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_thisRtn ?
@@ -112,7 +116,8 @@ java_lang_reflect_VMMethod__invokeNative0__LcLoBAIAJAFADALoAIII(
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(declaringClass, vmdata)))->jcgo_reflect;
  java_lang_Object value = jnull;
- if (jcgo_reflect != NULL && (pentry = jcgo_reflect->methodsEntry) != NULL)
+ if (JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
+     (pentry = jcgo_reflect->methodsEntry) != NULL)
  {
   pentry = pentry + (unsigned)slot;
   value = (java_lang_Object)(*pentry->mproxy)(obj != jnull && allowOverride ?

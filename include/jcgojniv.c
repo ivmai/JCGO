@@ -106,8 +106,8 @@ jObject CFASTCALL jcgo_jniDeRef( jobject obj )
 #ifndef JCGO_NOGC
 #ifdef JCGO_THREADS
 #ifndef JCGO_FNLZDATA_OMITREFQUE
-  if (*(void **)((volatile char *)obj - (int)sizeof(void *)) ==
-      JCGO_PTR_RESERVED)
+  if (JCGO_EXPECT_FALSE(*(void **)((volatile char *)obj -
+      (int)sizeof(void *)) == JCGO_PTR_RESERVED))
    return *(jObject volatile *)obj != jnull ?
            (jObject)JCGO_MEM_CALLWITHSYNC(&jcgo_refGetPtr, obj) : jnull;
 #endif
@@ -191,7 +191,7 @@ STATIC void CFASTCALL jcgo_jniCallbackEnter( JNIEnv *pJniEnv,
  struct jcgo_try_s *pCurTry, jObjectArr *plocalObjs )
 {
  struct jcgo_tcb_s *tcb;
- if (pJniEnv == NULL)
+ if (JCGO_EXPECT_FALSE(pJniEnv == NULL))
   jcgo_abortOnJniEnvCorrupted();
  if ((tcb = JCGO_JNI_GETTCB(pJniEnv))->jniEnv != &jcgo_jniNatIface ||
      (tcb->insideCallback++, jcgo_restoreTCB(tcb) < 0))
@@ -266,9 +266,9 @@ jcgo_JniDefineClass( JNIEnv *pJniEnv, CONST char *name, jobject loader,
 #ifdef OBJT_java_lang_VMClassLoader_ClassParser
  java_lang_Class JCGO_TRY_VOLATILE aclass;
  jbyteArr buffer;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
- if (buf == NULL)
+ if (JCGO_EXPECT_FALSE(buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -280,7 +280,7 @@ jcgo_JniDefineClass( JNIEnv *pJniEnv, CONST char *name, jobject loader,
  JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jbyte, buffer, 0), (void *)buf,
   (JCGO_ALLOCSIZE_T)bufLen);
  aclass = java_lang_VMClassLoader_ClassParser__defineClass0X__LsLoBA(
-           name != NULL ? jcgo_utfMakeString(name) : jnull,
+           JCGO_EXPECT_TRUE(name != NULL) ? jcgo_utfMakeString(name) : jnull,
            (java_lang_Object)jcgo_jniDeRef(loader), buffer);
  JCGO_NATCBACK_END(pJniEnv)
  return (jclass)jcgo_jniToLocalRef(pJniEnv, (jObject)aclass);
@@ -303,9 +303,9 @@ jcgo_JniFindClass( JNIEnv *pJniEnv, CONST char *name )
  int i;
  int j;
  unsigned char ch;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
- if (name == NULL)
+ if (JCGO_EXPECT_FALSE(name == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -360,7 +360,7 @@ jcgo_JniFindClass( JNIEnv *pJniEnv, CONST char *name )
    i++;
    len--;
   }
-  if (i < (int)len)
+  if (JCGO_EXPECT_TRUE(i < (int)len))
   {
    arr = (jcharArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jchar), 0,
           (int)len - i);
@@ -370,8 +370,9 @@ jcgo_JniFindClass( JNIEnv *pJniEnv, CONST char *name )
    j = 0;
    do
    {
-    if ((ch = (unsigned char)(*(name + i))) == (unsigned char)0x2e || /*'.'*/
-        ch > (unsigned char)0x7f)
+    ch = (unsigned char)(*(name + i));
+    if (JCGO_EXPECT_FALSE(ch == (unsigned char)0x2e || /*'.'*/
+        ch > (unsigned char)0x7f))
     {
      str = jnull;
      break;
@@ -383,9 +384,9 @@ jcgo_JniFindClass( JNIEnv *pJniEnv, CONST char *name )
    } while (++i < (int)len);
   }
  }
- if (str != jnull)
+ if (JCGO_EXPECT_TRUE(str != jnull))
   baseClass = jcgo_findClass(str, 0);
- if (baseClass != jnull)
+ if (JCGO_EXPECT_TRUE(baseClass != jnull))
  {
   if (dims)
   {
@@ -412,10 +413,10 @@ STATIC jclass JNICALL
 jcgo_JniGetSuperclass( JNIEnv *pJniEnv, jclass clazz )
 {
  java_lang_Class aclass;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull)
+ if (JCGO_EXPECT_FALSE(aclass == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -449,10 +450,10 @@ jcgo_JniThrow( JNIEnv *pJniEnv, jthrowable obj )
 #ifdef OBJT_java_lang_Throwable
  jObject jobj;
  struct jcgo_tcb_s *tcb = JCGO_JNI_GETTCB(pJniEnv);
- if (tcb->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(tcb->nativeExc != jnull))
   return (jint)JNI_ERR;
  jobj = jcgo_jniDeRef((jobject)obj);
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jint)JNI_ERR;
@@ -461,7 +462,7 @@ jcgo_JniThrow( JNIEnv *pJniEnv, jthrowable obj )
      jobj))
   jcgo_abortOnNonThrowable();
 #ifdef JCGO_THREADS
- if (tcb->stopExc != jnull)
+ if (JCGO_EXPECT_FALSE(tcb->stopExc != jnull))
   return (jint)JNI_ERR;
 #endif
  tcb->nativeExc = jobj;
@@ -494,16 +495,16 @@ jcgo_JniThrowNew( JNIEnv *pJniEnv, jclass clazz, CONST char *msg )
  int i;
  int count;
  JCGO_TRY_VOLATILE int res;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jint)JNI_ERR;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull)
+ if (JCGO_EXPECT_FALSE(aclass == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jint)JNI_ERR;
  }
 #ifdef JCGO_THREADS
- if (JCGO_JNI_GETTCB(pJniEnv)->stopExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->stopExc != jnull))
   return (jint)JNI_ERR;
 #endif
  res = (int)JNI_ERR;
@@ -513,12 +514,12 @@ jcgo_JniThrowNew( JNIEnv *pJniEnv, jclass clazz, CONST char *msg )
  pentry = NULL;
  slotNoArg = -1;
  slotStrArg = -1;
- if ((JCGO_FIELD_NZACCESS(aclass, modifiers) &
-     (JCGO_ACCMOD_INTERFACE | JCGO_ACCMOD_ABSTRACT)) == 0)
+ if (JCGO_EXPECT_TRUE((JCGO_FIELD_NZACCESS(aclass, modifiers) &
+     (JCGO_ACCMOD_INTERFACE | JCGO_ACCMOD_ABSTRACT)) == 0))
  {
   jcgo_reflect = ((jvtable)&JCGO_METHODS_OF(
                   JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect;
-  if (jcgo_reflect != NULL &&
+  if (JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
       (methodsTypes = jcgo_reflect->methodsTypes) != jnull)
   {
    count = (int)JCGO_ARRAY_NZLENGTH(methodsTypes);
@@ -555,7 +556,7 @@ jcgo_JniThrowNew( JNIEnv *pJniEnv, jclass clazz, CONST char *msg )
    else if ((rtn = ((jvtable)&JCGO_METHODS_OF(
             JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_thisRtn) != 0)
     slotNoArg = 0;
-  if ((slotNoArg & slotStrArg) >= 0)
+  if (JCGO_EXPECT_TRUE((slotNoArg & slotStrArg) >= 0))
    jobj = jcgo_newObject(
            (jvtable)&JCGO_METHODS_OF(JCGO_FIELD_NZACCESS(aclass, vmdata)));
  }
@@ -585,7 +586,8 @@ jcgo_JniThrowNew( JNIEnv *pJniEnv, jclass clazz, CONST char *msg )
  }
   else jobj = (*rtn)(jobj);
  res = 0;
- if (*(void *volatile *)&jcgo_noTypesClassArr.jcgo_methods != NULL)
+ if (JCGO_EXPECT_FALSE(*(void *volatile *)
+     &jcgo_noTypesClassArr.jcgo_methods != NULL))
   JCGO_THROW_EXC(jobj);
  JCGO_NATCBACK_END(pJniEnv)
  return (jint)res;
@@ -600,7 +602,7 @@ jcgo_JniExceptionOccurred( JNIEnv *pJniEnv )
 {
  jObject ex = JCGO_JNI_GETTCB(pJniEnv)->nativeExc;
 #ifdef JCGO_THREADS
- if (ex == jnull)
+ if (JCGO_EXPECT_TRUE(ex == jnull))
   ex = JCGO_JNI_GETTCB(pJniEnv)->stopExc;
 #endif
  return (jthrowable)jcgo_jniToLocalRef(pJniEnv, ex);
@@ -618,7 +620,7 @@ jcgo_JniExceptionDescribe( JNIEnv *pJniEnv )
  res = (int)java_lang_VMThread__jniExceptionDescribe0X__Lo(
         (java_lang_Object)ex);
  JCGO_NATCBACK_END(pJniEnv)
- if (res)
+ if (JCGO_EXPECT_TRUE(res != 0))
   return;
  JCGO_JNI_GETTCB(pJniEnv)->nativeExc = ex;
 #else
@@ -653,7 +655,7 @@ jcgo_JniPushLocalFrame( JNIEnv *pJniEnv, jint capacity )
               JCGO_CLASSREF_OF(java_lang_Object__class), 0,
               (capacity > 0 ? capacity : 1) + 3);
  JCGO_NATCBACK_END(pJniEnv)
- if (localObjs == jnull)
+ if (JCGO_EXPECT_FALSE(localObjs == jnull))
   return (jint)JNI_ERR;
  JCGO_ARR_INTERNALACC(jObject, localObjs, 0) =
   (jObject)JCGO_JNI_GETTCB(pJniEnv)->localObjs;
@@ -688,10 +690,10 @@ jcgo_JniNewGlobalRef( JNIEnv *pJniEnv, jobject obj )
  jObjectArr prevEntry;
  jObjectArr JCGO_TRY_VOLATILE queEntry;
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
   return NULL;
  queEntry = jnull;
  JCGO_NATCBACK_BEGIN(pJniEnv)
@@ -699,7 +701,8 @@ jcgo_JniNewGlobalRef( JNIEnv *pJniEnv, jobject obj )
               JCGO_CLASSREF_OF(java_lang_Object__class), 0, 3);
  JCGO_ARR_INTERNALACC(jObject, prevEntry, 2) = jobj;
  JCGO_CRITMOD_BEGIN(jcgo_jniGlobalRefsMutex)
- if ((nextEntry = jcgo_globData.jniGlobalRefsQue) != jnull)
+ nextEntry = jcgo_globData.jniGlobalRefsQue;
+ if (JCGO_EXPECT_TRUE(nextEntry != jnull))
  {
   JCGO_ARR_INTERNALACC(jObject, prevEntry, 0) = (jObject)nextEntry;
   JCGO_ARR_INTERNALACC(jObject, nextEntry, 1) = (jObject)prevEntry;
@@ -708,7 +711,7 @@ jcgo_JniNewGlobalRef( JNIEnv *pJniEnv, jobject obj )
  JCGO_CRITMOD_END(jcgo_jniGlobalRefsMutex)
  queEntry = prevEntry;
  JCGO_NATCBACK_END(pJniEnv)
- return queEntry != jnull ?
+ return JCGO_EXPECT_TRUE(queEntry != jnull) ?
          (jobject)&JCGO_ARR_INTERNALACC(jObject, queEntry, 2) : NULL;
 }
 
@@ -718,7 +721,7 @@ jcgo_JniDeleteGlobalRef( JNIEnv *pJniEnv, jobject globalref )
  jObjectArr queEntry;
  jObjectArr nextEntry;
  jObjectArr prevEntry;
- if (globalref != NULL)
+ if (JCGO_EXPECT_TRUE(globalref != NULL))
  {
   queEntry = (jObjectArr)((volatile char *)globalref -
               (JCGO_OFFSET_OF(struct jcgo_jobjectarr_s, jObject) +
@@ -734,9 +737,9 @@ jcgo_JniDeleteGlobalRef( JNIEnv *pJniEnv, jobject globalref )
   JCGO_CRITMOD_BEGIN(jcgo_jniGlobalRefsMutex)
   nextEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, queEntry, 0);
   prevEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, queEntry, 1);
-  if (nextEntry != jnull)
+  if (JCGO_EXPECT_TRUE(nextEntry != jnull))
    JCGO_ARR_INTERNALACC(jObject, nextEntry, 1) = (jObject)prevEntry;
-  if (prevEntry != jnull)
+  if (JCGO_EXPECT_TRUE(prevEntry != jnull))
    JCGO_ARR_INTERNALACC(jObject, prevEntry, 0) = (jObject)nextEntry;
    else jcgo_globData.jniGlobalRefsQue = nextEntry;
   JCGO_CRITMOD_END(jcgo_jniGlobalRefsMutex)
@@ -749,7 +752,7 @@ jcgo_JniDeleteGlobalRef( JNIEnv *pJniEnv, jobject globalref )
 STATIC void JNICALL
 jcgo_JniDeleteLocalRef( JNIEnv *pJniEnv, jobject localref )
 {
- if (localref != NULL)
+ if (JCGO_EXPECT_TRUE(localref != NULL))
   *(jObject *)localref = jnull;
 }
 
@@ -769,14 +772,14 @@ jcgo_JniNewLocalRef( JNIEnv *pJniEnv, jobject obj )
 STATIC jint JNICALL
 jcgo_JniEnsureLocalCapacity( JNIEnv *pJniEnv, jint capacity )
 {
- jint len;
+ jint len = 0;
  jObjectArr localObjs;
  jObjectArr JCGO_TRY_VOLATILE newLocalObjs;
  localObjs = JCGO_JNI_GETTCB(pJniEnv)->localObjs;
- len = 0;
- if (capacity > 0)
+ if (JCGO_EXPECT_TRUE(capacity > 0))
  {
-  if (localObjs != jnull && (len = JCGO_ARRAY_NZLENGTH(localObjs)) > capacity)
+  if (JCGO_EXPECT_TRUE(localObjs != jnull) &&
+      (len = JCGO_ARRAY_NZLENGTH(localObjs)) > capacity)
   {
    while (--len > 0)
     if (JCGO_ARR_INTERNALACC(jObject, localObjs, len) == jnull &&
@@ -784,14 +787,14 @@ jcgo_JniEnsureLocalCapacity( JNIEnv *pJniEnv, jint capacity )
      return 0;
    len = JCGO_ARRAY_NZLENGTH(localObjs);
   }
-  if (localObjs == jnull || (len += capacity) <= 0)
+  if (JCGO_EXPECT_FALSE(localObjs == jnull || (len += capacity) <= 0))
    len = (jint)(((u_jint)-1) >> 1);
   newLocalObjs = jnull;
   JCGO_NATCBACK_BEGIN(pJniEnv)
   newLocalObjs = (jObjectArr)jcgo_newArray(
                   JCGO_CLASSREF_OF(java_lang_Object__class), 0, len);
   JCGO_NATCBACK_END(pJniEnv)
-  if (newLocalObjs == jnull)
+  if (JCGO_EXPECT_FALSE(newLocalObjs == jnull))
    return (jint)JNI_ERR;
   JCGO_ARR_INTERNALACC(jObject, newLocalObjs, 0) = (jObject)localObjs;
   JCGO_ARR_INTERNALACC(jObject, newLocalObjs, 1) = (jObject)localObjs;
@@ -805,18 +808,18 @@ jcgo_JniAllocObject( JNIEnv *pJniEnv, jclass clazz )
 {
  java_lang_Class aclass;
  jObject JCGO_TRY_VOLATILE jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull)
+ if (JCGO_EXPECT_FALSE(aclass == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
  }
  jobj = jnull;
  JCGO_NATCBACK_BEGIN(pJniEnv)
- if ((JCGO_FIELD_NZACCESS(aclass, modifiers) &
-     (JCGO_ACCMOD_INTERFACE | JCGO_ACCMOD_ABSTRACT)) == 0)
+ if (JCGO_EXPECT_TRUE((JCGO_FIELD_NZACCESS(aclass, modifiers) &
+     (JCGO_ACCMOD_INTERFACE | JCGO_ACCMOD_ABSTRACT)) == 0))
   jobj = jcgo_newObject(
           (jvtable)&JCGO_METHODS_OF(JCGO_FIELD_NZACCESS(aclass, vmdata)));
 #ifdef OBJT_java_lang_VMThrowable
@@ -833,10 +836,10 @@ jcgo_JniGetObjectClass( JNIEnv *pJniEnv, jobject obj )
  jObject jobj;
  java_lang_Class JCGO_TRY_VOLATILE aclass;
  int dims;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -865,7 +868,7 @@ jcgo_JniIsInstanceOf( JNIEnv *pJniEnv, jobject obj, jclass clazz )
  java_lang_Class aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
  java_lang_Class srcClass;
  int typenum;
- if (aclass == jnull)
+ if (JCGO_EXPECT_FALSE(aclass == jnull))
  {
   jcgo_jniHandleInstanceOfNullClass(pJniEnv);
   return (jboolean)JNI_FALSE;
@@ -909,7 +912,7 @@ jcgo_JniMonitorEnter( JNIEnv *pJniEnv, jobject obj )
  jObjectArr *pentry;
  jint len;
 #endif
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
  {
   if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc == jnull)
    jcgo_jniThrowNullPointerException(pJniEnv);
@@ -924,7 +927,8 @@ jcgo_JniMonitorEnter( JNIEnv *pJniEnv, jobject obj )
   pentry = &tcb->jniLockedObjs;
   for (;;)
   {
-   if ((listEntry = *pentry) == jnull)
+   listEntry = *pentry;
+   if (JCGO_EXPECT_FALSE(listEntry == jnull))
    {
     {
      JCGO_TRY_BLOCK
@@ -935,7 +939,7 @@ jcgo_JniMonitorEnter( JNIEnv *pJniEnv, jobject obj )
      }
      JCGO_TRY_LEAVE
      {
-      if (*pentry == jnull)
+      if (JCGO_EXPECT_FALSE(*pentry == jnull))
        jcgo_monLeaveInner(jobj, tcb);
      }
      JCGO_TRY_FINALLYEND
@@ -948,7 +952,7 @@ jcgo_JniMonitorEnter( JNIEnv *pJniEnv, jobject obj )
    while (--len > 0)
     if (JCGO_ARR_INTERNALACC(jObject, listEntry, len) == jnull)
      break;
-   if (len)
+   if (JCGO_EXPECT_TRUE(len != 0))
    {
     JCGO_ARR_INTERNALACC(jObject, listEntry, len) = jobj;
     break;
@@ -984,7 +988,7 @@ jcgo_JniMonitorExit( JNIEnv *pJniEnv, jobject obj )
  jObjectArr *pentry;
  jint len;
 #endif
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
  {
   if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc == jnull)
    jcgo_jniThrowNullPointerException(pJniEnv);
@@ -1010,9 +1014,10 @@ jcgo_JniMonitorExit( JNIEnv *pJniEnv, jobject obj )
    {
     len = JCGO_ARRAY_NZLENGTH(listEntry);
     while (--len > 0)
-     if (JCGO_ARR_INTERNALACC(jObject, listEntry, len) == jobj)
+     if (JCGO_EXPECT_FALSE(JCGO_ARR_INTERNALACC(jObject, listEntry, len) ==
+         jobj))
       break;
-    if (len)
+    if (JCGO_EXPECT_TRUE(len != 0))
     {
      JCGO_ARR_INTERNALACC(jObject, listEntry, len) = jnull;
      break;
@@ -1020,7 +1025,7 @@ jcgo_JniMonitorExit( JNIEnv *pJniEnv, jobject obj )
    }
    break;
   }
-  if (JCGO_ARR_INTERNALACC(jObject, listEntry, 0) == jobj)
+  if (JCGO_EXPECT_FALSE(JCGO_ARR_INTERNALACC(jObject, listEntry, 0) == jobj))
   {
    *pentry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
    break;
@@ -1044,11 +1049,11 @@ jcgo_JniNewWeakGlobalRef( JNIEnv *pJniEnv, jobject obj )
  struct jcgo_refexthidden_s *pexthidden;
 #endif
  jweak JCGO_TRY_VOLATILE weakref;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jobj = jcgo_jniDeRef(obj);
  weakref = NULL;
- if (jobj != jnull)
+ if (JCGO_EXPECT_TRUE(jobj != jnull))
  {
   JCGO_NATCBACK_BEGIN(pJniEnv)
 #ifdef JCGO_FNLZDATA_OMITREFQUE
@@ -1058,8 +1063,8 @@ jcgo_JniNewWeakGlobalRef( JNIEnv *pJniEnv, jobject obj )
 #else
   listEntry = (jObjectArr)jcgo_newArray(
                JCGO_CLASSREF_OF(java_lang_Object__class), 0, 2);
-  if ((pexthidden = jcgo_newWeakQueRef(jnull, (jObject)listEntry,
-      jobj, 1)) != NULL)
+  pexthidden = jcgo_newWeakQueRef(jnull, (jObject)listEntry, jobj, 1);
+  if (JCGO_EXPECT_TRUE(pexthidden != NULL))
   {
 #ifdef JCGO_THREADS
    *(void **)((volatile char *)&pexthidden->hidden.obj -
@@ -1089,7 +1094,7 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
  jObjectArr listEntry;
  jObjectArr prevEntry;
  struct jcgo_refexthidden_s *pexthidden;
- if (weakref != NULL)
+ if (JCGO_EXPECT_TRUE(weakref != NULL))
  {
 #ifndef JCGO_PARALLEL
   JCGO_NATCBACK_BEGIN(pJniEnv)
@@ -1102,21 +1107,22 @@ jcgo_JniDeleteWeakGlobalRef( JNIEnv *pJniEnv, jweak weakref )
   {
    pexthidden =
     (struct jcgo_refexthidden_s *)JCGO_ARR_INTERNALACC(jObject, listEntry, 0);
-   if (pexthidden != NULL && (jweak)(&pexthidden->hidden.obj) == weakref)
+   if (JCGO_EXPECT_TRUE(pexthidden != NULL) &&
+       JCGO_EXPECT_FALSE((jweak)(&pexthidden->hidden.obj) == weakref))
     break;
    prevEntry = listEntry;
    listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
   }
-  if (listEntry != jnull)
+  if (JCGO_EXPECT_TRUE(listEntry != jnull))
   {
-   if (prevEntry != jnull)
+   if (JCGO_EXPECT_TRUE(prevEntry != jnull))
     JCGO_ARR_INTERNALACC(jObject, prevEntry, 1) =
      JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
     else jcgo_globData.jniWeakRefsList =
           (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
   }
   JCGO_CRITMOD_END(jcgo_jniWeakRefsMutex)
-  if (listEntry != jnull)
+  if (JCGO_EXPECT_TRUE(listEntry != jnull))
    pexthidden->hidden.obj = jnull;
    else JCGO_FATAL_ABORT("Invalid JNI weak global reference!");
 #ifndef JCGO_PARALLEL
@@ -1141,20 +1147,21 @@ jcgo_JniGetObjectRefType( JNIEnv *pJniEnv, jobject obj )
  jobjectRefType JCGO_TRY_VOLATILE reftype;
 #endif
  reftype = JNIInvalidRefType;
- if (obj != NULL)
+ if (JCGO_EXPECT_TRUE(obj != NULL))
  {
   localObjs = JCGO_JNI_GETTCB(pJniEnv)->localObjs;
   while (localObjs != jnull)
   {
    index = (jObject *)obj - &JCGO_ARR_INTERNALACC(jObject, localObjs, 0);
    if (index >= 2 && JCGO_ARRAY_NZLENGTH(localObjs) > index &&
-       (unsigned)((char *)obj - (char *)&JCGO_ARR_INTERNALACC(jObject,
-       localObjs, 0)) % sizeof(jObject) == 0)
+       JCGO_EXPECT_TRUE((unsigned)(
+       (char *)obj - (char *)&JCGO_ARR_INTERNALACC(jObject,
+       localObjs, 0)) % sizeof(jObject) == 0))
     return JNILocalRefType;
    listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, localObjs, 0);
    if ((jobject)&JCGO_ARR_INTERNALACC(jObject, localObjs, 1) == obj)
-    return (jObjectArr)JCGO_ARR_INTERNALACC(jObject,
-            localObjs, 1) != listEntry ? JNILocalRefType : JNIInvalidRefType;
+    return JCGO_EXPECT_TRUE((jObjectArr)JCGO_ARR_INTERNALACC(jObject,
+            localObjs, 1) != listEntry) ? JNILocalRefType : JNIInvalidRefType;
    localObjs = listEntry;
   }
 #ifndef JCGO_PARALLEL
@@ -1167,12 +1174,13 @@ jcgo_JniGetObjectRefType( JNIEnv *pJniEnv, jobject obj )
   {
    pexthidden =
     (struct jcgo_refexthidden_s *)JCGO_ARR_INTERNALACC(jObject, listEntry, 0);
-   if (pexthidden != NULL && (jobject)(&pexthidden->hidden.obj) == obj)
+   if (JCGO_EXPECT_TRUE(pexthidden != NULL) &&
+       JCGO_EXPECT_FALSE((jobject)(&pexthidden->hidden.obj) == obj))
     break;
    listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
   }
   JCGO_CRITMOD_END(jcgo_jniWeakRefsMutex)
-  if (listEntry != jnull)
+  if (JCGO_EXPECT_FALSE(listEntry != jnull))
    reftype = JNIWeakGlobalRefType;
    else
 #endif
@@ -1181,12 +1189,13 @@ jcgo_JniGetObjectRefType( JNIEnv *pJniEnv, jobject obj )
    listEntry = jcgo_globData.jniGlobalRefsQue;
    while (listEntry != jnull)
    {
-    if ((jobject)&JCGO_ARR_INTERNALACC(jObject, listEntry, 2) == obj)
+    if (JCGO_EXPECT_FALSE((jobject)&JCGO_ARR_INTERNALACC(jObject,
+        listEntry, 2) == obj))
      break;
     listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 0);
    }
    JCGO_CRITMOD_END(jcgo_jniGlobalRefsMutex)
-   if (listEntry != jnull)
+   if (JCGO_EXPECT_TRUE(listEntry != jnull))
     reftype = JNIGlobalRefType;
   }
 #ifndef JCGO_PARALLEL

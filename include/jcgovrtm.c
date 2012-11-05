@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -64,7 +64,7 @@ JCGO_NOSEP_STATIC jlong CFASTCALL
 java_lang_VMRuntime__freeMemory__( void )
 {
  jlong size = (jlong)JCGO_MEM_CORELEFT(0);
- if (size < (jlong)0L)
+ if (JCGO_EXPECT_FALSE(size < (jlong)0L))
   size = (jlong)(((u_jlong)-1L) >> 1);
  return size;
 }
@@ -74,9 +74,9 @@ java_lang_VMRuntime__totalMemory__( void )
 {
  jlong size = (jlong)JCGO_MEM_HEAPCURSIZE(0);
  jlong left = (jlong)JCGO_MEM_CORELEFT(0);
- if ((u_jlong)size <= (u_jlong)left)
+ if (JCGO_EXPECT_FALSE((u_jlong)size <= (u_jlong)left))
   size = left != (jlong)0L ? left : jcgo_allocatedBytesCnt;
- if (size < (jlong)0L)
+ if (JCGO_EXPECT_FALSE(size < (jlong)0L))
   size = (jlong)(((u_jlong)-1L) >> 1);
  return size;
 }
@@ -221,8 +221,8 @@ java_lang_VMRuntime__preventIOBlocking0__( void )
 JCGO_NOSEP_STATIC java_lang_String CFASTCALL
 java_lang_VMRuntime__getJavaExePathname0__( void )
 {
- JCGO_MAIN_TCHAR *tstr;
- if ((tstr = jcgo_targv0) != NULL)
+ JCGO_MAIN_TCHAR *tstr = jcgo_targv0;
+ if (JCGO_EXPECT_TRUE(tstr != NULL))
  {
   JCGO_JNI_BLOCK(0)
   return (java_lang_String)jcgo_jniLeave(jcgo_pJniEnv,

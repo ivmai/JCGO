@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -258,7 +258,7 @@ STATIC int CFASTCALL jcgo_softRefsProcess( int clearAll )
  long deltaSize;
  int age;
  unsigned hist = 0;
- if (!clearAll)
+ if (JCGO_EXPECT_TRUE(!clearAll))
  {
   size = (u_jlong)JCGO_MEM_HEAPCURSIZE(0);
   deltaSize = (long)jcgo_heapLastSize;
@@ -283,7 +283,7 @@ STATIC int CFASTCALL jcgo_softRefsProcess( int clearAll )
  }
  if ((keeper = jcgo_globData.refKeeperList) == NULL)
   return 0;
- if (clearAll)
+ if (JCGO_EXPECT_FALSE(clearAll))
  {
   jcgo_globData.refKeeperList = NULL;
   do
@@ -335,10 +335,10 @@ STATIC void *CFASTCALL jcgo_memAlloc( JCGO_ALLOCSIZE_T size,
  for (;;)
 #endif
  {
-  if (size)
+  if (JCGO_EXPECT_TRUE(size != 0))
   {
    JCGO_MEM_CALLOC(&ptr, size, jcgo_methods);
-   if (ptr != NULL)
+   if (JCGO_EXPECT_TRUE(ptr != NULL))
    {
 #ifdef OBJT_java_lang_ref_SoftReference
 #ifdef JCGO_NOGC
@@ -348,7 +348,7 @@ STATIC void *CFASTCALL jcgo_memAlloc( JCGO_ALLOCSIZE_T size,
         jcgo_lastAllocBytesCnt < (unsigned)JCGO_SOFTREF_ALLOCBYTESMIN)
      break;
 #endif
-    if ((unsigned)JCGO_MEM_GCGETCOUNT(0) == jcgo_gcCount)
+    if (JCGO_EXPECT_TRUE((unsigned)JCGO_MEM_GCGETCOUNT(0) == jcgo_gcCount))
     {
 #ifndef JCGO_NOGC
      jcgo_lastAllocBytesCnt = (unsigned)jcgo_allocatedBytesCnt;
@@ -422,7 +422,8 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newObject( jvtable jcgo_methods )
   ptr = NULL;
   size = -size;
  }
- if ((ptr = jcgo_memAlloc((unsigned)size, ptr)) == NULL
+ ptr = jcgo_memAlloc((unsigned)size, ptr);
+ if (JCGO_EXPECT_FALSE(ptr == NULL)
 #ifndef JCGO_NOGC
 #ifdef OBJT_java_lang_VMRuntime
      || (((CONST struct java_lang_Object_methods_s *)
@@ -450,7 +451,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
  JCGO_ALLOCSIZE_T size;
  int typenum;
  void *ptr = NULL;
- if (aclass == jnull)
+ if (JCGO_EXPECT_FALSE(aclass == jnull))
   JCGO_THROW_EXC(jnull);
  if ((typenum = ((jvtable)&JCGO_METHODS_OF(
      JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_typeid) > OBJT_jarray &&
@@ -473,8 +474,8 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
                JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_typeid;
    }
  }
- if (typenum == OBJT_void ||
-     ((jint)(((JCGO_DIMS_MAX - 1) - dims) | dims) | len) < 0)
+ if (JCGO_EXPECT_FALSE(typenum == OBJT_void ||
+     ((jint)(((JCGO_DIMS_MAX - 1) - dims) | dims) | len) < 0))
  {
 #ifdef OBJT_java_lang_VMThrowable
   java_lang_VMThrowable__throwNegativeArraySizeException0X__();
@@ -482,7 +483,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
   JCGO_FATAL_ABORT("Negative array size specified!");
 #endif
  }
- if (len != (jint)(((u_jint)-1) >> 1))
+ if (JCGO_EXPECT_TRUE(len != (jint)(((u_jint)-1) >> 1)))
  {
   ptr = JCGO_PTR_RESERVED;
   typenum = dims > 0 ? (OBJT_jarray + OBJT_void) + dims :
@@ -494,10 +495,10 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
    ptr = NULL;
    dims = typenum - OBJT_jarray;
   }
-  if (len)
+  if (JCGO_EXPECT_TRUE(len != 0))
   {
    size = 0;
-   if (jcgo_arrayMaxLen[dims] >= (JCGO_ALLOCSIZE_T)len)
+   if (JCGO_EXPECT_TRUE(jcgo_arrayMaxLen[dims] >= (JCGO_ALLOCSIZE_T)len))
    {
     size = jcgo_primitiveSize[dims] * (JCGO_ALLOCSIZE_T)len +
             jcgo_primitiveOffset[dims];
@@ -530,7 +531,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_newArray( java_lang_Class aclass,
    }
   ptr = jcgo_memAlloc(size, ptr);
  }
- if (ptr == NULL)
+ if (JCGO_EXPECT_FALSE(ptr == NULL))
  {
 #ifdef OBJT_java_lang_VMThrowable
   java_lang_VMThrowable__throwOutOfMemoryError0X__();
@@ -590,7 +591,7 @@ STATIC void *GC_CALLBACK jcgo_fnlzDataAttachNew( void *client_data )
   ((struct jcgo_reffnlzdata_s *)client_data)->next;
  struct jcgo_reffnlzdata_s *next;
 #ifdef JCGO_PARALLEL
- if (pfnlzdata != NULL)
+ if (JCGO_EXPECT_TRUE(pfnlzdata != NULL))
 #endif
  {
   if (pfnlzdata->pexthidden != NULL)
@@ -809,23 +810,24 @@ JCGO_NOSEP_INLINE
 struct jcgo_refexthidden_s *CFASTCALL jcgo_newWeakQueRef( jObject refObj,
  jObject ownerObj, jObject referent, int noclear )
 {
- struct jcgo_refexthidden_s *pexthidden;
+ struct jcgo_refexthidden_s *pexthidden =
+  jcgo_memAlloc(sizeof(struct jcgo_refexthidden_s), NULL);
 #ifndef JCGO_NOGC
 #ifdef OBJT_java_lang_VMRuntime
  struct jcgo_reffnlzdata_s *pfnlzdata;
  struct jcgo_reffnlzdata_s *next;
 #endif
 #endif
- if ((pexthidden = jcgo_memAlloc(sizeof(struct jcgo_refexthidden_s),
-     NULL)) != NULL)
+ if (JCGO_EXPECT_TRUE(pexthidden != NULL))
  {
   pexthidden->hidden.jcgo_methods = (jvtable)&java_lang_Object_methods;
 #ifdef JCGO_NOGC
   pexthidden->hidden.obj = referent;
 #else
 #ifdef OBJT_java_lang_VMRuntime
-  if ((pfnlzdata = jcgo_memAlloc(sizeof(struct jcgo_reffnlzdata_s),
-      JCGO_PTR_RESERVED)) == NULL)
+  pfnlzdata = jcgo_memAlloc(sizeof(struct jcgo_reffnlzdata_s),
+               JCGO_PTR_RESERVED);
+  if (JCGO_EXPECT_FALSE(pfnlzdata == NULL))
    return NULL;
   if (noclear)
   {
@@ -838,7 +840,8 @@ struct jcgo_refexthidden_s *CFASTCALL jcgo_newWeakQueRef( jObject refObj,
     pexthidden->hidden.obj = referent;
     if (JCGO_MEM_SAFEREGWEAKLINK((void **)&pexthidden->hidden.obj,
         (void *)&JCGO_METHODS_OF(referent),
-        JCGO_METHODS_OF(referent)->jcgo_typeid > OBJT_java_lang_String))
+        JCGO_EXPECT_TRUE(JCGO_METHODS_OF(referent)->jcgo_typeid >
+        OBJT_java_lang_String)))
      return NULL;
    }
 #ifdef OBJT_java_lang_VMRuntime
@@ -849,14 +852,16 @@ struct jcgo_refexthidden_s *CFASTCALL jcgo_newWeakQueRef( jObject refObj,
   next = JCGO_PTR_RESERVED;
   JCGO_MEM_REGJFINALIZER(pexthidden, jcgo_refExtHiddenFnlz, pfnlzdata,
    (void **)&next);
-  if (next != NULL)
+  if (JCGO_EXPECT_FALSE(next != NULL))
    return NULL;
   pfnlzdata->next = pfnlzdata;
   pexthidden->ref = refObj;
   JCGO_MEM_SAFEREGJFINALIZER((void *)&JCGO_METHODS_OF(referent),
    jcgo_refFinalizer, pfnlzdata, (void **)&pfnlzdata->next,
-   JCGO_METHODS_OF(referent)->jcgo_typeid > OBJT_java_lang_String);
-  if ((next = pfnlzdata->next) == pfnlzdata)
+   JCGO_EXPECT_TRUE(JCGO_METHODS_OF(referent)->jcgo_typeid >
+   OBJT_java_lang_String));
+  next = pfnlzdata->next;
+  if (JCGO_EXPECT_FALSE(next == pfnlzdata))
   {
    JCGO_MEM_REGJFINALIZER(pexthidden, 0, NULL, (void **)&next);
    return NULL;

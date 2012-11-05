@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -112,20 +112,22 @@ JCGO_NOSEP_INLINE void JCGO_INLFRW_FASTCALL jcgo_initFP( void )
 
 JCGO_NOSEP_STATIC jdouble CFASTCALL jcgo_fdiv( jdouble d1, jdouble d2 )
 {
- if (d2 == (jdouble)0)
+ if (JCGO_EXPECT_FALSE(d2 == (jdouble)0))
   return d1 < (jdouble)0 ? (jdouble)((jlong)(~(((u_jlong)-1L) >> 1))) :
           d1 > (jdouble)0 ? (jdouble)(jlong)(((u_jlong)-1L) >> 1) : d2;
- if (d2 == (jdouble)-1 && d1 == (jdouble)((jlong)(~(((u_jlong)-1L) >> 1))))
+ if (JCGO_EXPECT_FALSE(d2 == (jdouble)-1) &&
+     JCGO_EXPECT_FALSE(d1 == (jdouble)((jlong)(~(((u_jlong)-1L) >> 1)))))
   return (jdouble)(jlong)(((u_jlong)-1L) >> 1);
  return d1 / d2;
 }
 
 JCGO_NOSEP_STATIC jfloat CFASTCALL jcgo_fdivf( jfloat f1, jfloat f2 )
 {
- if (f2 == (jfloat)0)
+ if (JCGO_EXPECT_FALSE(f2 == (jfloat)0))
   return f1 < (jfloat)0 ? (jfloat)((jint)(~(((u_jint)-1) >> 1))) :
           f1 > (jfloat)0 ? (jfloat)(((u_jint)-1) >> 1) : f2;
- if (f2 == (jfloat)-1 && f1 == (jfloat)((jint)(~(((u_jint)-1) >> 1))))
+ if (JCGO_EXPECT_FALSE(f2 == (jfloat)-1) &&
+     JCGO_EXPECT_FALSE(f1 == (jfloat)((jint)(~(((u_jint)-1) >> 1)))))
   return (jfloat)(((u_jint)-1) >> 1);
  return f1 / f2;
 }
@@ -135,9 +137,10 @@ JCGO_NOSEP_STATIC jfloat CFASTCALL jcgo_fdivf( jfloat f1, jfloat f2 )
 JCGO_NOSEP_EXTRASTATIC jint CFASTCALL jcgo_jfloat2jint( jfloat f )
 {
  if (JCGO_FP_NOTNANF(f))
-  return f < (jfloat)0.0 ? (f <= (jfloat)((jint)(~(((u_jint)-1) >> 1))) ?
+  return f < (jfloat)0.0 ?
+          (JCGO_EXPECT_FALSE(f <= (jfloat)((jint)(~(((u_jint)-1) >> 1)))) ?
           (jint)(~(((u_jint)-1) >> 1)) : (jint)(-JCGO_FP_FLOORF(-f))) :
-          f < -(jfloat)(-(jint)(((u_jint)-1) >> 1)) ?
+          JCGO_EXPECT_TRUE(f < -(jfloat)(-(jint)(((u_jint)-1) >> 1))) ?
           (jint)JCGO_FP_FLOORF(f) : (jint)(((u_jint)-1) >> 1);
  return 0;
 }
@@ -145,9 +148,10 @@ JCGO_NOSEP_EXTRASTATIC jint CFASTCALL jcgo_jfloat2jint( jfloat f )
 JCGO_NOSEP_EXTRASTATIC jlong CFASTCALL jcgo_jfloat2jlong( jfloat f )
 {
  if (JCGO_FP_NOTNANF(f))
-  return f < (jfloat)0.0 ? (f <= (jfloat)((jlong)(~(((u_jlong)-1L) >> 1))) ?
+  return f < (jfloat)0.0 ?
+          (JCGO_EXPECT_FALSE(f <= (jfloat)((jlong)(~(((u_jlong)-1L) >> 1)))) ?
           (jlong)(~(((u_jlong)-1L) >> 1)) : (jlong)(-JCGO_FP_FLOORF(-f))) :
-          f < -(jfloat)(-(jlong)(((u_jlong)-1L) >> 1)) ?
+          JCGO_EXPECT_TRUE(f < -(jfloat)(-(jlong)(((u_jlong)-1L) >> 1))) ?
           (jlong)JCGO_FP_FLOORF(f) : (jlong)(((u_jlong)-1L) >> 1);
  return (jlong)0L;
 }
@@ -155,19 +159,21 @@ JCGO_NOSEP_EXTRASTATIC jlong CFASTCALL jcgo_jfloat2jlong( jfloat f )
 JCGO_NOSEP_EXTRASTATIC jint CFASTCALL jcgo_jdouble2jint( jdouble d )
 {
  if (JCGO_FP_NOTNAN(d))
-  return d < (jdouble)0.0 ? (d <= (jdouble)((jint)(~(((u_jint)-1) >> 1))) ?
+  return d < (jdouble)0.0 ?
+          (JCGO_EXPECT_FALSE(d <= (jdouble)((jint)(~(((u_jint)-1) >> 1)))) ?
           (jint)(~(((u_jint)-1) >> 1)) : (jint)(-JCGO_FP_FLOOR(-d))) :
-          d < (jdouble)(jint)(((u_jint)-1) >> 1) ? (jint)JCGO_FP_FLOOR(d) :
-          (jint)(((u_jint)-1) >> 1);
+          JCGO_EXPECT_TRUE(d < (jdouble)(jint)(((u_jint)-1) >> 1)) ?
+          (jint)JCGO_FP_FLOOR(d) : (jint)(((u_jint)-1) >> 1);
  return 0;
 }
 
 JCGO_NOSEP_EXTRASTATIC jlong CFASTCALL jcgo_jdouble2jlong( jdouble d )
 {
  if (JCGO_FP_NOTNAN(d))
-  return d < (jdouble)0.0 ? (d <= (jdouble)((jlong)(~(((u_jlong)-1L) >> 1))) ?
+  return d < (jdouble)0.0 ? (JCGO_EXPECT_FALSE(d <=
+          (jdouble)((jlong)(~(((u_jlong)-1L) >> 1)))) ?
           (jlong)(~(((u_jlong)-1L) >> 1)) : (jlong)(-JCGO_FP_FLOOR(-d))) :
-          d < -(jdouble)(-(jlong)(((u_jlong)-1L) >> 1)) ?
+          JCGO_EXPECT_TRUE(d < -(jdouble)(-(jlong)(((u_jlong)-1L) >> 1))) ?
           (jlong)JCGO_FP_FLOOR(d) : (jlong)(((u_jlong)-1L) >> 1);
  return (jlong)0L;
 }
@@ -213,7 +219,7 @@ JCGO_NOSEP_STATIC int CFASTCALL jcgo_flessthanf( jfloat f1, jfloat f2 )
 
 JCGO_NOSEP_STATIC jdouble CFASTCALL jcgo_fdiv( jdouble d1, jdouble d2 )
 {
- if (d2 >= (jdouble)-0.0 && d2 <= (jdouble)0.0)
+ if (JCGO_EXPECT_FALSE(d2 >= (jdouble)-0.0 && d2 <= (jdouble)0.0))
  {
   if (d1 == (jdouble)0.0)
    return jcgo_fpNaN;
@@ -226,7 +232,7 @@ JCGO_NOSEP_STATIC jdouble CFASTCALL jcgo_fdiv( jdouble d1, jdouble d2 )
 
 JCGO_NOSEP_STATIC jfloat CFASTCALL jcgo_fdivf( jfloat f1, jfloat f2 )
 {
- if (f2 >= (jfloat)-0.0 && f2 <= (jfloat)0.0)
+ if (JCGO_EXPECT_FALSE(f2 >= (jfloat)-0.0 && f2 <= (jfloat)0.0))
  {
   if (f1 == (jfloat)0.0)
    return (jfloat)jcgo_fpNaN;
@@ -264,7 +270,7 @@ jcgo_fmod( jdouble d1, jdouble d2 )
 #endif
 #else
  jdouble d;
- if (d2 != (jdouble)0.0 && JCGO_FP_FINITE(d1))
+ if (JCGO_EXPECT_TRUE(d2 != (jdouble)0.0) && JCGO_FP_FINITE(d1))
  {
   if (JCGO_FP_FINITE(d2))
   {
@@ -273,12 +279,13 @@ jcgo_fmod( jdouble d1, jdouble d2 )
     d1 = -d1;
    if (d2 < (jdouble)0.0)
     d2 = -d2;
-   if (d1 >= d2)
+   if (JCGO_EXPECT_TRUE(d1 >= d2))
    {
 #ifdef JCGO_LONGDBL
     d1 = fmodl(d1, d2);
 #else
-    d1 = d1 < DBL_MIN || (d2 < DBL_MIN && d1 <= 1.0) ?
+    d1 = JCGO_EXPECT_FALSE(d1 < DBL_MIN) ||
+          (JCGO_EXPECT_FALSE(d2 < DBL_MIN) && d1 <= 1.0) ?
           fmod(d1 * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
           (1L << (DBL_MANT_DIG / 2))),
           d2 * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
@@ -318,7 +325,7 @@ jcgo_fmodf( jfloat f1, jfloat f2 )
  return (jfloat)JCGO_FP_FMODF(f1, f2);
 #else
  jfloat f;
- if (f2 != (jfloat)0.0 && JCGO_FP_FINITEF(f1))
+ if (JCGO_EXPECT_TRUE(f2 != (jfloat)0.0) && JCGO_FP_FINITEF(f1))
  {
   if (JCGO_FP_FINITEF(f2))
   {
@@ -327,7 +334,7 @@ jcgo_fmodf( jfloat f1, jfloat f2 )
     f1 = -f1;
    if (f2 < (jfloat)0.0)
     f2 = -f2;
-   if (f1 >= f2)
+   if (JCGO_EXPECT_TRUE(f1 >= f2))
     f1 = (jfloat)JCGO_FP_FMODF(f1, f2);
    if (f < (jfloat)0.0)
     f1 = -f1;

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -80,15 +80,17 @@ jcgo_softRefGetReferent( void *client_data )
 JCGO_NOSEP_STATIC java_lang_Object CFASTCALL
 java_lang_ref_VMReference__initReferent0__Lo( java_lang_Object referent )
 {
- struct jcgo_refhidden_s *phidden;
- if ((phidden = jcgo_memAlloc(sizeof(struct jcgo_refhidden_s), NULL)) == NULL)
+ struct jcgo_refhidden_s *phidden =
+  jcgo_memAlloc(sizeof(struct jcgo_refhidden_s), NULL);
+ if (JCGO_EXPECT_FALSE(phidden == NULL))
   return jnull;
  phidden->jcgo_methods = (jvtable)&java_lang_Object_methods;
  phidden->obj = (jObject)referent;
  return JCGO_MEM_SAFEREGWEAKLINK((void **)&phidden->obj,
          (void *)&JCGO_METHODS_OF(referent),
-         JCGO_METHODS_OF(referent)->jcgo_typeid > OBJT_java_lang_String) ?
-         jnull : JCGO_OBJREF_OF(*(java_lang_Object)phidden);
+         JCGO_EXPECT_TRUE(JCGO_METHODS_OF(referent)->jcgo_typeid >
+         OBJT_java_lang_String)) ? jnull :
+         JCGO_OBJREF_OF(*(java_lang_Object)phidden);
 }
 
 JCGO_NOSEP_STATIC java_lang_Object CFASTCALL
@@ -99,7 +101,7 @@ java_lang_ref_VMReference__initEnqueuedReferent0__LoLoI(
  struct jcgo_refexthidden_s *pexthidden =
   jcgo_newWeakQueRef((jObject)refObj, (jObject)refObj, (jObject)referent,
   (int)noclear);
- if (pexthidden != NULL)
+ if (JCGO_EXPECT_TRUE(pexthidden != NULL))
   return JCGO_OBJREF_OF(*(java_lang_Object)pexthidden);
 #endif
  return jnull;
@@ -137,14 +139,15 @@ java_lang_ref_VMReference__updateSoftRefAndGet0__Lo( java_lang_Object vmdata )
     keeper->timestamp = jcgo_gcCount;
     else
     {
-     if ((keeper = jcgo_memAlloc(sizeof(struct jcgo_refkeeper_s),
-         JCGO_PTR_RESERVED)) != NULL)
+     keeper = jcgo_memAlloc(sizeof(struct jcgo_refkeeper_s),
+               JCGO_PTR_RESERVED);
+     if (JCGO_EXPECT_TRUE(keeper != NULL))
      {
       keeper->obj = referent;
       res = JCGO_MEM_REGWEAKLINK((void **)&keeper->obj,
              (void *)&JCGO_METHODS_OF(vmdata));
       keeper->timestamp = jcgo_gcCount;
-      if (!res)
+      if (JCGO_EXPECT_TRUE(!res))
       {
        JCGO_MEMREFGDAT_LOCK(0);
        keeper->next = jcgo_globData.refKeeperList;
@@ -154,7 +157,7 @@ java_lang_ref_VMReference__updateSoftRefAndGet0__Lo( java_lang_Object vmdata )
        res = JCGO_MEM_REGWEAKLINK((void **)&((struct jcgo_refhidden_s *)
               &JCGO_METHODS_OF(vmdata))->keeper, keeper);
       }
-      if ((unsigned)res > 1)
+      if (JCGO_EXPECT_FALSE((unsigned)res > 1))
       {
        keeper->obj = jnull;
        ((struct jcgo_refhidden_s *)&JCGO_METHODS_OF(vmdata))->keeper = NULL;

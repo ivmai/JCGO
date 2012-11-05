@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -84,8 +84,8 @@ STATIC java_lang_Class CFASTCALL jcgo_methodDeclClass( java_lang_Class aclass,
  {
   if (isStatic > 0)
   {
-   if ((jmethodID)(&((jvtable)&JCGO_METHODS_OF(
-       JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect) == methodID)
+   if (JCGO_EXPECT_FALSE((jmethodID)(&((jvtable)&JCGO_METHODS_OF(
+       JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect) == methodID))
     break;
   }
    else if ((jmethodID)(&((jvtable)&JCGO_METHODS_OF(
@@ -93,12 +93,14 @@ STATIC java_lang_Class CFASTCALL jcgo_methodDeclClass( java_lang_Class aclass,
     return aclass;
   jcgo_reflect = ((jvtable)&JCGO_METHODS_OF(
                   JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect;
-  if (jcgo_reflect != NULL && (pentry = jcgo_reflect->methodsEntry) != NULL &&
+  if (JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
+      (pentry = jcgo_reflect->methodsEntry) != NULL &&
       ((CONST struct jcgo_methodentry_s *)methodID - pentry) >= 0 &&
       JCGO_ARRAY_NZLENGTH(jcgo_reflect->methodsTypes) >
       ((CONST struct jcgo_methodentry_s *)methodID - pentry))
   {
-   if (isStatic > 0 && jcgo_reflect->methodsModifiers == jnull)
+   if (isStatic > 0 &&
+       JCGO_EXPECT_FALSE(jcgo_reflect->methodsModifiers == jnull))
     break;
    return aclass;
   }
@@ -119,8 +121,9 @@ STATIC java_lang_Class CFASTCALL jcgo_jniMethodInvokePrep( jObject *pjobj,
  java_lang_Class aclass, jmethodID methodID, int isStatic )
 {
 #ifdef OBJT_java_lang_VMThrowable
- if (!methodID || (*pjobj == jnull && isStatic <= 0 && isStatic != -2) ||
-     (isStatic && aclass == jnull))
+ if (JCGO_EXPECT_FALSE(!methodID ||
+     (*pjobj == jnull && isStatic <= 0 && isStatic != -2) ||
+     (isStatic && aclass == jnull)))
   JCGO_THROW_EXC(java_lang_VMThrowable__createNullPointerException0X__());
 #endif
  if (aclass != jnull)
@@ -139,8 +142,8 @@ STATIC java_lang_Class CFASTCALL jcgo_jniMethodInvokePrep( jObject *pjobj,
  if (isStatic == -2)
  {
 #ifdef OBJT_java_lang_VMThrowable
-  if ((JCGO_FIELD_NZACCESS(aclass, modifiers) &
-      (JCGO_ACCMOD_INTERFACE | JCGO_ACCMOD_ABSTRACT)) != 0)
+  if (JCGO_EXPECT_FALSE((JCGO_FIELD_NZACCESS(aclass,
+      modifiers) & (JCGO_ACCMOD_INTERFACE | JCGO_ACCMOD_ABSTRACT)) != 0))
    JCGO_THROW_EXC(java_lang_VMThrowable__createInstantiationException0X__Lc(
     aclass));
 #endif
@@ -166,7 +169,7 @@ STATIC int CFASTCALL jcgo_jniMethodInvokeCount( int *pargsCnt, int *pintCount,
  int longCount;
  int floatCount;
  int doubleCount;
- if (argTypes != jnull &&
+ if (JCGO_EXPECT_TRUE(argTypes != jnull) &&
      (argsCnt = (int)JCGO_ARRAY_NZLENGTH(argTypes)) > 0 &&
      (methodsName = jcgo_reflect->methodsName) != jnull &&
      (name = (java_lang_String)
@@ -180,7 +183,7 @@ STATIC int CFASTCALL jcgo_jniMethodInvokeCount( int *pargsCnt, int *pintCount,
     JCGO_ARR_INTERNALACC(jObject, argTypes, argsCnt), vmdata)))->jcgo_typeid;
  }
  *pargsCnt = argsCnt;
- if (argsCnt > JCGO_JNIINVOKE_MAXSTACKARGS)
+ if (JCGO_EXPECT_FALSE(argsCnt > JCGO_JNIINVOKE_MAXSTACKARGS))
  {
   intCount = 0;
   longCount = 0;
@@ -322,7 +325,7 @@ STATIC jobject CFASTCALL jcgo_jniMethodInvokeA( JNIEnv *pJniEnv, jobject obj,
  JCGO_STATIC_ARRAY(jdouble, JCGO_JNIINVOKE_MAXSTACKARGS) jcgo_stackobj4;
  JCGO_STATIC_OBJARRAY(JCGO_JNIINVOKE_MAXSTACKARGS) jcgo_stackobj5;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jobj = jcgo_jniDeRef(obj);
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
@@ -344,23 +347,23 @@ STATIC jobject CFASTCALL jcgo_jniMethodInvokeA( JNIEnv *pJniEnv, jobject obj,
               jcgo_reflect->methodsTypes, slot);
   restype = jcgo_jniMethodInvokeCount(&argsCnt, &intInd, &longInd, &floatInd,
              &doubleInd, &objectInd, jcgo_reflect, argTypes, paramDims, slot);
-  intArgs = intInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  intArgs = JCGO_EXPECT_FALSE(intInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
              (jintArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jint), 0,
              (jint)intInd) : (jintArr)JCGO_STACKOBJ_PRIMARRNEW(jcgo_stackobj1,
              jintArr_methods, intInd);
-  longArgs = longInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  longArgs = JCGO_EXPECT_FALSE(longInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
               (jlongArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jlong), 0,
               (jint)longInd) : (jlongArr)JCGO_STACKOBJ_PRIMARRNEW(
               jcgo_stackobj2, jlongArr_methods, longInd);
-  floatArgs = floatInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  floatArgs = JCGO_EXPECT_FALSE(floatInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
                (jfloatArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jfloat), 0,
                (jint)floatInd) : (jfloatArr)JCGO_STACKOBJ_PRIMARRNEW(
                jcgo_stackobj3, jfloatArr_methods, floatInd);
-  doubleArgs = doubleInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  doubleArgs = JCGO_EXPECT_FALSE(doubleInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
                 (jdoubleArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jdouble), 0,
                 (jint)doubleInd) : (jdoubleArr)JCGO_STACKOBJ_PRIMARRNEW(
                 jcgo_stackobj4, jdoubleArr_methods, doubleInd);
-  objectArgs = objectInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  objectArgs = JCGO_EXPECT_FALSE(objectInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
                 (jObjectArr)jcgo_newArray(JCGO_CLASSREF_OF(
                 java_lang_Object__class), 0, (jint)objectInd) :
                 JCGO_STACKOBJ_OBJARRNEW(jcgo_stackobj5, jObjectArr_methods,
@@ -457,7 +460,7 @@ jcgo_jniMethodInvokeV( JNIEnv *pJniEnv, jobject obj, jclass clazz,
  JCGO_STATIC_ARRAY(jdouble, JCGO_JNIINVOKE_MAXSTACKARGS) jcgo_stackobj4;
  JCGO_STATIC_OBJARRAY(JCGO_JNIINVOKE_MAXSTACKARGS) jcgo_stackobj5;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jobj = jcgo_jniDeRef(obj);
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
@@ -479,23 +482,23 @@ jcgo_jniMethodInvokeV( JNIEnv *pJniEnv, jobject obj, jclass clazz,
               jcgo_reflect->methodsTypes, slot);
   restype = jcgo_jniMethodInvokeCount(&argsCnt, &intInd, &longInd, &floatInd,
              &doubleInd, &objectInd, jcgo_reflect, argTypes, paramDims, slot);
-  intArgs = intInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  intArgs = JCGO_EXPECT_FALSE(intInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
              (jintArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jint), 0,
              (jint)intInd) : (jintArr)JCGO_STACKOBJ_PRIMARRNEW(jcgo_stackobj1,
              jintArr_methods, intInd);
-  longArgs = longInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  longArgs = JCGO_EXPECT_FALSE(longInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
               (jlongArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jlong), 0,
               (jint)longInd) : (jlongArr)JCGO_STACKOBJ_PRIMARRNEW(
               jcgo_stackobj2, jlongArr_methods, longInd);
-  floatArgs = floatInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  floatArgs = JCGO_EXPECT_FALSE(floatInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
                (jfloatArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jfloat), 0,
                (jint)floatInd) : (jfloatArr)JCGO_STACKOBJ_PRIMARRNEW(
                jcgo_stackobj3, jfloatArr_methods, floatInd);
-  doubleArgs = doubleInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  doubleArgs = JCGO_EXPECT_FALSE(doubleInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
                 (jdoubleArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jdouble), 0,
                 (jint)doubleInd) : (jdoubleArr)JCGO_STACKOBJ_PRIMARRNEW(
                 jcgo_stackobj4, jdoubleArr_methods, doubleInd);
-  objectArgs = objectInd > JCGO_JNIINVOKE_MAXSTACKARGS ?
+  objectArgs = JCGO_EXPECT_FALSE(objectInd > JCGO_JNIINVOKE_MAXSTACKARGS) ?
                 (jObjectArr)jcgo_newArray(JCGO_CLASSREF_OF(
                 java_lang_Object__class), 0, (jint)objectInd) :
                 JCGO_STACKOBJ_OBJARRNEW(jcgo_stackobj5, jObjectArr_methods,
@@ -574,10 +577,10 @@ jcgo_JniFromReflectedMethod( JNIEnv *pJniEnv, jobject method )
  CONST struct jcgo_reflect_s *jcgo_reflect;
  CONST struct jcgo_methodentry_s *pentry;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jmethodID)0;
  jobj = (java_lang_Object)jcgo_jniDeRef(method);
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jmethodID)0;
@@ -588,7 +591,7 @@ jcgo_JniFromReflectedMethod( JNIEnv *pJniEnv, jobject method )
  aclass = java_lang_reflect_VMMethod__getMethodDeclClass0X__Lo(jobj);
  jcgo_reflect = ((jvtable)&JCGO_METHODS_OF(
                  JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect;
- methodID = jcgo_reflect != NULL && (pentry =
+ methodID = JCGO_EXPECT_TRUE(jcgo_reflect != NULL) && (pentry =
              jcgo_reflect->methodsEntry) != NULL ? (jmethodID)(pentry +
              (unsigned)java_lang_reflect_VMMethod__getMethodSlot0X__Lo(
              jobj)) : (jmethodID)(&((jvtable)&JCGO_METHODS_OF(
@@ -608,10 +611,10 @@ jcgo_JniToReflectedMethod( JNIEnv *pJniEnv, jclass clazz, jmethodID methodID,
  CONST struct jcgo_reflect_s *jcgo_reflect;
  CONST struct jcgo_methodentry_s *pentry;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull || !methodID)
+ if (JCGO_EXPECT_FALSE(aclass == jnull || !methodID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -624,12 +627,15 @@ jcgo_JniToReflectedMethod( JNIEnv *pJniEnv, jclass clazz, jmethodID methodID,
   aclass = JCGO_CLASSREF_OF(java_lang_Object__class);
  JCGO_NATCBACK_BEGIN(pJniEnv)
  aclass = jcgo_methodDeclClass(aclass, methodID, isStatic ? 1 : 0);
- if (aclass != jnull)
+ if (JCGO_EXPECT_TRUE(aclass != jnull))
+ {
+  jcgo_reflect = ((jvtable)&JCGO_METHODS_OF(JCGO_FIELD_NZACCESS(aclass,
+                  vmdata)))->jcgo_reflect;
   jobj = java_lang_reflect_VMMethod__getMethodBySlot0X__LcJ(aclass,
-          (jcgo_reflect = ((jvtable)&JCGO_METHODS_OF(
-          JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect) != NULL &&
+          JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
           (pentry = jcgo_reflect->methodsEntry) != NULL ?
           (jlong)((CONST struct jcgo_methodentry_s *)methodID - pentry) : 0);
+ }
  if (jobj == jnull)
   jcgo_abortOnInvalidMethodId();
  JCGO_NATCBACK_END(pJniEnv)
@@ -682,10 +688,10 @@ jcgo_JniGetMethodID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  CONST struct jcgo_reflect_s *jcgo_reflect;
  CONST struct jcgo_methodentry_s *pentry;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jmethodID)0;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull || name == NULL || sig == NULL)
+ if (JCGO_EXPECT_FALSE(aclass == jnull || name == NULL || sig == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jmethodID)0;
@@ -695,13 +701,14 @@ jcgo_JniGetMethodID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  JCGO_NATCBACK_BEGIN(pJniEnv)
  str = jcgo_utfMakeString(name);
  sigstr = jcgo_utfMakeString(sig);
- if ((jobj = java_lang_reflect_VMMethod__getMethodByName0X__LcLsLsI(aclass,
-     str, sigstr, 0)) != jnull)
+ jobj = java_lang_reflect_VMMethod__getMethodByName0X__LcLsLsI(aclass, str,
+         sigstr, 0);
+ if (JCGO_EXPECT_TRUE(jobj != jnull))
  {
   aclass = java_lang_reflect_VMMethod__getMethodDeclClass0X__Lo(jobj);
   jcgo_reflect = ((jvtable)&JCGO_METHODS_OF(
                   JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect;
-  methodID = jcgo_reflect != NULL && (pentry =
+  methodID = JCGO_EXPECT_TRUE(jcgo_reflect != NULL) && (pentry =
               jcgo_reflect->methodsEntry) != NULL ? (jmethodID)(pentry +
               (unsigned)java_lang_reflect_VMMethod__getMethodSlot0X__Lo(
               jobj)) : (jmethodID)&((jvtable)&JCGO_METHODS_OF(
@@ -720,8 +727,8 @@ jcgo_JniGetMethodID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
      *sig != (char)0x28 || *(sig + 1) != (char)0x29 || /* "()V" */
      *(sig + 2) != (char)0x56 || *(sig + 3))
   jcgo_abortOnMethodNotFound();
- if (((jvtable)&JCGO_METHODS_OF(
-     JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_thisRtn)
+ if (JCGO_EXPECT_TRUE(((jvtable)&JCGO_METHODS_OF(
+     JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_thisRtn != 0))
   methodID = (jmethodID)&((jvtable)&JCGO_METHODS_OF(
               JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_thisRtn;
 #ifdef OBJT_java_lang_VMThrowable
@@ -1390,10 +1397,10 @@ jcgo_JniGetStaticMethodID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  java_lang_Object jobj;
  jint slot;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jmethodID)0;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull || name == NULL || sig == NULL)
+ if (JCGO_EXPECT_FALSE(aclass == jnull || name == NULL || sig == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jmethodID)0;
@@ -1403,13 +1410,14 @@ jcgo_JniGetStaticMethodID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  JCGO_NATCBACK_BEGIN(pJniEnv)
  str = jcgo_utfMakeString(name);
  sigstr = jcgo_utfMakeString(sig);
- if ((jobj = java_lang_reflect_VMMethod__getMethodByName0X__LcLsLsI(aclass,
-     str, sigstr, 1)) != jnull)
+ jobj = java_lang_reflect_VMMethod__getMethodByName0X__LcLsLsI(aclass, str,
+         sigstr, 1);
+ if (JCGO_EXPECT_TRUE(jobj != jnull))
  {
   aclass = java_lang_reflect_VMMethod__getMethodDeclClass0X__Lo(jobj);
   slot = java_lang_reflect_VMMethod__getMethodSlot0X__Lo(jobj);
   methodID =
-   slot != -1 ? (jmethodID)(((jvtable)&JCGO_METHODS_OF(
+   JCGO_EXPECT_TRUE(slot != -1) ? (jmethodID)(((jvtable)&JCGO_METHODS_OF(
    JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect->methodsEntry +
    (unsigned)slot) : (jmethodID)&((jvtable)&JCGO_METHODS_OF(
    JCGO_FIELD_NZACCESS(aclass, vmdata)))->jcgo_reflect;

@@ -232,6 +232,9 @@
 #define JCGO_JNI_FUNC(func) func
 #endif
 
+#define JCGO_EXPECT_FALSE(cond) (cond)
+#define JCGO_EXPECT_TRUE(cond) (cond)
+
 #define JCGO_OBJREF_OF(objname) (&objname)
 #define JCGO_METHODS_OF(obj) (obj)->jcgo_methods
 #define JCGO_FIELD_NZACCESS(obj, field) (obj)->field
@@ -259,8 +262,8 @@
 #define JCGO_THROW_EXC(throwable) jcgo_throwExc((jObject)(throwable))
 
 #define JCGO_CALL_NZVFUNC(obj) JCGO_METHODS_OF(obj)
-#define JCGO_CALL_EVFUNC(obj) JCGO_METHODS_OF((obj) != jnull ? (obj) : (jcgo_throwNullPtrExc(), obj))
-#define JCGO_CALL_EFINALF(obj) (void)((obj) != jnull ? -1 : (jcgo_throwNullPtrExc(), 0)),
+#define JCGO_CALL_EVFUNC(obj) JCGO_METHODS_OF(JCGO_EXPECT_TRUE((obj) != jnull) ? (obj) : (jcgo_throwNullPtrExc(), obj))
+#define JCGO_CALL_EFINALF(obj) (void)(JCGO_EXPECT_TRUE((obj) != jnull) ? -1 : (jcgo_throwNullPtrExc(), 0)),
 
 #include "jcgochke.h"
 
@@ -270,8 +273,8 @@
 #define JCGO_TRY_BLOCK __try
 #define JCGO_TRY_LEAVE __finally
 #define JCGO_TRY_FINALLYEND /* empty */
-#define JCGO_TRY_CATCHES(suffnum) { jObject *jcgo_pthrowable; jObject jcgo_trythrowable; if ((jcgo_trythrowable = *(jcgo_pthrowable = jcgo_tryCatches())) == jnull) goto jcgo_trynoexc##suffnum;
-#define JCGO_TRY_CATCH(objId, maxId) else if ((unsigned)(JCGO_METHODS_OF(jcgo_trythrowable)->jcgo_typeid - (objId)) <= (unsigned)((maxId) - (objId)) ? (*jcgo_pthrowable = jnull, 1) : 0)
+#define JCGO_TRY_CATCHES(suffnum) { jObject *jcgo_pthrowable; jObject jcgo_trythrowable; if (JCGO_EXPECT_TRUE((jcgo_trythrowable = *(jcgo_pthrowable = jcgo_tryCatches())) == jnull)) goto jcgo_trynoexc##suffnum;
+#define JCGO_TRY_CATCH(objId, maxId) else if (JCGO_EXPECT_FALSE((unsigned)(JCGO_METHODS_OF(jcgo_trythrowable)->jcgo_typeid - (objId)) <= (unsigned)((maxId) - (objId))) ? (*jcgo_pthrowable = jnull, 1) : 0)
 #define JCGO_TRY_THROWABLE(x) jcgo_trythrowable
 #ifndef JCGO_TRY_SEHNOP
 #define JCGO_TRY_SEHNOP (void)0
@@ -285,9 +288,9 @@
 #define JCGO_TRY_NOCLOBBER(argvar) (void)(*(volatile void **)&jcgo_trashVar = &argvar)
 #define JCGO_TRY_BLOCK struct jcgo_try_s jcgo_try; jcgo_tryEnter(&jcgo_try); if (!setjmp(jcgo_try.jbuf))
 #define JCGO_TRY_LEAVE jcgo_tryLeave();
-#define JCGO_TRY_FINALLYEND if (jcgo_try.throwable != jnull) JCGO_THROW_EXC(jcgo_try.throwable);
-#define JCGO_TRY_CATCHES(suffnum) if (jcgo_try.throwable == jnull) { /* dummy */ }
-#define JCGO_TRY_CATCH(objId, maxId) else if ((unsigned)(JCGO_METHODS_OF(jcgo_try.throwable)->jcgo_typeid - (objId)) <= (unsigned)((maxId) - (objId)))
+#define JCGO_TRY_FINALLYEND if (JCGO_EXPECT_FALSE(jcgo_try.throwable != jnull)) JCGO_THROW_EXC(jcgo_try.throwable);
+#define JCGO_TRY_CATCHES(suffnum) if (JCGO_EXPECT_TRUE(jcgo_try.throwable == jnull)) { /* dummy */ }
+#define JCGO_TRY_CATCH(objId, maxId) else if (JCGO_EXPECT_FALSE((unsigned)(JCGO_METHODS_OF(jcgo_try.throwable)->jcgo_typeid - (objId)) <= (unsigned)((maxId) - (objId))))
 #define JCGO_TRY_THROWABLE(x) jcgo_try.throwable
 #define JCGO_TRY_RETHROW(suffnum) else JCGO_THROW_EXC(jcgo_try.throwable);
 #define JCGO_TRY_CATCHALLSTORE(pthrowable) (void)(*(pthrowable) = jcgo_try.throwable);
@@ -324,7 +327,7 @@
 #endif
 #define JCGO_MON_DEFN /* empty */
 #define JCGO_MON_INIT /* empty */
-#define JCGO_SYNC_BLOCK(obj) if ((obj) == jnull) jcgo_throwNullPtrExc();
+#define JCGO_SYNC_BLOCK(obj) if (JCGO_EXPECT_FALSE((obj) == jnull)) jcgo_throwNullPtrExc();
 #define JCGO_SYNC_BLOCKSAFENZ(obj) ;
 #ifndef JCGO_SEHTRY
 #define JCGO_SYNC_JUMPLEAVE(x) (void)0
@@ -346,7 +349,7 @@
 #endif
 
 #ifdef JCGO_ASSERTION
-#define JCGO_ASSERT_STMT(cond, throwable) if (!(cond)) JCGO_THROW_EXC(throwable)
+#define JCGO_ASSERT_STMT(cond, throwable) if (JCGO_EXPECT_FALSE(!(cond))) JCGO_THROW_EXC(throwable)
 #else
 #define JCGO_ASSERT_STMT(cond, throwable) /* empty */
 #endif
@@ -439,7 +442,7 @@
 #ifdef JCGO_PARALLEL
 #define JCGO_CLINIT_TRIG(clsvarname) jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class))
 #else
-#define JCGO_CLINIT_TRIG(clsvarname) if ((JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0) jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class))
+#define JCGO_CLINIT_TRIG(clsvarname) if (JCGO_EXPECT_FALSE((JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0)) jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class))
 #endif
 #define JCGO_CLINIT_LITERACC(clsvarname, literalfield) (jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class)), literalfield)
 #define JCGO_CLINIT_VARACC(clsvarname, classfield) (jcgo_clinitTrig(JCGO_OBJREF_OF(clsvarname.jcgo_class)), &classfield)[0]
@@ -453,9 +456,9 @@
 #define JCGO_CLINIT_LITERACC(clsvarname, literalfield) literalfield
 #ifdef JCGO_CLINITCHK
 #ifdef JCGO_THREADS
-#define JCGO_CLINIT_TRIG(clsvarname) if ((*(JCGO_THRD_VOLATILE jint *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0) jcgo_clinitCheckOrder(JCGO_OBJREF_OF(clsvarname.jcgo_class))
+#define JCGO_CLINIT_TRIG(clsvarname) if (JCGO_EXPECT_FALSE((*(JCGO_THRD_VOLATILE jint *)&JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) != 0)) jcgo_clinitCheckOrder(JCGO_OBJREF_OF(clsvarname.jcgo_class))
 #else
-#define JCGO_CLINIT_TRIG(clsvarname) if ((JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & JCGO_ACCMOD_VOLATILE) != 0) jcgo_clinitCheckOrder(JCGO_OBJREF_OF(clsvarname.jcgo_class))
+#define JCGO_CLINIT_TRIG(clsvarname) if (JCGO_EXPECT_FALSE((JCGO_FIELD_NZACCESS(JCGO_OBJREF_OF(clsvarname.jcgo_class), modifiers) & JCGO_ACCMOD_VOLATILE) != 0)) jcgo_clinitCheckOrder(JCGO_OBJREF_OF(clsvarname.jcgo_class))
 #endif
 #define JCGO_CLINIT_VARACC(clsvarname, classfield) (jcgo_clinitCheckOrder(JCGO_OBJREF_OF(clsvarname.jcgo_class)), &classfield)[0]
 #define JCGO_STACKOBJ_NEWTRIG(objname, methods) (jcgo_clinitCheckOrder(methods.jcgo_class), JCGO_STACKOBJ_NEW(objname, methods))

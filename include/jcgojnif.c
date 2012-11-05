@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -56,9 +56,9 @@ STATIC java_lang_Object CFASTCALL jcgo_fieldFindById( java_lang_Class aclass,
   obj = java_lang_reflect_VMField__getFieldBySlot0X__LcJ(aclass, isStatic ?
          (jlong)((char *)fieldID - (char *)&JCGO_METHODS_OF(aclass)) :
          (jlong)JCGO_CAST_PTRTONUM(fieldID));
-  if (obj != jnull &&
+  if (JCGO_EXPECT_TRUE(obj != jnull &&
       (java_lang_reflect_VMField__getStaticFieldClass0X__Lo(obj) != jnull ?
-      isStatic : !isStatic))
+      isStatic : !isStatic)))
    return obj;
   if (isStatic)
   {
@@ -91,10 +91,10 @@ jcgo_JniFromReflectedField( JNIEnv *pJniEnv, jobject field )
  java_lang_Class aclass;
  jint slot;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jfieldID)0;
  jobj = (java_lang_Object)jcgo_jniDeRef(field);
- if (jobj == jnull)
+ if (JCGO_EXPECT_FALSE(jobj == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jfieldID)0;
@@ -117,10 +117,10 @@ jcgo_JniToReflectedField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
 {
  java_lang_Class aclass;
  java_lang_Object JCGO_TRY_VOLATILE jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(aclass == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -147,10 +147,10 @@ jcgo_JniGetFieldID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  java_lang_String sigstr;
  java_lang_Object jobj;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jfieldID)0;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull || name == NULL || sig == NULL)
+ if (JCGO_EXPECT_FALSE(aclass == jnull || name == NULL || sig == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jfieldID)0;
@@ -162,7 +162,7 @@ jcgo_JniGetFieldID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  sigstr = jcgo_utfMakeString(sig);
  jobj = java_lang_reflect_VMField__getFieldByName0X__LcLsLsI(aclass, str,
          sigstr, 0);
- if (jobj != jnull)
+ if (JCGO_EXPECT_TRUE(jobj != jnull))
   fieldID = (jfieldID)JCGO_CAST_NUMTOPTR(
              java_lang_reflect_VMField__getSlotOfField0X__Lo(jobj));
 #ifdef OBJT_java_lang_VMThrowable
@@ -181,10 +181,10 @@ STATIC jobject JNICALL
 jcgo_JniGetObjectField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -198,10 +198,10 @@ STATIC jboolean JNICALL
 jcgo_JniGetBooleanField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jboolean)JNI_FALSE;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jboolean)JNI_FALSE;
@@ -214,10 +214,10 @@ STATIC jbyte JNICALL
 jcgo_JniGetByteField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jbyte)0;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jbyte)0;
@@ -230,10 +230,10 @@ STATIC jchar JNICALL
 jcgo_JniGetCharField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jchar)0;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jchar)0;
@@ -246,10 +246,10 @@ STATIC jshort JNICALL
 jcgo_JniGetShortField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jshort)0;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jshort)0;
@@ -262,10 +262,10 @@ STATIC jint JNICALL
 jcgo_JniGetIntField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jint)0;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jint)0;
@@ -278,10 +278,10 @@ STATIC jlong JNICALL
 jcgo_JniGetLongField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jlong)0L;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jlong)0L;
@@ -294,10 +294,10 @@ STATIC jfloat JNICALL
 jcgo_JniGetFloatField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jfloat)0;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jfloat)0;
@@ -310,10 +310,10 @@ STATIC jdouble JNICALL
 jcgo_JniGetDoubleField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jdouble)0;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jdouble)0;
@@ -327,10 +327,10 @@ jcgo_JniSetObjectField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jobject value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -344,10 +344,10 @@ jcgo_JniSetBooleanField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jboolean value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -361,10 +361,10 @@ jcgo_JniSetByteField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jbyte value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -378,10 +378,10 @@ jcgo_JniSetCharField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jchar value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -395,10 +395,10 @@ jcgo_JniSetShortField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jshort value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -412,10 +412,10 @@ jcgo_JniSetIntField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jint value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -429,10 +429,10 @@ jcgo_JniSetLongField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jlong value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -446,10 +446,10 @@ jcgo_JniSetFloatField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jfloat value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -463,10 +463,10 @@ jcgo_JniSetDoubleField( JNIEnv *pJniEnv, jobject obj, jfieldID fieldID,
  jdouble value )
 {
  jObject jobj;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jobj = jcgo_jniDeRef(obj);
- if (jobj == jnull || !fieldID)
+ if (JCGO_EXPECT_FALSE(jobj == jnull || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -486,10 +486,10 @@ jcgo_JniGetStaticFieldID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  java_lang_String sigstr;
  java_lang_Object jobj;
 #endif
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jfieldID)0;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull || name == NULL || sig == NULL)
+ if (JCGO_EXPECT_FALSE(aclass == jnull || name == NULL || sig == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jfieldID)0;
@@ -501,7 +501,7 @@ jcgo_JniGetStaticFieldID( JNIEnv *pJniEnv, jclass clazz, CONST char *name,
  sigstr = jcgo_utfMakeString(sig);
  jobj = java_lang_reflect_VMField__getFieldByName0X__LcLsLsI(aclass, str,
          sigstr, 1);
- if (jobj != jnull && (aclass =
+ if (JCGO_EXPECT_TRUE(jobj != jnull) && (aclass =
      java_lang_reflect_VMField__getStaticFieldClass0X__Lo(jobj)) != jnull)
   fieldID = (jfieldID)((char *)&JCGO_METHODS_OF(aclass) +
              (unsigned)java_lang_reflect_VMField__getSlotOfField0X__Lo(jobj));
@@ -521,9 +521,9 @@ STATIC jobject JNICALL
 jcgo_JniGetStaticObjectField( JNIEnv *pJniEnv, jclass clazz,
  jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -535,9 +535,9 @@ STATIC jboolean JNICALL
 jcgo_JniGetStaticBooleanField( JNIEnv *pJniEnv, jclass clazz,
  jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jboolean)JNI_FALSE;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jboolean)JNI_FALSE;
@@ -548,9 +548,9 @@ jcgo_JniGetStaticBooleanField( JNIEnv *pJniEnv, jclass clazz,
 STATIC jbyte JNICALL
 jcgo_JniGetStaticByteField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jbyte)0;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jbyte)0;
@@ -561,9 +561,9 @@ jcgo_JniGetStaticByteField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 STATIC jchar JNICALL
 jcgo_JniGetStaticCharField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jchar)0;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jchar)0;
@@ -574,9 +574,9 @@ jcgo_JniGetStaticCharField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 STATIC jshort JNICALL
 jcgo_JniGetStaticShortField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jshort)0;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jshort)0;
@@ -587,9 +587,9 @@ jcgo_JniGetStaticShortField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 STATIC jint JNICALL
 jcgo_JniGetStaticIntField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jint)0;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jint)0;
@@ -600,9 +600,9 @@ jcgo_JniGetStaticIntField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 STATIC jlong JNICALL
 jcgo_JniGetStaticLongField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jlong)0L;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jlong)0L;
@@ -613,9 +613,9 @@ jcgo_JniGetStaticLongField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 STATIC jfloat JNICALL
 jcgo_JniGetStaticFloatField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jfloat)0;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jfloat)0;
@@ -627,9 +627,9 @@ STATIC jdouble JNICALL
 jcgo_JniGetStaticDoubleField( JNIEnv *pJniEnv, jclass clazz,
  jfieldID fieldID )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jdouble)0;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jdouble)0;
@@ -641,9 +641,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticObjectField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jobject value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -655,9 +655,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticBooleanField( JNIEnv *pJniEnv, jclass clazz,
  jfieldID fieldID, jboolean value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -669,9 +669,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticByteField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jbyte value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -683,9 +683,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticCharField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jchar value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -697,9 +697,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticShortField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jshort value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -711,9 +711,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticIntField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jint value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -725,9 +725,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticLongField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jlong value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -739,9 +739,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticFloatField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jfloat value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
@@ -753,9 +753,9 @@ STATIC void JNICALL
 jcgo_JniSetStaticDoubleField( JNIEnv *pJniEnv, jclass clazz, jfieldID fieldID,
  jdouble value )
 {
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
- if (clazz == NULL || !fieldID)
+ if (JCGO_EXPECT_FALSE(clazz == NULL || !fieldID))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;

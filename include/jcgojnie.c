@@ -363,10 +363,11 @@ STATIC JNIEnv *CFASTCALL jcgo_jniVmAttachThread( JavaVM *vm,
 #endif
 #endif
  struct jcgo_tcb_s *tcb;
- if (((jcgo_initialized + 1) >> 1) == 0)
+ if (JCGO_EXPECT_FALSE(((jcgo_initialized + 1) >> 1) == 0))
   return NULL;
 #ifdef JCGO_THREADS
- if ((tcb = jcgo_getSelfTCB()) == NULL)
+ tcb = jcgo_getSelfTCB();
+ if (JCGO_EXPECT_TRUE(tcb == NULL))
  {
   if (args != NULL && args->version != JNI_VERSION_1_2 &&
       args->version != JNI_VERSION_1_4 && args->version != JNI_VERSION_1_6)
@@ -378,11 +379,11 @@ STATIC JNIEnv *CFASTCALL jcgo_jniVmAttachThread( JavaVM *vm,
        *(void *volatile *)&jcgo_globData.jniNewTCB)) != NULL)
     jcgo_globData.jniNewTCB = JCGO_PTR_RESERVED;
    JCGO_CRITMOD_END(jcgo_jniMiscAttachMutex)
-   if (tcb != JCGO_PTR_RESERVED)
+   if (JCGO_EXPECT_TRUE(tcb != JCGO_PTR_RESERVED))
     break;
    JCGO_THREAD_YIELD;
   }
-  if (tcb == NULL)
+  if (JCGO_EXPECT_FALSE(tcb == NULL))
    return NULL;
   if (jcgo_threadInitHandle(tcb) < 0)
   {
@@ -427,11 +428,11 @@ STATIC JNIEnv *CFASTCALL jcgo_jniVmAttachThread( JavaVM *vm,
     JCGO_TRY_LEAVE
     JCGO_TRY_CATCHIGNOREALL(tcb)
    }
-   if (localObjs == jnull
+   if (JCGO_EXPECT_FALSE(localObjs == jnull
 #ifdef OBJT_java_lang_VMThread
        || tcb->thread == jnull
 #endif
-       )
+       ))
    {
     jcgo_threadDetachTCB(tcb);
     (void)JCGO_THREAD_CLOSEHND(&tcb->thrhandle);
@@ -459,10 +460,11 @@ jcgo_JniVmDestroyJavaVM( JavaVM *vm )
 #ifndef JCGO_NOCREATJVM
  struct jcgo_tcb_s *tcb;
  jObject ex;
- if (((jcgo_initialized + 1) >> 1) != 0)
+ if (JCGO_EXPECT_TRUE(((jcgo_initialized + 1) >> 1) != 0))
  {
 #ifdef JCGO_THREADS
-  if ((tcb = jcgo_getSelfTCB()) == NULL)
+  tcb = jcgo_getSelfTCB();
+  if (JCGO_EXPECT_FALSE(tcb == NULL))
    return (jint)JNI_ERR;
 #else
   tcb = &jcgo_mainTCB;
@@ -522,10 +524,10 @@ jcgo_JniVmDetachCurrentThread( JavaVM *vm )
 #ifdef OBJT_java_lang_VMThread
  jObject ex;
 #endif
- if (((jcgo_initialized + 1) >> 1) != 0)
+ if (JCGO_EXPECT_TRUE(((jcgo_initialized + 1) >> 1) != 0))
  {
   tcb = jcgo_getSelfTCB();
-  if (tcb == NULL || tcb == &jcgo_mainTCB)
+  if (JCGO_EXPECT_FALSE(tcb == NULL || tcb == &jcgo_mainTCB))
    return 0;
   if (tcb->jniEnv == NULL)
    jcgo_abortOnJniEnvCorrupted();
@@ -566,13 +568,14 @@ STATIC jint JNICALL
 jcgo_JniVmGetEnv( JavaVM *vm, void **penv, jint version )
 {
  struct jcgo_tcb_s *tcb;
- if (!jcgo_initialized)
+ if (JCGO_EXPECT_FALSE(!jcgo_initialized))
  {
   *penv = NULL;
   return (jint)JNI_EDETACHED;
  }
 #ifdef JCGO_THREADS
- if ((tcb = jcgo_getSelfTCB()) == NULL)
+ tcb = jcgo_getSelfTCB();
+ if (JCGO_EXPECT_FALSE(tcb == NULL))
  {
   *penv = NULL;
   return (jint)JNI_EDETACHED;
@@ -580,7 +583,8 @@ jcgo_JniVmGetEnv( JavaVM *vm, void **penv, jint version )
 #else
  tcb = &jcgo_mainTCB;
 #endif
- if (version < (jint)JNI_VERSION_1_1 || version > (jint)JNI_VERSION_1_6)
+ if (JCGO_EXPECT_FALSE(version < (jint)JNI_VERSION_1_1 ||
+     version > (jint)JNI_VERSION_1_6))
  {
   *penv = NULL;
   return (jint)JNI_EVERSION;
@@ -642,7 +646,7 @@ jcgo_jniTCreateJavaVM( void **targv )
   JCGO_TRY_LEAVE
   JCGO_TRY_CATCHALLSTORE(&throwable)
  }
- if (throwable != jnull)
+ if (JCGO_EXPECT_FALSE(throwable != jnull))
  {
   jcgo_destroyJavaVM(throwable);
   return -1;
@@ -658,7 +662,7 @@ JNI_CreateJavaVM( JavaVM **pvm, void **penv, void *args )
 #else
  int (*volatile fnLaunch)(void **);
 #endif
- if (!jcgo_initialized)
+ if (JCGO_EXPECT_TRUE(!jcgo_initialized))
  {
   fnLaunch = &jcgo_jniTCreateJavaVM;
 #ifndef JCGO_NOGC
@@ -694,13 +698,13 @@ JNI_CreateJavaVM( JavaVM **pvm, void **penv, void *args )
 JNIEXPORT_INVOKE jint JNICALL_INVOKE
 JNI_GetCreatedJavaVMs( JavaVM **vmBuf, jsize bufLen, jsize *nVMs )
 {
- if (((jcgo_initialized + 1) >> 1) == 0)
+ if (JCGO_EXPECT_FALSE(((jcgo_initialized + 1) >> 1) == 0))
  {
   *nVMs = 0;
   return 0;
  }
  *nVMs = 1;
- if ((jint)bufLen > 0)
+ if (JCGO_EXPECT_TRUE((jint)bufLen > 0))
   vmBuf[0] = (JavaVM *)&jcgo_jniJavaVM;
  return 0;
 }
@@ -743,7 +747,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_jniLeave( JNIEnv *pJniEnv,
 #endif
 #endif
    jcgo_checkStop(tcb);
-   if (ex != jnull)
+   if (JCGO_EXPECT_FALSE(ex != jnull))
     JCGO_THROW_EXC(ex);
   }
  return jobj;
@@ -756,13 +760,13 @@ STATIC void CFASTCALL jcgo_jniOnLoad( void )
  {
   i = 0;
   JCGO_CRITMOD_BEGIN(jcgo_jniMiscAttachMutex)
-  if (!(*(volatile int *)&jcgo_jniOnLoadDone))
+  if (JCGO_EXPECT_TRUE(!(*(volatile int *)&jcgo_jniOnLoadDone)))
   {
    *(volatile int *)&jcgo_jniOnLoadDone = 1;
    i = -1;
   }
   JCGO_CRITMOD_END(jcgo_jniMiscAttachMutex)
-  if (i < 0)
+  if (JCGO_EXPECT_TRUE(i < 0))
   {
    while (jcgo_jniOnLoadList[++i])
    {
@@ -781,7 +785,7 @@ JCGO_NOSEP_INLINE void JCGO_INLFRW_FASTCALL jcgo_jniOnUnload( void )
  struct jcgo_tcb_s *tcb;
 #endif
  int i;
- if (jcgo_jniOnLoadDone > 1)
+ if (JCGO_EXPECT_TRUE(jcgo_jniOnLoadDone > 1))
  {
   *(volatile int *)&jcgo_jniOnLoadDone = -1;
 #ifdef JCGO_SEHTRY

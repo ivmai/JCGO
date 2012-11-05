@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -150,31 +150,31 @@
 #ifdef isnan
 /* #include <math.h> */
 /* int isnan(<fptype>); */
-#define JCGO_FP_NOTNAN(d) (!isnan(d))
-#define JCGO_FP_NOTNANF(f) JCGO_FP_NOTNAN(f)
+#define JCGO_FPI_NOTNAN(d) (!isnan(d))
+#define JCGO_FPI_NOTNANF(f) JCGO_FPI_NOTNAN(f)
 #else
 #ifdef fpclassify
 /* #include <math.h> */
 /* int fpclassify(<fptype>); */
-#define JCGO_FP_NOTNAN(d) (fpclassify(d) != FP_NAN)
-#define JCGO_FP_NOTNANF(f) JCGO_FP_NOTNAN(f)
+#define JCGO_FPI_NOTNAN(d) (fpclassify(d) != FP_NAN)
+#define JCGO_FPI_NOTNANF(f) JCGO_FPI_NOTNAN(f)
 #else
 #ifdef JCGO_MATHEXT
 #ifdef JCGO_LONGDBL
 /* #include <math.h> */
 /* int isnanl(long double); */
-#define JCGO_FP_NOTNAN(d) (!isnanl(d))
+#define JCGO_FPI_NOTNAN(d) (!isnanl(d))
 #else
 /* #include <math.h> */
 /* int isnan(double); */
-#define JCGO_FP_NOTNAN(d) (!isnan(d))
+#define JCGO_FPI_NOTNAN(d) (!isnan(d))
 #endif
 /* #include <math.h> */
 /* int isnanf(float); */
-#define JCGO_FP_NOTNANF(f) (!isnanf(f))
+#define JCGO_FPI_NOTNANF(f) (!isnanf(f))
 #else
-#define JCGO_FP_NOTNAN(d) ((d) + jcgo_fpZero >= (d) && (d) - jcgo_fpZero <= (d))
-#define JCGO_FP_NOTNANF(f) ((f) + jcgo_fpZeroF >= (f) && (f) - jcgo_fpZeroF <= (f))
+#define JCGO_FPI_NOTNAN(d) ((d) + jcgo_fpZero >= (d) && (d) - jcgo_fpZero <= (d))
+#define JCGO_FPI_NOTNANF(f) ((f) + jcgo_fpZeroF >= (f) && (f) - jcgo_fpZeroF <= (f))
 #endif
 #endif
 #endif
@@ -182,27 +182,32 @@
 #ifdef isfinite
 /* #include <math.h> */
 /* int isfinite(<fptype>); */
-#define JCGO_FP_FINITE(d) isfinite(d)
-#define JCGO_FP_FINITEF(f) JCGO_FP_FINITE(f)
+#define JCGO_FPI_FINITE(d) (isfinite(d) != 0)
+#define JCGO_FPI_FINITEF(f) JCGO_FPI_FINITE(f)
 #else
 #ifdef JCGO_MATHEXT
 #ifdef JCGO_LONGDBL
 /* #include <math.h> */
 /* int finitel(long double); */
-#define JCGO_FP_FINITE(d) finitel(d)
+#define JCGO_FPI_FINITE(d) (finitel(d) != 0)
 #else
 /* #include <math.h> */
 /* int finite(double); */
-#define JCGO_FP_FINITE(d) finite(d)
+#define JCGO_FPI_FINITE(d) (finite(d) != 0)
 #endif
 /* #include <math.h> */
 /* int finitef(float); */
-#define JCGO_FP_FINITEF(f) finitef(f)
+#define JCGO_FPI_FINITEF(f) (finitef(f) != 0)
 #else
-#define JCGO_FP_FINITE(d) JCGO_FP_NOTNAN((d) * jcgo_fpZero)
-#define JCGO_FP_FINITEF(f) JCGO_FP_NOTNANF((f) * jcgo_fpZeroF)
+#define JCGO_FPI_FINITE(d) JCGO_FPI_NOTNAN((d) * jcgo_fpZero)
+#define JCGO_FPI_FINITEF(f) JCGO_FPI_NOTNANF((f) * jcgo_fpZeroF)
 #endif
 #endif
+
+#define JCGO_FP_FINITE(d) JCGO_EXPECT_TRUE(JCGO_FPI_FINITE(d))
+#define JCGO_FP_FINITEF(f) JCGO_EXPECT_TRUE(JCGO_FPI_FINITEF(f))
+#define JCGO_FP_NOTNAN(d) JCGO_EXPECT_TRUE(JCGO_FPI_NOTNAN(d))
+#define JCGO_FP_NOTNANF(f) JCGO_EXPECT_TRUE(JCGO_FPI_NOTNANF(f))
 
 #ifdef JCGO_MATHEXT
 

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -56,7 +56,7 @@ java_lang_reflect_VMConstructor__constructNative0__LcLcBAIAJAFADALoAII(
   JCGO_FIELD_NZACCESS(declaringClass, vmdata)))->jcgo_reflect;
  CONST struct jcgo_methodentry_s *pentry = NULL;
  java_lang_Object obj = jnull;
- if (((jcgo_reflect != NULL &&
+ if (((JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
      (pentry = jcgo_reflect->methodsEntry) != NULL) ||
      (rtn = ((jvtable)&JCGO_METHODS_OF(JCGO_FIELD_NZACCESS(declaringClass,
      vmdata)))->jcgo_thisRtn) != 0) &&

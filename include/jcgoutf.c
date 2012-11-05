@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -49,10 +49,12 @@ STATIC jint CFASTCALL jcgo_utfLenOfChars( jcharArr chars, jint ofs,
  jint utfLen = count;
  while (count-- > 0)
  {
-  if (JCGO_ARR_INTERNALACC(jchar, chars, ofs) - (jchar)1 >= (jchar)0x7f)
+  if (JCGO_EXPECT_FALSE(JCGO_ARR_INTERNALACC(jchar, chars, ofs) - (jchar)1 >=
+      (jchar)0x7f))
   {
    utfLen++;
-   if (JCGO_ARR_INTERNALACC(jchar, chars, ofs) > (jchar)0x7ff)
+   if (JCGO_EXPECT_FALSE(JCGO_ARR_INTERNALACC(jchar, chars, ofs) >
+       (jchar)0x7ff))
     utfLen++;
   }
   ofs++;
@@ -66,8 +68,8 @@ STATIC jint CFASTCALL jcgo_utfLenOfBytes( jbyteArr bytes, jint ofs,
  jint utfLen = count;
  while (count-- > 0)
  {
-  if ((unsigned char)(JCGO_ARR_INTERNALACC(jbyte, bytes, ofs) - 1) >=
-      (unsigned char)0x7f)
+  if (JCGO_EXPECT_FALSE((unsigned char)(JCGO_ARR_INTERNALACC(jbyte,
+      bytes, ofs) - 1) >= (unsigned char)0x7f))
    utfLen++;
   ofs++;
  }
@@ -82,11 +84,11 @@ STATIC unsigned CFASTCALL jcgo_utfFillFromChars( char *utfbuf, jcharArr chars,
  while (count-- > 0)
  {
   ch = JCGO_ARR_INTERNALACC(jchar, chars, ofs);
-  if (ch - (jchar)1 < (jchar)0x7f)
+  if (JCGO_EXPECT_TRUE(ch - (jchar)1 < (jchar)0x7f))
    *(utfbuf + pos) = (char)ch;
    else
    {
-    if (ch <= (jchar)0x7ff)
+    if (JCGO_EXPECT_TRUE(ch <= (jchar)0x7ff))
      *(utfbuf + pos) = (char)((ch >> 6) | 0xc0);
      else
      {
@@ -110,7 +112,7 @@ STATIC unsigned CFASTCALL jcgo_utfFillFromBytes( char *utfbuf, jbyteArr bytes,
  while (count-- > 0)
  {
   ch = JCGO_ARR_INTERNALACC(jbyte, bytes, ofs);
-  if ((unsigned char)(ch - 1) < (unsigned char)0x7f)
+  if (JCGO_EXPECT_TRUE((unsigned char)(ch - 1) < (unsigned char)0x7f))
    *(utfbuf + pos) = (char)ch;
    else
    {
@@ -130,7 +132,7 @@ JCGO_NOSEP_INLINE unsigned CFASTCALL jcgo_utfCountChars( CONST char *utfstrz )
  unsigned count = 0;
  char ch;
  for (pos = 0; (ch = *(utfstrz + pos)) != (char)0; pos++)
-  if ((ch & 0xc0) != 0x80)
+  if (JCGO_EXPECT_FALSE((ch & 0xc0) != 0x80))
    count++;
  return count;
 }
@@ -146,24 +148,24 @@ JCGO_NOSEP_INLINE unsigned CFASTCALL jcgo_utfToChars( CONST char *utfstr,
  while (count-- > 0)
  {
   ch = (unsigned char)(*(utfstr + (pos++)));
-  if (ch < (unsigned char)0x80)
+  if (JCGO_EXPECT_TRUE(ch < (unsigned char)0x80))
    jch = (jchar)ch;
    else
    {
     ch2 = (unsigned char)(*(utfstr + pos));
     jch = (jchar)0x3f; /*'?'*/
-    if ((ch2 & 0xc0) == 0x80)
+    if (JCGO_EXPECT_TRUE((ch2 & 0xc0) == 0x80))
     {
      pos++;
-     if (ch < (unsigned char)0xe0)
+     if (JCGO_EXPECT_TRUE(ch < (unsigned char)0xe0))
       jch = (jchar)(((ch & 0x1f) << 6) | (ch2 & 0x3f));
       else
       {
        ch3 = (unsigned char)(*(utfstr + pos));
-       if ((ch3 & 0xc0) == 0x80)
+       if (JCGO_EXPECT_TRUE((ch3 & 0xc0) == 0x80))
        {
         pos++;
-        if (ch < (unsigned char)0xf0)
+        if (JCGO_EXPECT_TRUE(ch < (unsigned char)0xf0))
          jch = (jchar)(((((ch & 0xf) << 6) | (ch2 & 0x3f)) << 6) |
                 (ch3 & 0x3f));
        }

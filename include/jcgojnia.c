@@ -51,7 +51,7 @@ STATIC void *CFASTCALL jcgo_jniAllocData( JNIEnv *pJniEnv,
  jObjectArr listEntry;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  ptr = jcgo_memAlloc(size ? size : (JCGO_ALLOCSIZE_T)1L, NULL);
- if (ptr != NULL)
+ if (JCGO_EXPECT_TRUE(ptr != NULL))
  {
   listEntry = (jObjectArr)jcgo_newArray(
                JCGO_CLASSREF_OF(java_lang_Object__class), 0, 2);
@@ -86,9 +86,9 @@ STATIC void CFASTCALL jcgo_jniReleaseData( JNIEnv *pJniEnv, void *ptr )
   prevEntry = listEntry;
   listEntry = (jObjectArr)JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
  }
- if (listEntry != jnull)
+ if (JCGO_EXPECT_TRUE(listEntry != jnull))
  {
-  if (prevEntry != jnull)
+  if (JCGO_EXPECT_TRUE(prevEntry != jnull))
    JCGO_ARR_INTERNALACC(jObject, prevEntry, 1) =
     JCGO_ARR_INTERNALACC(jObject, listEntry, 1);
    else jcgo_globData.jniAllocatedDataList =
@@ -136,23 +136,20 @@ jcgo_JniNewString( JNIEnv *pJniEnv, CONST jchar *chars, jsize len )
 {
  java_lang_String JCGO_TRY_VOLATILE jStr;
  jcharArr JCGO_TRY_VOLATILE jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull ||
+     chars == NULL))
   return NULL;
- if (chars == NULL)
- {
-  return NULL;
- }
  jStr = jnull;
  jArr = jnull;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jcharArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jchar), 0, (jint)len);
  jStr = (java_lang_String)jcgo_newObject((jvtable)&java_lang_String_methods);
  JCGO_NATCBACK_END(pJniEnv)
- if (jStr != jnull)
+ if (JCGO_EXPECT_TRUE(jStr != jnull))
  {
   JCGO_FIELD_NZACCESS(jStr, value) = (void *)jArr;
   JCGO_FIELD_NZACCESS(jStr, count) = (jint)len;
-  if (len)
+  if (JCGO_EXPECT_TRUE(len != 0))
    JCGO_MEM_CPY(&JCGO_ARR_INTERNALACC(jchar, jArr, 0), (void *)chars,
     (unsigned)len * sizeof(jchar));
  }
@@ -163,10 +160,10 @@ STATIC jsize JNICALL
 jcgo_JniGetStringLength( JNIEnv *pJniEnv, jstring str )
 {
  java_lang_String jStr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jsize)JNI_ERR;
  jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull)
+ if (JCGO_EXPECT_FALSE(jStr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jsize)JNI_ERR;
@@ -182,10 +179,10 @@ jcgo_JniGetStringChars( JNIEnv *pJniEnv, jstring str, jboolean *isCopy )
  jObject value;
  jint ofs;
  jint count;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull)
+ if (JCGO_EXPECT_FALSE(jStr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -197,7 +194,7 @@ jcgo_JniGetStringChars( JNIEnv *pJniEnv, jstring str, jboolean *isCopy )
   count = JCGO_FIELD_NZACCESS(jStr, count);
   chars = (jchar *)jcgo_jniAllocData(pJniEnv,
            (JCGO_ALLOCSIZE_T)count * sizeof(jchar));
-  if (chars != NULL)
+  if (JCGO_EXPECT_TRUE(chars != NULL))
   {
    if (isCopy != NULL)
     *isCopy = (jboolean)JNI_TRUE;
@@ -217,7 +214,7 @@ STATIC void JNICALL
 jcgo_JniReleaseStringChars( JNIEnv *pJniEnv, jstring str, CONST jchar *chars )
 {
  java_lang_String jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull)
+ if (JCGO_EXPECT_FALSE(jStr == jnull))
  {
   if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc == jnull)
    jcgo_jniThrowNullPointerException(pJniEnv);
@@ -233,12 +230,9 @@ STATIC jstring JNICALL
 jcgo_JniNewStringUTF( JNIEnv *pJniEnv, CONST char *chars )
 {
  java_lang_String JCGO_TRY_VOLATILE jStr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull ||
+     chars == NULL))
   return NULL;
- if (chars == NULL)
- {
-  return NULL;
- }
  jStr = jnull;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jStr = jcgo_utfMakeString(chars);
@@ -251,10 +245,10 @@ jcgo_JniGetStringUTFLength( JNIEnv *pJniEnv, jstring str )
 {
  java_lang_String jStr;
  jObject value;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jsize)JNI_ERR;
  jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull)
+ if (JCGO_EXPECT_FALSE(jStr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jsize)JNI_ERR;
@@ -277,10 +271,10 @@ jcgo_JniGetStringUTFChars( JNIEnv *pJniEnv, jstring str, jboolean *isCopy )
  jObject value;
  jint ofs;
  jint count;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull)
+ if (JCGO_EXPECT_FALSE(jStr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -293,7 +287,7 @@ jcgo_JniGetStringUTFChars( JNIEnv *pJniEnv, jstring str, jboolean *isCopy )
           OBJT_jarray + OBJT_jbyte ? jcgo_utfLenOfBytes((jbyteArr)value,
           ofs, count) : jcgo_utfLenOfChars((jcharArr)value, ofs, count)) +
           (JCGO_ALLOCSIZE_T)1L);
- if (chars != NULL)
+ if (JCGO_EXPECT_TRUE(chars != NULL))
  {
   if (JCGO_METHODS_OF(value)->jcgo_typeid == OBJT_jarray + OBJT_jbyte)
    jcgo_utfFillFromBytes(chars, (jbyteArr)value, ofs, count);
@@ -308,13 +302,13 @@ STATIC void JNICALL
 jcgo_JniReleaseStringUTFChars( JNIEnv *pJniEnv, jstring str,
  CONST char *chars )
 {
- if (str == NULL)
+ if (JCGO_EXPECT_FALSE(str == NULL))
  {
   if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc == jnull)
    jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if (chars != NULL)
+ if (JCGO_EXPECT_TRUE(chars != NULL))
   jcgo_jniReleaseData(pJniEnv, (void *)chars);
 }
 
@@ -322,10 +316,10 @@ STATIC jsize JNICALL
 jcgo_JniGetArrayLength( JNIEnv *pJniEnv, jarray arr )
 {
  jbyteArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jsize)JNI_ERR;
  jArr = (jbyteArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jsize)JNI_ERR;
@@ -342,10 +336,10 @@ jcgo_JniNewObjectArray( JNIEnv *pJniEnv, jsize len, jclass clazz,
  jObjectArr JCGO_TRY_VOLATILE jArr;
  java_lang_Class srcClass;
  int typenum;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  aclass = (java_lang_Class)jcgo_jniDeRef((jobject)clazz);
- if (aclass == jnull)
+ if (JCGO_EXPECT_FALSE(aclass == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -358,8 +352,8 @@ jcgo_JniNewObjectArray( JNIEnv *pJniEnv, jsize len, jclass clazz,
       typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
    srcClass = JCGO_OBJARR_COMPCLASS((jObjectArr)jobj);
    else typenum = OBJT_jarray + OBJT_void - 1;
-  if (!jcgo_isAssignable(srcClass, aclass,
-      typenum - (OBJT_jarray + OBJT_void - 1), 0))
+  if (JCGO_EXPECT_FALSE(!jcgo_isAssignable(srcClass, aclass,
+      typenum - (OBJT_jarray + OBJT_void - 1), 0)))
   {
    jcgo_jniThrowArrayStoreException(pJniEnv);
    return NULL;
@@ -380,15 +374,16 @@ jcgo_JniGetObjectArrayElement( JNIEnv *pJniEnv, jobjectArray arr,
  jsize index )
 {
  jObjectArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jObjectArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
  }
- if ((jint)index < 0 || JCGO_ARRAY_NZLENGTH(jArr) <= (jint)index)
+ if (JCGO_EXPECT_FALSE((jint)index < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) <= (jint)index))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return NULL;
@@ -407,15 +402,16 @@ jcgo_JniSetObjectArrayElement( JNIEnv *pJniEnv, jobjectArray arr, jsize index,
  java_lang_Class destClass;
  int typenum;
  int destDims;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jObjectArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)index < 0 || JCGO_ARRAY_NZLENGTH(jArr) <= (jint)index)
+ if (JCGO_EXPECT_FALSE((jint)index < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) <= (jint)index))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
@@ -432,8 +428,8 @@ jcgo_JniSetObjectArrayElement( JNIEnv *pJniEnv, jobjectArray arr, jsize index,
        typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
     srcClass = JCGO_OBJARR_COMPCLASS((jObjectArr)jobj);
     else typenum = OBJT_jarray + OBJT_void - 1;
-   if (!jcgo_isAssignable(srcClass, destClass,
-       typenum - (OBJT_jarray + OBJT_void - 1), destDims))
+   if (JCGO_EXPECT_FALSE(!jcgo_isAssignable(srcClass, destClass,
+       typenum - (OBJT_jarray + OBJT_void - 1), destDims)))
    {
     jcgo_jniThrowArrayStoreException(pJniEnv);
     return;
@@ -447,7 +443,7 @@ STATIC jbooleanArray JNICALL
 jcgo_JniNewBooleanArray( JNIEnv *pJniEnv, jsize len )
 {
  jbooleanArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jbooleanArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jboolean), 0,
@@ -460,7 +456,7 @@ STATIC jbyteArray JNICALL
 jcgo_JniNewByteArray( JNIEnv *pJniEnv, jsize len )
 {
  jbyteArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jbyteArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jbyte), 0, (jint)len);
@@ -472,7 +468,7 @@ STATIC jcharArray JNICALL
 jcgo_JniNewCharArray( JNIEnv *pJniEnv, jsize len )
 {
  jcharArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jcharArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jchar), 0, (jint)len);
@@ -484,7 +480,7 @@ STATIC jshortArray JNICALL
 jcgo_JniNewShortArray( JNIEnv *pJniEnv, jsize len )
 {
  jshortArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jshortArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jshort), 0,
@@ -497,7 +493,7 @@ STATIC jintArray JNICALL
 jcgo_JniNewIntArray( JNIEnv *pJniEnv, jsize len )
 {
  jintArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jintArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jint), 0, (jint)len);
@@ -509,7 +505,7 @@ STATIC jlongArray JNICALL
 jcgo_JniNewLongArray( JNIEnv *pJniEnv, jsize len )
 {
  jlongArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jlongArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jlong), 0, (jint)len);
@@ -521,7 +517,7 @@ STATIC jfloatArray JNICALL
 jcgo_JniNewFloatArray( JNIEnv *pJniEnv, jsize len )
 {
  jfloatArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jfloatArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jfloat), 0,
@@ -534,7 +530,7 @@ STATIC jdoubleArray JNICALL
 jcgo_JniNewDoubleArray( JNIEnv *pJniEnv, jsize len )
 {
  jdoubleArr JCGO_TRY_VOLATILE jArr = jnull;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jdoubleArr)jcgo_newArray(JCGO_CORECLASS_FOR(OBJT_jdouble), 0,
@@ -548,10 +544,10 @@ jcgo_JniGetBooleanArrayElements( JNIEnv *pJniEnv, jbooleanArray arr,
  jboolean *isCopy )
 {
  jbooleanArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jbooleanArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -566,10 +562,10 @@ jcgo_JniGetByteArrayElements( JNIEnv *pJniEnv, jbyteArray arr,
  jboolean *isCopy )
 {
  jbyteArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jbyteArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -584,10 +580,10 @@ jcgo_JniGetCharArrayElements( JNIEnv *pJniEnv, jcharArray arr,
  jboolean *isCopy )
 {
  jcharArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jcharArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -602,10 +598,10 @@ jcgo_JniGetShortArrayElements( JNIEnv *pJniEnv, jshortArray arr,
  jboolean *isCopy )
 {
  jshortArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jshortArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -620,10 +616,10 @@ jcgo_JniGetIntArrayElements( JNIEnv *pJniEnv, jintArray arr,
  jboolean *isCopy )
 {
  jintArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jintArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -638,10 +634,10 @@ jcgo_JniGetLongArrayElements( JNIEnv *pJniEnv, jlongArray arr,
  jboolean *isCopy )
 {
  jlongArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jlongArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -656,10 +652,10 @@ jcgo_JniGetFloatArrayElements( JNIEnv *pJniEnv, jfloatArray arr,
  jboolean *isCopy )
 {
  jfloatArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jfloatArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -674,10 +670,10 @@ jcgo_JniGetDoubleArrayElements( JNIEnv *pJniEnv, jdoubleArray arr,
  jboolean *isCopy )
 {
  jdoubleArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jdoubleArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -748,21 +744,21 @@ jcgo_JniGetBooleanArrayRegion( JNIEnv *pJniEnv, jbooleanArray arr,
  jsize start, jsize len, jboolean *buf )
 {
  jbooleanArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jbooleanArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jboolean, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jboolean));
 }
@@ -772,21 +768,21 @@ jcgo_JniGetByteArrayRegion( JNIEnv *pJniEnv, jbyteArray arr, jsize start,
  jsize len, jbyte *buf )
 {
  jbyteArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jbyteArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jbyte, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len);
 }
@@ -796,21 +792,21 @@ jcgo_JniGetCharArrayRegion( JNIEnv *pJniEnv, jcharArray arr, jsize start,
  jsize len, jchar *buf )
 {
  jcharArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jcharArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jchar, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jchar));
 }
@@ -820,21 +816,21 @@ jcgo_JniGetShortArrayRegion( JNIEnv *pJniEnv, jshortArray arr, jsize start,
  jsize len, jshort *buf )
 {
  jshortArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jshortArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jshort, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jshort));
 }
@@ -844,21 +840,21 @@ jcgo_JniGetIntArrayRegion( JNIEnv *pJniEnv, jintArray arr, jsize start,
  jsize len, jint *buf )
 {
  jintArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jintArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jint, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jint));
 }
@@ -868,21 +864,21 @@ jcgo_JniGetLongArrayRegion( JNIEnv *pJniEnv, jlongArray arr, jsize start,
  jsize len, jlong *buf )
 {
  jlongArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jlongArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jlong, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jlong));
 }
@@ -892,21 +888,21 @@ jcgo_JniGetFloatArrayRegion( JNIEnv *pJniEnv, jfloatArray arr, jsize start,
  jsize len, jfloat *buf )
 {
  jfloatArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jfloatArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jfloat, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jfloat));
 }
@@ -916,21 +912,21 @@ jcgo_JniGetDoubleArrayRegion( JNIEnv *pJniEnv, jdoubleArray arr,
  jsize start, jsize len, jdouble *buf )
 {
  jdoubleArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jdoubleArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(buf, &JCGO_ARR_INTERNALACC(jdouble, jArr, (jint)start),
    (JCGO_ALLOCSIZE_T)len * sizeof(jdouble));
 }
@@ -940,21 +936,21 @@ jcgo_JniSetBooleanArrayRegion( JNIEnv *pJniEnv, jbooleanArray arr,
  jsize start, jsize len, CONST jboolean *buf )
 {
  jbooleanArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jbooleanArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jboolean, jArr, (jint)start),
    (void *)buf, (JCGO_ALLOCSIZE_T)len * sizeof(jboolean));
 }
@@ -964,21 +960,21 @@ jcgo_JniSetByteArrayRegion( JNIEnv *pJniEnv, jbyteArray arr, jsize start,
  jsize len, CONST jbyte *buf )
 {
  jbyteArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jbyteArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jbyte, jArr, (jint)start), (void *)buf,
    (JCGO_ALLOCSIZE_T)len);
 }
@@ -988,21 +984,21 @@ jcgo_JniSetCharArrayRegion( JNIEnv *pJniEnv, jcharArray arr, jsize start,
  jsize len, CONST jchar *buf )
 {
  jcharArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jcharArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jchar, jArr, (jint)start), (void *)buf,
    (JCGO_ALLOCSIZE_T)len * sizeof(jchar));
 }
@@ -1012,21 +1008,21 @@ jcgo_JniSetShortArrayRegion( JNIEnv *pJniEnv, jshortArray arr, jsize start,
  jsize len, CONST jshort *buf )
 {
  jshortArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jshortArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jshort, jArr, (jint)start),
    (void *)buf, (JCGO_ALLOCSIZE_T)len * sizeof(jshort));
 }
@@ -1036,21 +1032,21 @@ jcgo_JniSetIntArrayRegion( JNIEnv *pJniEnv, jintArray arr, jsize start,
  jsize len, CONST jint *buf )
 {
  jintArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jintArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jint, jArr, (jint)start), (void *)buf,
    (JCGO_ALLOCSIZE_T)len * sizeof(jint));
 }
@@ -1060,21 +1056,21 @@ jcgo_JniSetLongArrayRegion( JNIEnv *pJniEnv, jlongArray arr, jsize start,
  jsize len, CONST jlong *buf )
 {
  jlongArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jlongArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jlong, jArr, (jint)start), (void *)buf,
    (JCGO_ALLOCSIZE_T)len * sizeof(jlong));
 }
@@ -1084,21 +1080,21 @@ jcgo_JniSetFloatArrayRegion( JNIEnv *pJniEnv, jfloatArray arr, jsize start,
  jsize len, CONST jfloat *buf )
 {
  jfloatArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jfloatArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jfloat, jArr, (jint)start),
    (void *)buf, (JCGO_ALLOCSIZE_T)len * sizeof(jfloat));
 }
@@ -1108,21 +1104,21 @@ jcgo_JniSetDoubleArrayRegion( JNIEnv *pJniEnv, jdoubleArray arr, jsize start,
  jsize len, CONST jdouble *buf )
 {
  jdoubleArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jArr = (jdoubleArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jArr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_ARRAY_NZLENGTH(jArr) - (jint)start < (jint)len))
  {
   jcgo_jniThrowArrayIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
   JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jdouble, jArr, (jint)start),
    (void *)buf, (JCGO_ALLOCSIZE_T)len * sizeof(jdouble));
 }
@@ -1133,21 +1129,21 @@ jcgo_JniGetStringRegion( JNIEnv *pJniEnv, jstring str, jsize start, jsize len,
 {
  java_lang_String jStr;
  jObject value;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jStr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_FIELD_NZACCESS(jStr, count) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_FIELD_NZACCESS(jStr, count) - (jint)start < (jint)len))
  {
   jcgo_jniThrowStringIndexOutOfBoundsException(pJniEnv);
   return;
  }
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
  {
   value = (jObject)JCGO_FIELD_NZACCESS(jStr, value);
   start = (jsize)JCGO_FIELD_NZACCESS(jStr, offset) + start;
@@ -1170,22 +1166,22 @@ jcgo_JniGetStringUTFRegion( JNIEnv *pJniEnv, jstring str, jsize start,
  java_lang_String jStr;
  jObject value;
  unsigned pos;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return;
  jStr = (java_lang_String)jcgo_jniDeRef((jobject)str);
- if (jStr == jnull || buf == NULL)
+ if (JCGO_EXPECT_FALSE(jStr == jnull || buf == NULL))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return;
  }
- if ((jint)(start | len) < 0 ||
-     JCGO_FIELD_NZACCESS(jStr, count) - (jint)start < (jint)len)
+ if (JCGO_EXPECT_FALSE((jint)(start | len) < 0 ||
+     JCGO_FIELD_NZACCESS(jStr, count) - (jint)start < (jint)len))
  {
   jcgo_jniThrowStringIndexOutOfBoundsException(pJniEnv);
   return;
  }
  pos = 0;
- if (len)
+ if (JCGO_EXPECT_TRUE(len != 0))
  {
   value = (jObject)JCGO_FIELD_NZACCESS(jStr, value);
   start = (jsize)JCGO_FIELD_NZACCESS(jStr, offset) + start;
@@ -1201,10 +1197,10 @@ jcgo_JniGetPrimitiveArrayCritical( JNIEnv *pJniEnv, jarray arr,
  jboolean *isCopy )
 {
  jbyteArr jArr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  jArr = (jbyteArr)jcgo_jniDeRef((jobject)arr);
- if (jArr == jnull)
+ if (JCGO_EXPECT_FALSE(jArr == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -1242,7 +1238,7 @@ jcgo_JniNewDirectByteBuffer( JNIEnv *pJniEnv, void *address, jlong capacity )
 {
 #ifdef OBJT_java_nio_VMDirectByteBuffer
  jObject JCGO_TRY_VOLATILE buffer;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  buffer = jnull;
  JCGO_NATCBACK_BEGIN(pJniEnv)
@@ -1262,10 +1258,10 @@ jcgo_JniGetDirectBufferAddress( JNIEnv *pJniEnv, jobject buf )
 {
  jObject buffer;
  void *JCGO_TRY_VOLATILE addr;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return NULL;
  buffer = jcgo_jniDeRef(buf);
- if (buffer == jnull)
+ if (JCGO_EXPECT_FALSE(buffer == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
@@ -1289,10 +1285,10 @@ jcgo_JniGetDirectBufferCapacity( JNIEnv *pJniEnv, jobject buf )
 {
  jObject buffer;
  JCGO_TRY_VOLATILE jlong capacity;
- if (JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull)
+ if (JCGO_EXPECT_FALSE(JCGO_JNI_GETTCB(pJniEnv)->nativeExc != jnull))
   return (jlong)-1L;
  buffer = jcgo_jniDeRef(buf);
- if (buffer == jnull)
+ if (JCGO_EXPECT_FALSE(buffer == jnull))
  {
   jcgo_jniThrowNullPointerException(pJniEnv);
   return (jlong)-1L;

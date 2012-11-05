@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -159,8 +159,8 @@ jcgo_checkStop( struct jcgo_tcb_s *tcb )
  jObject ex;
 #endif
 #ifndef JCGO_NOCTRLC
- int sig;
- if ((sig = jcgo_sigTermNum) > 0 && !tcb->insideCallback)
+ int sig = jcgo_sigTermNum;
+ if (JCGO_EXPECT_FALSE(sig > 0) && !tcb->insideCallback)
  {
   *(volatile int *)&jcgo_sigTermNum = 0;
   JCGO_CALLBACK_BEGIN
@@ -169,7 +169,8 @@ jcgo_checkStop( struct jcgo_tcb_s *tcb )
  }
 #endif
 #ifdef JCGO_THREADS
- if ((ex = tcb->stopExc) != jnull && !tcb->insideCallback)
+ ex = tcb->stopExc;
+ if (JCGO_EXPECT_FALSE(ex != jnull) && !tcb->insideCallback)
  {
   tcb->stopExc = jnull;
   JCGO_THROW_EXC(ex);
@@ -185,13 +186,13 @@ JCGO_NOSEP_STATIC jObject *CFASTCALL jcgo_tryCatches( void )
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_THREADS
 #ifdef JCGO_PARALLEL
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
   } while (tcb->suspended);
 #ifdef OBJT_java_lang_VMThrowable
- if (tcb->stopExc != jnull && !tcb->insideCallback &&
+ if (JCGO_EXPECT_FALSE(tcb->stopExc != jnull) && !tcb->insideCallback &&
      tcb->throwable == jnull && (tcb->throwable =
      (jObject)(*(jObject volatile *)&tcb->stopExc)) != jnull)
  {
@@ -239,12 +240,12 @@ JCGO_NOSEP_EXTRASTATIC void CFASTCALL jcgo_tryLeave( void )
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_THREADS
 #ifdef JCGO_PARALLEL
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
   } while (tcb->suspended);
- if (tcb->stopExc != jnull && !tcb->insideCallback &&
+ if (JCGO_EXPECT_FALSE(tcb->stopExc != jnull) && !tcb->insideCallback &&
      tcb->pCurTry->throwable == jnull)
  {
   tcb->pCurTry->throwable = tcb->stopExc;
@@ -358,17 +359,18 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_throwExc( jObject throwable )
 #endif
 #endif
  JCGO_GET_CURTCB(&tcb);
- if (throwable == jnull && tcb->jniEnv == NULL)
+ if (JCGO_EXPECT_FALSE(throwable == jnull) && tcb->jniEnv == NULL)
   throwable =
    (jObject)java_lang_VMThrowable__createNullPointerException0X__();
 #ifdef JCGO_SEHTRY
- if (tcb->jniEnv == NULL)
+ if (JCGO_EXPECT_TRUE(tcb->jniEnv == NULL))
  {
   tcb->throwable = throwable;
   longjmp(tcb->jbuf, 1);
  }
 #else
- if ((pCurTry = tcb->pCurTry) != NULL && tcb->jniEnv == NULL)
+ pCurTry = tcb->pCurTry;
+ if (JCGO_EXPECT_TRUE(pCurTry != NULL) && tcb->jniEnv == NULL)
  {
 #ifdef JCGO_THREADS
   for (pCurMon = tcb->pCurMon; pCurMon != NULL; pCurMon = pCurMon->last)

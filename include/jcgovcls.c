@@ -84,8 +84,8 @@ java_lang_VMClass__throwException0__Lo( java_lang_Object throwable )
 JCGO_NOSEP_STATIC java_lang_Object CFASTCALL
 java_lang_VMClass__vmdataForObjArray0__I( jint dims )
 {
- return (unsigned)dims - (unsigned)1 < (unsigned)JCGO_DIMS_MAX ?
-         (java_lang_Object)&JCGO_METHODS_OF(
+ return JCGO_EXPECT_TRUE((unsigned)dims - (unsigned)1 <
+         (unsigned)JCGO_DIMS_MAX) ? (java_lang_Object)&JCGO_METHODS_OF(
          jcgo_objArrStubClasses[(int)dims - 1].vmdata) : jnull;
 }
 

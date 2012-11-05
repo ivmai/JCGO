@@ -353,7 +353,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_jniLeave( JNIEnv *pJniEnv,
  (void)jcgo_restoreTCB(tcb);
 #endif
  jcgo_checkStop(tcb);
- if (ex != jnull)
+ if (JCGO_EXPECT_FALSE(ex != jnull))
   JCGO_THROW_EXC(ex);
  return (jObject)obj;
 }
@@ -403,7 +403,8 @@ jstring JNICALL jcgo_jnuStringCreate( JNIEnv *pJniEnv, jint len )
 #else
  struct jcgo_try_s jcgo_try;
 #endif
- if (pJniEnv != NULL && (tcb = JCGO_JNI_GETTCB(pJniEnv))->nativeExc == jnull)
+ if (JCGO_EXPECT_TRUE(pJniEnv != NULL) &&
+     (tcb = JCGO_JNI_GETTCB(pJniEnv))->nativeExc == jnull)
  {
 #ifndef JCGO_SEHTRY
   jcgo_try.throwable = jnull;
@@ -486,12 +487,12 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_clinitTrig( java_lang_Class aclass )
  jObjectArr prevEntry;
  JCGO_TRY_VOLATILE int noerr;
  int flags;
- if ((*(volatile jint *)&JCGO_FIELD_NZACCESS(aclass, modifiers) &
-     (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) == 0)
+ if (JCGO_EXPECT_TRUE((*(volatile jint *)&JCGO_FIELD_NZACCESS(aclass,
+     modifiers) & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_TRANSIENT)) == 0))
  {
-  /* FIXME: use atomic operation to read modifiers. */
   return;
  }
+ /* FIXME: use atomic operation to re-check modifiers. */
  noerr = 0;
  {
   JCGO_SYNC_BLOCKSAFENZ(aclass)
@@ -532,7 +533,7 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_clinitTrig( java_lang_Class aclass )
 #endif
     return;
    }
-   if (flags == JCGO_ACCMOD_VOLATILE)
+   if (JCGO_EXPECT_FALSE(flags == JCGO_ACCMOD_VOLATILE))
    {
 #ifdef OBJT_java_lang_VMThrowable
     JCGO_THROW_EXC(java_lang_VMThrowable__createNoClassDefFoundError0X__LsI(
@@ -623,7 +624,8 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_clinitTrig( java_lang_Class aclass )
  if ((JCGO_FIELD_NZACCESS(aclass, modifiers) & JCGO_ACCMOD_VOLATILE) == 0)
   return;
 #ifdef OBJT_java_lang_VMThrowable
- if ((JCGO_FIELD_NZACCESS(aclass, modifiers) & JCGO_ACCMOD_TRANSIENT) == 0)
+ if (JCGO_EXPECT_FALSE((JCGO_FIELD_NZACCESS(aclass,
+     modifiers) & JCGO_ACCMOD_TRANSIENT) == 0))
   JCGO_THROW_EXC(java_lang_VMThrowable__createNoClassDefFoundError0X__LsI(
    JCGO_FIELD_NZACCESS(aclass, name), 1));
 #endif

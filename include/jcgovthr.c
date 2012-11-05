@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -70,16 +70,17 @@ java_lang_VMThread__notify0__LoI( java_lang_Object obj, jint all )
  int res;
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_PARALLEL
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
   } while (tcb->suspended);
  jcgo_checkStop(tcb);
- if (JCGO_GETMON_OF(obj) == tcb)
+ if (JCGO_EXPECT_FALSE(JCGO_GETMON_OF(obj) == tcb))
   return 0;
 #else
- if ((othertcb = JCGO_GETMON_OF(obj)) == tcb)
+ othertcb = JCGO_GETMON_OF(obj);
+ if (JCGO_EXPECT_FALSE(othertcb == tcb))
   return 0;
 #endif
  res = -1;
@@ -87,8 +88,8 @@ java_lang_VMThread__notify0__LoI( java_lang_Object obj, jint all )
 #ifdef JCGO_PARALLEL
  othertcb = JCGO_GETMON_OF(obj);
 #endif
- if (othertcb != NULL && othertcb->monObj == (jObject)obj &&
-     othertcb->tcbMonOwner == tcb)
+ if (JCGO_EXPECT_TRUE(othertcb != NULL && othertcb->monObj == (jObject)obj &&
+     othertcb->tcbMonOwner == tcb))
  {
   res = 0;
   if ((int)all > 0)
@@ -105,9 +106,10 @@ java_lang_VMThread__notify0__LoI( java_lang_Object obj, jint all )
      while (!othertcb->waitsleep)
       if ((othertcb = othertcb->tcbWaitNext) == NULL)
        break;
-     if (othertcb != NULL)
+     if (JCGO_EXPECT_TRUE(othertcb != NULL))
      {
-      if ((tcb = othertcb)->suspended)
+      tcb = othertcb;
+      if (JCGO_EXPECT_FALSE(othertcb->suspended != 0))
        while ((othertcb = othertcb->tcbWaitNext) != NULL)
         if (!othertcb->suspended && othertcb->waitsleep)
         {
@@ -141,9 +143,9 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
 #ifdef JCGO_PARALLEL
  int monMutexInd;
 #endif
- if (ms == (jlong)0L && ns)
+ if (JCGO_EXPECT_FALSE(ms == (jlong)0L && ns))
   ms = (jlong)1L;
- if (ms >= (jlong)0x7fffffffL)
+ if (JCGO_EXPECT_FALSE(ms >= (jlong)0x7fffffffL))
   ms = (jlong)0x7fffffffL;
  (void)JCGO_EVENTTIME_PREPARE(&waittime, (long)ms);
  JCGO_GET_CURTCB(&tcb);
@@ -156,7 +158,7 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
  if ((othertcb = JCGO_GETMON_OF(obj)) == tcb || (othertcb != NULL &&
      othertcb->monObj == (jObject)obj && othertcb->tcbMonOwner == tcb))
  {
-  if (!tcb->interruptReq)
+  if (JCGO_EXPECT_TRUE(!tcb->interruptReq))
   {
    tcb->waitsleep = ms > (jlong)0L ? 1 : -1;
    tcb->monObj = (jObject)obj;
@@ -173,7 +175,8 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
     }
     if (othertcb != NULL)
     {
-     if ((prevtcb2 = othertcb)->suspended)
+     prevtcb2 = othertcb;
+     if (JCGO_EXPECT_FALSE(othertcb->suspended != 0))
      {
       while ((othertcb2 = prevtcb2->tcbWaitNext) != NULL)
       {
@@ -228,9 +231,10 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
 #ifdef JCGO_PARALLEL
  (void)JCGO_MUTEX_UNLOCK(&jcgo_monCritMutexes[monMutexInd]);
 #endif
- if (othertcb == NULL)
+ if (JCGO_EXPECT_FALSE(othertcb == NULL))
   return (jint)(interrupted - 1);
- if (!interrupted && (tcb->insideCallback || tcb->stopExc == jnull))
+ if (JCGO_EXPECT_TRUE(!interrupted) &&
+     (tcb->insideCallback || JCGO_EXPECT_TRUE(tcb->stopExc == jnull)))
  {
 #ifndef JCGO_PARALLEL
   (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
@@ -253,7 +257,7 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
    }
 #ifndef JCGO_PARALLEL
   (void)JCGO_MUTEX_LOCK(&jcgo_nonParallelMutex);
-  if (tcb->suspended && !tcb->insideCallback)
+  if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
    do
    {
     (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
@@ -319,14 +323,14 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
   }
  }
 #ifdef JCGO_PARALLEL
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
   } while (tcb->suspended);
 #endif
  jcgo_checkStop(tcb);
- if (interrupted || tcb->interruptReq)
+ if (JCGO_EXPECT_FALSE(interrupted || tcb->interruptReq))
  {
   tcb->interruptReq = 0;
   return 1;
@@ -364,7 +368,7 @@ java_lang_VMThread__start0__LoJ( java_lang_Object thread, jlong stacksize )
  int res;
  struct jcgo_tcb_s *othertcb = jcgo_memAlloc(sizeof(struct jcgo_tcb_s),
                                 JCGO_PTR_RESERVED);
- if (othertcb != NULL && !JCGO_EVENT_INIT(&othertcb->event))
+ if (JCGO_EXPECT_TRUE(othertcb != NULL && !JCGO_EVENT_INIT(&othertcb->event)))
  {
 #ifdef JCGO_PARALLEL
   if (JCGO_EVENT_INIT(&othertcb->resumeEvent))
@@ -388,7 +392,7 @@ java_lang_VMThread__start0__LoJ( java_lang_Object thread, jlong stacksize )
 #ifdef JCGO_PARALLEL
  (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
 #endif
-  if (!res)
+  if (JCGO_EXPECT_TRUE(!res))
    return JCGO_OBJREF_OF(*(java_lang_Object)othertcb);
   othertcb->thread = jnull;
 #ifdef JCGO_PARALLEL
@@ -410,7 +414,7 @@ java_lang_VMThread__nativeSetPriority0__LoI( java_lang_Object vmdata,
  JCGO_THREADPRIO_T sched;
  (void)JCGO_THREADT_COPY(&thrhandle,
   &((struct jcgo_tcb_s *)&JCGO_METHODS_OF(vmdata))->thrhandle);
- if (JCGO_THREADT_ISVALID(&thrhandle))
+ if (JCGO_EXPECT_TRUE(JCGO_THREADT_ISVALID(&thrhandle)))
   res = JCGO_THREADPRIO_SET(&thrhandle, &sched, (int)priority);
 #endif
  return (jint)res;

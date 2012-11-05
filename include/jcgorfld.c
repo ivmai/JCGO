@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -55,7 +55,8 @@ java_lang_reflect_VMField__getFieldsName0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->fieldsName : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->fieldsName : jnull;
 }
 
 JCGO_NOSEP_STATIC jintArr CFASTCALL
@@ -64,7 +65,8 @@ java_lang_reflect_VMField__getFieldsSlot0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->fieldsSlot : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->fieldsSlot : jnull;
 }
 
 JCGO_NOSEP_STATIC jObjectArr CFASTCALL
@@ -73,7 +75,8 @@ java_lang_reflect_VMField__getFieldsType0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->fieldsType : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->fieldsType : jnull;
 }
 
 JCGO_NOSEP_STATIC jbyteArr CFASTCALL
@@ -82,7 +85,8 @@ java_lang_reflect_VMField__getFieldsDims0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->fieldsDims : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->fieldsDims : jnull;
 }
 
 JCGO_NOSEP_STATIC jshortArr CFASTCALL
@@ -91,7 +95,8 @@ java_lang_reflect_VMField__getFieldsModifiers0__Lc( java_lang_Class klass )
  CONST struct jcgo_reflect_s *jcgo_reflect =
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(klass, vmdata)))->jcgo_reflect;
- return jcgo_reflect != NULL ? jcgo_reflect->fieldsModifiers : jnull;
+ return JCGO_EXPECT_TRUE(jcgo_reflect != NULL) ?
+         jcgo_reflect->fieldsModifiers : jnull;
 }
 
 JCGO_NOSEP_STATIC jObjectArr CFASTCALL

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -54,14 +54,14 @@ java_lang_VMSystem__arraycopy__LoILoII( java_lang_Object src,
  java_lang_Class destClass;
  jObject obj;
 #endif
- if (src == jnull || dest == jnull)
+ if (JCGO_EXPECT_FALSE(src == jnull || dest == jnull))
   JCGO_THROW_EXC(jnull);
  typenum = (int)JCGO_METHODS_OF(src)->jcgo_typeid - OBJT_jarray;
  destDims = (int)JCGO_METHODS_OF(dest)->jcgo_typeid -
              (OBJT_jarray + OBJT_void);
- if (typenum <= 0 || typenum >= OBJT_void + JCGO_DIMS_MAX ||
+ if (JCGO_EXPECT_FALSE(typenum <= 0 || typenum >= OBJT_void + JCGO_DIMS_MAX ||
      (typenum - destDims != OBJT_void && (typenum < OBJT_void ||
-     (unsigned)destDims >= (unsigned)JCGO_DIMS_MAX)))
+     (unsigned)destDims >= (unsigned)JCGO_DIMS_MAX))))
  {
 #ifdef OBJT_java_lang_VMThrowable
   java_lang_VMThrowable__throwArrayStoreException0X__();
@@ -69,9 +69,9 @@ java_lang_VMSystem__arraycopy__LoILoII( java_lang_Object src,
   return;
 #endif
  }
- if ((srcStart | destStart | len) < 0 ||
+ if (JCGO_EXPECT_FALSE((srcStart | destStart | len) < 0 ||
      JCGO_ARRAY_NZLENGTH((jObjectArr)src) - len < srcStart ||
-     JCGO_ARRAY_NZLENGTH((jObjectArr)dest) - len < destStart)
+     JCGO_ARRAY_NZLENGTH((jObjectArr)dest) - len < destStart))
  {
 #ifdef OBJT_java_lang_VMThrowable
   java_lang_VMThrowable__throwArrayIndexOutOfBoundsException0X__();
@@ -79,15 +79,15 @@ java_lang_VMSystem__arraycopy__LoILoII( java_lang_Object src,
   return;
 #endif
  }
- if (len > 0 && (srcStart != destStart || src != dest))
+ if (JCGO_EXPECT_TRUE(len > 0 && (srcStart != destStart || src != dest)))
  {
   if (typenum >= OBJT_void)
   {
 #ifdef JCGO_CHKCAST
    destClass = JCGO_OBJARR_COMPCLASS((jObjectArr)dest);
-   if (src != dest && !jcgo_isAssignable(
+   if (src != dest && JCGO_EXPECT_FALSE(!jcgo_isAssignable(
        JCGO_OBJARR_COMPCLASS((jObjectArr)src), destClass,
-       typenum - OBJT_void, destDims))
+       typenum - OBJT_void, destDims)))
    {
     do
     {
@@ -100,8 +100,8 @@ java_lang_VMSystem__arraycopy__LoILoII( java_lang_Object src,
           typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
        srcClass = JCGO_OBJARR_COMPCLASS((jObjectArr)obj);
        else typenum = OBJT_jarray + OBJT_void - 1;
-      if (!jcgo_isAssignable(srcClass, destClass,
-          typenum - (OBJT_jarray + OBJT_void - 1), destDims))
+      if (JCGO_EXPECT_FALSE(!jcgo_isAssignable(srcClass, destClass,
+          typenum - (OBJT_jarray + OBJT_void - 1), destDims)))
        jcgo_throwArrayStoreExcX();
      }
      JCGO_ARR_INTERNALACC(jObject, (jObjectArr)dest, destStart) = obj;
@@ -131,7 +131,7 @@ java_lang_VMSystem__arraycopy__LoILoII( java_lang_Object src,
 JCGO_NOSEP_STATIC jint CFASTCALL
 java_lang_VMSystem__identityHashCode__Lo( java_lang_Object obj )
 {
- return obj != jnull ? (jint)(((u_jint)JCGO_CAST_PTRTONUM(obj)) >> 1) : 0;
+ return (jint)(((u_jint)JCGO_CAST_PTRTONUM(obj)) >> 1);
 }
 
 #endif

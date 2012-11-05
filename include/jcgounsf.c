@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -75,7 +75,7 @@ sun_misc_Unsafe__compareAndSwapInt0__LoJII( java_lang_Object obj,
                (JCGO_ALLOCSIZE_T)offset : JCGO_CAST_NUMTOPTR(offset);
  int res = 0;
  JCGO_ATOMICOP_BEGIN(addr)
- if (*(volatile jint *)addr == expect)
+ if (JCGO_EXPECT_TRUE(*(volatile jint *)addr == expect))
  {
   *(volatile jint *)addr = value;
   res = 1;
@@ -92,7 +92,7 @@ sun_misc_Unsafe__compareAndSwapLong0__LoJJJ( java_lang_Object obj,
                (JCGO_ALLOCSIZE_T)offset : JCGO_CAST_NUMTOPTR(offset);
  int res = 0;
  JCGO_ATOMICOP_BEGIN(addr)
- if (*(volatile jlong *)addr == expect)
+ if (JCGO_EXPECT_TRUE(*(volatile jlong *)addr == expect))
  {
   *(volatile jlong *)addr = value;
   res = 1;
@@ -109,7 +109,7 @@ sun_misc_Unsafe__compareAndSwapObject0__LoLoLoJ( java_lang_Object obj,
                (JCGO_ALLOCSIZE_T)offset : JCGO_CAST_NUMTOPTR(offset);
  int res = 0;
  JCGO_ATOMICOP_BEGIN(addr)
- if (*(java_lang_Object volatile *)addr == expect)
+ if (JCGO_EXPECT_TRUE(*(java_lang_Object volatile *)addr == expect))
  {
   *(java_lang_Object volatile *)addr = value;
   res = 1;

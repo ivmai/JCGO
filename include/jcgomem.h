@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -103,7 +103,7 @@
 /* #include <stdlib.h> */
 /* void *calloc(size_t, size_t); */
 
-#define JCGO_MEM_CALLOC(pobjptr, size, jcgo_methods) ((void)(*(pobjptr) = (size) <= (sizeof(JCGO_ALLOCSIZE_T) < 4 ? ~(JCGO_ALLOCSIZE_T)0xf : ~(JCGO_ALLOCSIZE_T)0xfff) ? calloc(size, 1) : NULL))
+#define JCGO_MEM_CALLOC(pobjptr, size, jcgo_methods) ((void)(*(pobjptr) = JCGO_EXPECT_TRUE((size) <= (sizeof(JCGO_ALLOCSIZE_T) < 4 ? ~(JCGO_ALLOCSIZE_T)0xf : ~(JCGO_ALLOCSIZE_T)0xfff)) ? calloc(size, 1) : NULL))
 
 #endif /* ! JCGO_HUGEARR */
 
@@ -189,13 +189,13 @@
 
 #define JCGO_MEMINIT_GCJSUPP GC_init_gcj_malloc(5, 0)
 
-#define JCGO_MEM_CALLOC(pobjptr, size, jcgo_methods) ((void)((size) < (JCGO_ALLOCSIZE_T)((size_t)-1L < (size_t)1 ? ~((size_t)1L << (sizeof(size_t) * 8 - 1)) : ~(size_t)0) ? ((jcgo_methods) != NULL ? (*(pobjptr) = (jcgo_methods) != (void *)&((volatile char *)NULL)[-1] && ((struct jcgo_methods_s *)(jcgo_methods))->jcgo_gcjdescr != (void *)GC_DS_LENGTH ? GC_GCJ_MALLOC((size_t)(size), (void *)(jcgo_methods)) : GC_MALLOC((size_t)(size))) : (void *)((*(pobjptr) = GC_MALLOC_ATOMIC((size_t)(size))) != NULL ? (JCGO_MEM_ZERO(*(pobjptr), (size_t)(size)), NULL) : NULL)) : (*(pobjptr) = NULL)))
+#define JCGO_MEM_CALLOC(pobjptr, size, jcgo_methods) ((void)(JCGO_EXPECT_TRUE((size) < (JCGO_ALLOCSIZE_T)((size_t)-1L < (size_t)1 ? ~((size_t)1L << (sizeof(size_t) * 8 - 1)) : ~(size_t)0)) ? ((jcgo_methods) != NULL ? (*(pobjptr) = (jcgo_methods) != (void *)&((volatile char *)NULL)[-1] && ((struct jcgo_methods_s *)(jcgo_methods))->jcgo_gcjdescr != (void *)GC_DS_LENGTH ? GC_GCJ_MALLOC((size_t)(size), (void *)(jcgo_methods)) : GC_MALLOC((size_t)(size))) : (void *)(JCGO_EXPECT_TRUE((*(pobjptr) = GC_MALLOC_ATOMIC((size_t)(size))) != NULL) ? (JCGO_MEM_ZERO(*(pobjptr), (size_t)(size)), NULL) : NULL)) : (*(pobjptr) = NULL)))
 
 #else /* JCGO_USEGCJ */
 
 #define JCGO_MEMINIT_GCJSUPP (void)0
 
-#define JCGO_MEM_CALLOC(pobjptr, size, jcgo_methods) ((void)((size) < (JCGO_ALLOCSIZE_T)((size_t)-1L < (size_t)1 ? ~((size_t)1L << (sizeof(size_t) * 8 - 1)) : ~(size_t)0) ? ((jcgo_methods) != NULL ? (*(pobjptr) = GC_MALLOC((size_t)(size))) : (void *)((*(pobjptr) = GC_MALLOC_ATOMIC((size_t)(size))) != NULL ? (JCGO_MEM_ZERO(*(pobjptr), (size_t)(size)), NULL) : NULL)) : (*(pobjptr) = NULL)))
+#define JCGO_MEM_CALLOC(pobjptr, size, jcgo_methods) ((void)(JCGO_EXPECT_TRUE((size) < (JCGO_ALLOCSIZE_T)((size_t)-1L < (size_t)1 ? ~((size_t)1L << (sizeof(size_t) * 8 - 1)) : ~(size_t)0)) ? ((jcgo_methods) != NULL ? (*(pobjptr) = GC_MALLOC((size_t)(size))) : (void *)(JCGO_EXPECT_TRUE((*(pobjptr) = GC_MALLOC_ATOMIC((size_t)(size))) != NULL) ? (JCGO_MEM_ZERO(*(pobjptr), (size_t)(size)), NULL) : NULL)) : (*(pobjptr) = NULL)))
 
 #endif /* ! JCGO_USEGCJ */
 

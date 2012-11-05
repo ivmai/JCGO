@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -46,8 +46,7 @@
 JCGO_NOSEP_STATIC java_lang_Object CFASTCALL
 java_nio_VMDirectByteBuffer__allocate0__I( jint capacity )
 {
- void *ptr = jcgo_memAlloc((JCGO_ALLOCSIZE_T)capacity, NULL);
- return ptr != NULL ? (java_lang_Object)ptr : jnull;
+ return (java_lang_Object)jcgo_memAlloc((JCGO_ALLOCSIZE_T)capacity, NULL);
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL

@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -65,18 +65,19 @@ java_lang_VMMath__sin__D( jdouble a )
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
-  if (a != (jdouble)0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
   {
    v = sinl(a);
-   if (JCGO_FP_NOTNAN(v) && v >= (jdouble)-1.0 && v <= (jdouble)1.0)
+   if (JCGO_FP_NOTNAN(v) &&
+       JCGO_EXPECT_TRUE(v >= (jdouble)-1.0 && v <= (jdouble)1.0))
     return v;
    a = sinl(fmodl(a, (jdouble)2.0 * M_PIl));
   }
 #else
-  if (a <= -DBL_MIN || a >= DBL_MIN)
+  if (JCGO_EXPECT_TRUE(a <= -DBL_MIN || a >= DBL_MIN))
   {
    v = sin(a);
-   if (JCGO_FP_NOTNAN(v) && v >= -1.0 && v <= 1.0)
+   if (JCGO_FP_NOTNAN(v) && JCGO_EXPECT_TRUE(v >= -1.0 && v <= 1.0))
     return v;
    a = sin(fmod(a, 2.0 * M_PI));
   }
@@ -108,12 +109,13 @@ java_lang_VMMath__cos__D( jdouble a )
  {
 #ifdef JCGO_LONGDBL
   v = cosl(a);
-  if (JCGO_FP_NOTNAN(v) && v >= (jdouble)-1.0 && v <= (jdouble)1.0)
+  if (JCGO_FP_NOTNAN(v) &&
+      JCGO_EXPECT_TRUE(v >= (jdouble)-1.0 && v <= (jdouble)1.0))
    return v;
   return cosl(fmodl(a, (jdouble)2.0 * M_PIl));
 #else
   v = cos(a);
-  if (JCGO_FP_NOTNAN(v) && v >= -1.0 && v <= 1.0)
+  if (JCGO_FP_NOTNAN(v) && JCGO_EXPECT_TRUE(v >= -1.0 && v <= 1.0))
    return v;
   return cos(fmod(a, 2.0 * M_PI));
 #endif
@@ -299,7 +301,7 @@ java_lang_VMMath__tan__D( jdouble a )
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
-  if (a != (jdouble)0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
   {
    v = tanl(a);
    if (JCGO_FP_FINITE(v))
@@ -307,7 +309,7 @@ java_lang_VMMath__tan__D( jdouble a )
    a = tanl(fmodl(a, M_PIl));
   }
 #else
-  if (a <= -DBL_MIN || a >= DBL_MIN)
+  if (JCGO_EXPECT_TRUE(a <= -DBL_MIN || a >= DBL_MIN))
   {
    v = tan(a);
    if (JCGO_FP_FINITE(v))
@@ -337,13 +339,14 @@ java_lang_VMMath__asin__D( jdouble a )
  return asin(a);
 #endif
 #else
- if (JCGO_FP_FINITE(a) && a >= (jdouble)-1.0 && a <= (jdouble)1.0)
+ if (JCGO_FP_FINITE(a) &&
+     JCGO_EXPECT_TRUE(a >= (jdouble)-1.0 && a <= (jdouble)1.0))
  {
 #ifdef JCGO_LONGDBL
-  if (a != (jdouble)0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
    a = asinl(a);
 #else
-  if (a <= -DBL_MIN || a >= DBL_MIN)
+  if (JCGO_EXPECT_TRUE(a <= -DBL_MIN || a >= DBL_MIN))
    a = asin(a);
 #endif
   return a;
@@ -369,7 +372,8 @@ java_lang_VMMath__acos__D( jdouble a )
  return acos(a);
 #endif
 #else
- if (JCGO_FP_FINITE(a) && a >= (jdouble)-1.0 && a <= (jdouble)1.0)
+ if (JCGO_FP_FINITE(a) &&
+     JCGO_EXPECT_TRUE(a >= (jdouble)-1.0 && a <= (jdouble)1.0))
  {
 #ifdef JCGO_LONGDBL
   return acosl(a);
@@ -401,10 +405,10 @@ java_lang_VMMath__atan__D( jdouble a )
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
-  if (a != (jdouble)0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
    a = atanl(a);
 #else
-  if (a <= -DBL_MIN || a >= DBL_MIN)
+  if (JCGO_EXPECT_TRUE(a <= -DBL_MIN || a >= DBL_MIN))
    a = atan(a);
 #endif
   return a;
@@ -472,10 +476,10 @@ java_lang_VMMath__atan2__DD( jdouble y, jdouble x )
  {
   if (JCGO_FP_FINITE(x))
   {
-   if (y != (jdouble)0.0)
+   if (JCGO_EXPECT_TRUE(y != (jdouble)0.0))
    {
 #ifdef JCGO_LONGDBL
-    if (x != (jdouble)0.0)
+    if (JCGO_EXPECT_TRUE(x != (jdouble)0.0))
     {
      v = y;
      if (y < (jdouble)0.0)
@@ -487,9 +491,10 @@ java_lang_VMMath__atan2__DD( jdouble y, jdouble x )
     }
     return y < (jdouble)0.0 ? -M_PIl / (jdouble)2.0 : M_PIl / (jdouble)2.0;
 #else
-    if (x != 0.0)
+    if (JCGO_EXPECT_TRUE(x != 0.0))
     {
-     if ((y > -DBL_MIN && y < DBL_MIN) || (x > -DBL_MIN && x < DBL_MIN))
+     if (JCGO_EXPECT_FALSE((y > -DBL_MIN && y < DBL_MIN) ||
+         (x > -DBL_MIN && x < DBL_MIN)))
      {
       v = y * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
            (1L << (DBL_MANT_DIG / 2)));
@@ -643,13 +648,14 @@ java_lang_VMMath__exp__D( jdouble a )
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
-  return a < (jdouble)(LN_MAXLDOUBLE - 0.1) ? expl(a) :
+  return JCGO_EXPECT_TRUE(a < (jdouble)(LN_MAXLDOUBLE - 0.1)) ? expl(a) :
           a < (jdouble)(LN_MAXLDOUBLE + 0.9) ? expl(a - (jdouble)1.0) * M_El :
           jcgo_fpInf;
 #else
-  return a < LN_MAXDOUBLE - 0.1 ? (a > -LN_MINDOUBLE - 0.1 &&
-          a < LN_MINDOUBLE + 0.1 ? (a >= 0.0 ? exp(a + DBL_MANT_DIG * M_LN2) /
-          ((double)(1L << (DBL_MANT_DIG / 2)) *
+  return JCGO_EXPECT_TRUE(a < LN_MAXDOUBLE - 0.1) ?
+          (JCGO_EXPECT_FALSE(a > -LN_MINDOUBLE - 0.1 &&
+          a < LN_MINDOUBLE + 0.1) ? (a >= 0.0 ? exp(a +
+          DBL_MANT_DIG * M_LN2) / ((double)(1L << (DBL_MANT_DIG / 2)) *
           (1L << ((DBL_MANT_DIG + 1) / 2))) : exp(a - DBL_MANT_DIG * M_LN2) *
           ((double)(1L << (DBL_MANT_DIG / 2)) *
           (1L << ((DBL_MANT_DIG + 1) / 2)))) : exp(a)) :
@@ -745,12 +751,13 @@ java_lang_VMMath__log__D( jdouble a )
   return jcgo_fpNaN;
  if (JCGO_FP_FINITE(a))
  {
-  if (a != (jdouble)0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
   {
 #ifdef JCGO_LONGDBL
    a = logl(a);
 #else
-   a = a < DBL_MIN ? log(a * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
+   a = JCGO_EXPECT_FALSE(a < DBL_MIN) ?
+        log(a * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
         (1L << (DBL_MANT_DIG / 2)))) - (DBL_MANT_DIG - 1) * M_LN2 : log(a);
 #endif
   }
@@ -807,12 +814,13 @@ java_lang_VMMath__sqrt__D( jdouble a )
 #else
  if (a < (jdouble)-0.0)
   return jcgo_fpNaN;
- if (JCGO_FP_FINITE(a) && a != (jdouble)0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)0.0))
  {
 #ifdef JCGO_LONGDBL
   a = sqrtl(a);
 #else
-  a = a < DBL_MIN ? sqrt(a * ((double)(1L << (DBL_MANT_DIG / 2)) *
+  a = JCGO_EXPECT_FALSE(a < DBL_MIN) ?
+       sqrt(a * ((double)(1L << (DBL_MANT_DIG / 2)) *
        (1L << (DBL_MANT_DIG / 2)))) / (double)(1L << (DBL_MANT_DIG / 2)) :
        sqrt(a);
 #endif
@@ -879,23 +887,23 @@ java_lang_VMMath__pow__DD( jdouble a, jdouble b )
  jdouble d;
  if (JCGO_FP_FINITE(b))
  {
-  if (b == (jdouble)0.0)
+  if (JCGO_EXPECT_FALSE(b == (jdouble)0.0))
    return (jdouble)1.0;
-  if (b == (jdouble)1.0)
+  if (JCGO_EXPECT_FALSE(b == (jdouble)1.0))
    return a;
   if (JCGO_FP_FINITE(a))
   {
-   if (a != (jdouble)0.0)
+   if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
    {
     v = (jdouble)0.0;
     if (a < (jdouble)0.0)
     {
      v = b - JCGO_FP_FLOOR(b / (jdouble)2.0) * (jdouble)2.0;
-     if (v != (jdouble)0.0 && v != (jdouble)1.0)
+     if (JCGO_EXPECT_FALSE(v != (jdouble)0.0 && v != (jdouble)1.0))
       return jcgo_fpNaN;
      a = -a;
     }
-    if (a != (jdouble)1.0)
+    if (JCGO_EXPECT_TRUE(a != (jdouble)1.0))
     {
 #ifdef JCGO_LONGDBL
      a = (a > (jdouble)1.0 && b < (jdouble)0.0) ||
@@ -904,17 +912,20 @@ java_lang_VMMath__pow__DD( jdouble a, jdouble b )
           powl(a, b) : d < (jdouble)(LN_MAXLDOUBLE + 0.9) ?
           expl(d - (jdouble)1.0) * M_El : jcgo_fpInf;
 #else
-     d = (a < DBL_MIN ? log(a * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
+     d = (JCGO_EXPECT_FALSE(a < DBL_MIN) ?
+          log(a * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
           (1L << (DBL_MANT_DIG / 2)))) - (DBL_MANT_DIG - 1) * M_LN2 :
           log(a)) * b;
-     a = d < LN_MAXDOUBLE - 0.1 ? (d > -LN_MINDOUBLE - 0.1 &&
-          d < LN_MINDOUBLE + 0.1 ? (d >= 0.0 ? exp(d + DBL_MANT_DIG * M_LN2) /
+     a = JCGO_EXPECT_TRUE(d < LN_MAXDOUBLE - 0.1) ?
+          (JCGO_EXPECT_FALSE(d > -LN_MINDOUBLE - 0.1 &&
+          d < LN_MINDOUBLE + 0.1) ? (d >= 0.0 ?
+          exp(d + DBL_MANT_DIG * M_LN2) /
           ((double)(1L << (DBL_MANT_DIG / 2)) *
           (1L << ((DBL_MANT_DIG + 1) / 2))) : exp(d - DBL_MANT_DIG * M_LN2) *
           ((double)(1L << (DBL_MANT_DIG / 2)) *
-          (1L << ((DBL_MANT_DIG + 1) / 2)))) : a < DBL_MIN ? exp(d) :
-          pow(a, b)) : d < LN_MAXDOUBLE + 0.9 ? exp(d - 1.0) * M_E :
-          jcgo_fpInf;
+          (1L << ((DBL_MANT_DIG + 1) / 2)))) :
+          JCGO_EXPECT_FALSE(a < DBL_MIN) ? exp(d) : pow(a, b)) :
+          d < LN_MAXDOUBLE + 0.9 ? exp(d - 1.0) * M_E : jcgo_fpInf;
 #endif
     }
     if (v != (jdouble)0.0)
@@ -1004,7 +1015,7 @@ java_lang_VMMath__IEEEremainder__DD( jdouble x, jdouble y )
   x = -x;
  return x;
 #else
- if (y != (jdouble)0.0 && JCGO_FP_FINITE(x))
+ if (JCGO_EXPECT_TRUE(y != (jdouble)0.0) && JCGO_FP_FINITE(x))
  {
   if (JCGO_FP_FINITE(y))
   {
@@ -1018,7 +1029,8 @@ java_lang_VMMath__IEEEremainder__DD( jdouble x, jdouble y )
 #ifdef JCGO_LONGDBL
     x = fmodl(x, y * (jdouble)2.0);
 #else
-    x = x < DBL_MIN || (y <= DBL_MIN / 2.0 && x <= 1.0) ?
+    x = JCGO_EXPECT_FALSE(x < DBL_MIN) ||
+         (JCGO_EXPECT_FALSE(y <= DBL_MIN / 2.0) && x <= 1.0) ?
          fmod(x * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
          (1L << (DBL_MANT_DIG / 2))),
          y * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
@@ -1054,7 +1066,7 @@ JCGO_NOSEP_STATIC jdouble CFASTCALL
 java_lang_VMMath__ceil__D( jdouble a )
 {
 #ifndef JCGO_NOFP
- if (JCGO_FP_FINITE(a) && a != (jdouble)0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)0.0))
   a = -JCGO_FP_FLOOR(-a);
 #endif
  return a;
@@ -1066,7 +1078,7 @@ JCGO_NOSEP_STATIC jdouble CFASTCALL
 java_lang_VMMath__floor__D( jdouble a )
 {
 #ifndef JCGO_NOFP
- if (JCGO_FP_FINITE(a) && a != (jdouble)0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)0.0))
   a = JCGO_FP_FLOOR(a);
 #endif
  return a;
@@ -1079,13 +1091,13 @@ java_lang_VMMath__rint__D( jdouble a )
 {
 #ifndef JCGO_NOFP
  jdouble v;
- if (JCGO_FP_FINITE(a) && a != (jdouble)0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)0.0))
  {
   v = a;
   a = JCGO_FP_FLOOR(((jdouble)0.5 + a) / (jdouble)2.0) * (jdouble)2.0;
   if (v - a > (jdouble)0.5)
    a = a + (jdouble)1.0;
-   else if (v < (jdouble)0.0 && v >= (jdouble)-0.5)
+   else if (JCGO_EXPECT_FALSE(v < (jdouble)0.0 && v >= (jdouble)-0.5))
     a = -a;
  }
 #endif
@@ -1148,7 +1160,7 @@ java_lang_VMMath__cbrt__D( jdouble a )
  }
  return sign ? -v : v;
 #else
- if (JCGO_FP_FINITE(a) && a != (jdouble)-0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)-0.0))
  {
   sign = 0;
   if (a < (jdouble)0.0)
@@ -1160,7 +1172,8 @@ java_lang_VMMath__cbrt__D( jdouble a )
 #ifdef JCGO_LONGDBL
   a = cbrtl(a);
 #else
-  a = a < DBL_MIN ? cbrt(a * ((double)(1L << ((DBL_MANT_DIG + 1) / 3)) *
+  a = JCGO_EXPECT_FALSE(a < DBL_MIN) ?
+       cbrt(a * ((double)(1L << ((DBL_MANT_DIG + 1) / 3)) *
        (double)(1L << ((DBL_MANT_DIG + 1) / 3)) *
        (1L << ((DBL_MANT_DIG + 1) / 3)))) /
        (double)(1L << ((DBL_MANT_DIG + 1) / 3)) : cbrt(a);
@@ -1169,7 +1182,8 @@ java_lang_VMMath__cbrt__D( jdouble a )
 #ifdef JCGO_LONGDBL
   a = powl(a, (jdouble)1.0 / (jdouble)3.0);
 #else
-  a = a < DBL_MIN ? pow(a * ((double)(1L << ((DBL_MANT_DIG + 1) / 3)) *
+  a = JCGO_EXPECT_FALSE(a < DBL_MIN) ?
+       pow(a * ((double)(1L << ((DBL_MANT_DIG + 1) / 3)) *
        (double)(1L << ((DBL_MANT_DIG + 1) / 3)) *
        (1L << ((DBL_MANT_DIG + 1) / 3))), 1.0 / 3.0) /
        (double)(1L << ((DBL_MANT_DIG + 1) / 3)) : pow(a, 1.0 / 3.0);
@@ -1355,12 +1369,12 @@ java_lang_VMMath__hypot__DD( jdouble a, jdouble b )
 #else
    v = a * M_SQRT2;
 #endif
-   if (a != b)
+   if (JCGO_EXPECT_TRUE(a != b))
    {
     if (JCGO_FP_FINITE(v))
     {
      v = JCGO_FP_HYPOT(a, b);
-     if (JCGO_FP_FINITE(v) && v != (jdouble)0.0)
+     if (JCGO_FP_FINITE(v) && JCGO_EXPECT_TRUE(v != (jdouble)0.0))
       return v;
     }
     v = JCGO_FP_HYPOT(b / a, (jdouble)1.0) * a;
@@ -1450,14 +1464,15 @@ java_lang_VMMath__expm1__D( jdouble a )
  {
 #ifdef JCGO_MATHEXT
 #ifdef JCGO_LONGDBL
-  v = a < (jdouble)(LN_MAXLDOUBLE - 0.1) ? (a != (jdouble)-0.0 ?
-       expm1l(a) : a) : a < (jdouble)(LN_MAXLDOUBLE + 0.9) ?
+  v = JCGO_EXPECT_TRUE(a < (jdouble)(LN_MAXLDOUBLE - 0.1)) ?
+       (JCGO_EXPECT_TRUE(a != (jdouble)-0.0) ? expm1l(a) : a) :
+       a < (jdouble)(LN_MAXLDOUBLE + 0.9) ?
        expm1l(a - (jdouble)1.0) * M_El : jcgo_fpInf;
 #else
-  if (a < LN_MAXDOUBLE - 0.1)
+  if (JCGO_EXPECT_TRUE(a < LN_MAXDOUBLE - 0.1))
   {
    v = expm1(a);
-   if (v >= -0.0 && v <= 0.0)
+   if (JCGO_EXPECT_FALSE(v >= -0.0 && v <= 0.0))
     v = a;
   }
    else v = a < LN_MAXDOUBLE + 0.9 ? expm1(a - 1.0) * M_E : jcgo_fpInf;
@@ -1465,19 +1480,20 @@ java_lang_VMMath__expm1__D( jdouble a )
   return v;
 #else
 #ifdef JCGO_LONGDBL
-  v = a < (jdouble)(LN_MAXLDOUBLE - 0.1) ? expl(a) :
+  v = JCGO_EXPECT_TRUE(a < (jdouble)(LN_MAXLDOUBLE - 0.1)) ? expl(a) :
        a < (jdouble)(LN_MAXLDOUBLE + 0.9) ? expl(a - (jdouble)1.0) * M_El :
        jcgo_fpInf;
 #else
-  v = a < LN_MAXDOUBLE - 0.1 ? (a > -LN_MINDOUBLE - 0.1 &&
-       a < LN_MINDOUBLE + 0.1 ? (a >= 0.0 ? exp(a + DBL_MANT_DIG * M_LN2) /
+  v = JCGO_EXPECT_TRUE(a < LN_MAXDOUBLE - 0.1) ?
+       (JCGO_EXPECT_FALSE(a > -LN_MINDOUBLE - 0.1 && a < LN_MINDOUBLE + 0.1) ?
+       (a >= 0.0 ? exp(a + DBL_MANT_DIG * M_LN2) /
        ((double)(1L << (DBL_MANT_DIG / 2)) *
        (1L << ((DBL_MANT_DIG + 1) / 2))) : exp(a - DBL_MANT_DIG * M_LN2) *
        ((double)(1L << (DBL_MANT_DIG / 2)) *
        (1L << ((DBL_MANT_DIG + 1) / 2)))) : exp(a)) :
        a < LN_MAXDOUBLE + 0.9 ? exp(a - 1.0) * M_E : jcgo_fpInf;
 #endif
-  return v != (jdouble)1.0 ? v - (jdouble)1.0 : a;
+  return JCGO_EXPECT_TRUE(v != (jdouble)1.0) ? v - (jdouble)1.0 : a;
 #endif
  }
  if (JCGO_FP_NOTNAN(a) && a < (jdouble)0.0)
@@ -1510,12 +1526,13 @@ java_lang_VMMath__log10__D( jdouble a )
   return jcgo_fpNaN;
  if (JCGO_FP_FINITE(a))
  {
-  if (a != (jdouble)0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)0.0))
   {
 #ifdef JCGO_LONGDBL
    a = log10l(a);
 #else
-   a = a < DBL_MIN ? log10(a * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
+   a = JCGO_EXPECT_FALSE(a < DBL_MIN) ?
+        log10(a * ((double)(1L << ((DBL_MANT_DIG - 1) / 2)) *
         (1L << (DBL_MANT_DIG / 2)))) - (DBL_MANT_DIG - 1) * M_LN2 / M_LN10 :
         log10(a);
 #endif
@@ -1604,20 +1621,20 @@ java_lang_VMMath__log1p__D( jdouble a )
 #endif
  if (a < (jdouble)-1.0)
   return jcgo_fpNaN;
- if (JCGO_FP_FINITE(a) && a != (jdouble)-0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)-0.0))
  {
-  if (a != (jdouble)-1.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)-1.0))
   {
 #ifdef JCGO_MATHEXT
 #ifdef JCGO_LONGDBL
    a = log1pl(a);
 #else
-   if (a <= -DBL_MIN || a >= DBL_MIN)
+   if (JCGO_EXPECT_TRUE(a <= -DBL_MIN || a >= DBL_MIN))
     a = log1p(a);
 #endif
 #else
    v = a + (jdouble)1.0;
-   if (v != (jdouble)1.0)
+   if (JCGO_EXPECT_TRUE(v != (jdouble)1.0))
    {
 #ifdef JCGO_LONGDBL
     a = a / (v - (jdouble)1.0) * logl(v);
@@ -1713,7 +1730,7 @@ java_lang_VMMath__sinh__D( jdouble a )
 #endif
 #else
  int sign;
- if (JCGO_FP_FINITE(a) && a != (jdouble)-0.0)
+ if (JCGO_FP_FINITE(a) && JCGO_EXPECT_TRUE(a != (jdouble)-0.0))
  {
   sign = 0;
   if (a < (jdouble)0.0)
@@ -1722,11 +1739,11 @@ java_lang_VMMath__sinh__D( jdouble a )
    a = -a;
   }
 #ifdef JCGO_LONGDBL
-  a = a < (jdouble)(LN_MAXLDOUBLE + M_LN2l - 0.1) ? sinhl(a) :
-       a < (jdouble)(LN_MAXLDOUBLE + M_LN2l + 0.9) ?
+  a = JCGO_EXPECT_TRUE(a < (jdouble)(LN_MAXLDOUBLE + M_LN2l - 0.1)) ?
+       sinhl(a) : a < (jdouble)(LN_MAXLDOUBLE + M_LN2l + 0.9) ?
        sinhl(a - (jdouble)1.0) * M_El : jcgo_fpInf;
 #else
-  a = a < LN_MAXDOUBLE + M_LN2 - 0.1 ? sinh(a) :
+  a = JCGO_EXPECT_TRUE(a < LN_MAXDOUBLE + M_LN2 - 0.1) ? sinh(a) :
        a < LN_MAXDOUBLE + M_LN2 + 0.9 ? sinh(a - 1.0) * M_E : jcgo_fpInf;
 #endif
   if (sign)
@@ -1813,11 +1830,11 @@ java_lang_VMMath__cosh__D( jdouble a )
  if (JCGO_FP_FINITE(a))
  {
 #ifdef JCGO_LONGDBL
-  a = a < (jdouble)(LN_MAXLDOUBLE + M_LN2l - 0.1) ? coshl(a) :
-       a < (jdouble)(LN_MAXLDOUBLE + M_LN2l + 0.9) ?
+  a = JCGO_EXPECT_TRUE(a < (jdouble)(LN_MAXLDOUBLE + M_LN2l - 0.1)) ?
+       coshl(a) : a < (jdouble)(LN_MAXLDOUBLE + M_LN2l + 0.9) ?
        coshl(a - (jdouble)1.0) * M_El : jcgo_fpInf;
 #else
-  a = a < LN_MAXDOUBLE + M_LN2 - 0.1 ? cosh(a) :
+  a = JCGO_EXPECT_TRUE(a < LN_MAXDOUBLE + M_LN2 - 0.1) ? cosh(a) :
        a < LN_MAXDOUBLE + M_LN2 + 0.9 ? cosh(a - 1.0) * M_E : jcgo_fpInf;
 #endif
  }
@@ -1844,7 +1861,7 @@ java_lang_VMMath__tanh__D( jdouble a )
 #else
  if (JCGO_FP_FINITE(a))
  {
-  if (a != (jdouble)-0.0)
+  if (JCGO_EXPECT_TRUE(a != (jdouble)-0.0))
   {
 #ifdef JCGO_LONGDBL
    a = tanhl(a);

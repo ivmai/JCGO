@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -45,36 +45,36 @@
 
 JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_div( jint v1, jint v2 )
 {
- if (!v2)
+ if (JCGO_EXPECT_FALSE(!v2))
   jcgo_throwArithmeticExc();
- if (v2 != -1)
+ if (JCGO_EXPECT_TRUE(v2 != -1))
   return v1 / v2;
  return -v1;
 }
 
 JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_mod( jint v1, jint v2 )
 {
- if (!v2)
+ if (JCGO_EXPECT_FALSE(!v2))
   jcgo_throwArithmeticExc();
- if (v2 != -1)
+ if (JCGO_EXPECT_TRUE(v2 != -1))
   return v1 % v2;
  return 0;
 }
 
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_ldiv( jlong v1, jlong v2 )
 {
- if (v2 == (jlong)0L)
+ if (JCGO_EXPECT_FALSE(v2 == (jlong)0L))
   jcgo_throwArithmeticExc();
- if (v2 != (jlong)-1L)
+ if (JCGO_EXPECT_TRUE(v2 != (jlong)-1L))
   return v1 / v2;
  return -v1;
 }
 
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_lmod( jlong v1, jlong v2 )
 {
- if (v2 == (jlong)0L)
+ if (JCGO_EXPECT_FALSE(v2 == (jlong)0L))
   jcgo_throwArithmeticExc();
- if (v2 != (jlong)-1L)
+ if (JCGO_EXPECT_TRUE(v2 != (jlong)-1L))
   return v1 % v2;
  return (jlong)0L;
 }
@@ -83,19 +83,19 @@ JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_lmod( jlong v1, jlong v2 )
 
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_lshl( jlong v, int cnt )
 {
- return (unsigned)(cnt & 0x3f) < sizeof(jlong) * 8 ? v << (cnt & 0x3f) :
-         (jlong)0L;
+ return JCGO_EXPECT_TRUE((unsigned)(cnt & 0x3f) < sizeof(jlong) * 8) ?
+         v << (cnt & 0x3f) : (jlong)0L;
 }
 
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_lshr( jlong v, int cnt )
 {
- return (unsigned)(cnt & 0x3f) < sizeof(jlong) * 8 ? v >> (cnt & 0x3f) :
-         v < (jlong)0L ? (jlong)-1L : (jlong)0L;
+ return JCGO_EXPECT_TRUE((unsigned)(cnt & 0x3f) < sizeof(jlong) * 8) ?
+         v >> (cnt & 0x3f) : v < (jlong)0L ? (jlong)-1L : (jlong)0L;
 }
 
 JCGO_NOSEP_INLINE jlong JCGO_INLFRW_FASTCALL jcgo_lushr( jlong v, int cnt )
 {
- return (unsigned)(cnt & 0x3f) < sizeof(jlong) * 8 ?
+ return JCGO_EXPECT_TRUE((unsigned)(cnt & 0x3f) < sizeof(jlong) * 8) ?
          (jlong)(((u_jlong)v) >> (unsigned)(cnt & 0x3f)) : (jlong)0L;
 }
 

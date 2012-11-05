@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -184,7 +184,7 @@ JCGO_NOSEP_STATIC jObjectArr CFASTCALL jcgo_newMultiArray(
  jint index;
  jint len = lenlist[0];
  jObjectArr arr = (jObjectArr)jcgo_newArray(aclass, (--cnt) + dims, len);
- if (cnt > 0)
+ if (JCGO_EXPECT_FALSE(cnt > 0))
   for (index = 0; index < len; index++)
    JCGO_ARR_INTERNALACC(jObject, arr, index) =
     (jObject)jcgo_newMultiArray(aclass, cnt, dims, &lenlist[1]);
@@ -237,7 +237,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_arrayClone( jObject arr )
  if ((typenum = JCGO_METHODS_OF(arr)->jcgo_typeid - OBJT_jarray) < OBJT_void)
  {
   newarr = jcgo_newArray(JCGO_CORECLASS_FOR(typenum), 0, len);
-  if (len > 0)
+  if (JCGO_EXPECT_TRUE(len > 0))
   {
    ofs = jcgo_primitiveOffset[typenum];
    JCGO_MEM_HCOPY((void *)((volatile char JCGO_HPTR_MOD *)newarr + ofs),
@@ -249,7 +249,7 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_arrayClone( jObject arr )
   {
    newarr = jcgo_newArray(JCGO_OBJARR_COMPCLASS((jObjectArr)arr),
              typenum - OBJT_void, len);
-   if (len > 0)
+   if (JCGO_EXPECT_TRUE(len > 0))
     JCGO_MEM_HCOPY(&JCGO_ARR_INTERNALACC(jObject, (jObjectArr)newarr, 0),
      &JCGO_ARR_INTERNALACC(jObject, (jObjectArr)arr, 0),
      (JCGO_ALLOCSIZE_T)len * sizeof(jObject));
@@ -259,21 +259,21 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_arrayClone( jObject arr )
 
 JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkNull( jObject obj )
 {
- if (obj == jnull)
+ if (JCGO_EXPECT_FALSE(obj == jnull))
   jcgo_throwNullPtrExc();
  return obj;
 }
 
 JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkNullX( jObject obj )
 {
- if (obj == jnull)
+ if (JCGO_EXPECT_FALSE(obj == jnull))
   jcgo_throwNullPtrExcX();
  return obj;
 }
 
 JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_arrayLength( jObject arr )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
  return (jint)JCGO_FIELD_NZACCESS((jObjectArr)arr, length);
 }
@@ -282,7 +282,7 @@ JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_arrayLength( jObject arr )
 
 JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_arrayLengthX( jObject arr )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
  return (jint)JCGO_FIELD_NZACCESS((jObjectArr)arr, length);
 }
@@ -292,9 +292,9 @@ JCGO_NOSEP_INLINE jint JCGO_INLFRW_FASTCALL jcgo_arrayLengthX( jObject arr )
 JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccess(
  jObjectArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jObject, arr, index);
 }
@@ -302,7 +302,7 @@ JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccess(
 JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccessNZ(
  jObjectArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jObject, arr, index);
 }
@@ -310,9 +310,9 @@ JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccessNZ(
 JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccess(
  jbooleanArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jboolean, arr, index);
 }
@@ -320,7 +320,7 @@ JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccess(
 JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccessNZ(
  jbooleanArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jboolean, arr, index);
 }
@@ -328,9 +328,9 @@ JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccessNZ(
 JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccess(
  jbyteArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jbyte, arr, index);
 }
@@ -338,7 +338,7 @@ JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccess(
 JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccessNZ(
  jbyteArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jbyte, arr, index);
 }
@@ -346,9 +346,9 @@ JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccessNZ(
 JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccess(
  jcharArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jchar, arr, index);
 }
@@ -356,7 +356,7 @@ JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccess(
 JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccessNZ(
  jcharArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jchar, arr, index);
 }
@@ -364,9 +364,9 @@ JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccessNZ(
 JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccess(
  jshortArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jshort, arr, index);
 }
@@ -374,7 +374,7 @@ JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccess(
 JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccessNZ(
  jshortArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jshort, arr, index);
 }
@@ -382,9 +382,9 @@ JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccessNZ(
 JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccess( jintArr arr,
  jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jint, arr, index);
 }
@@ -392,7 +392,7 @@ JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccess( jintArr arr,
 JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccessNZ(
  jintArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jint, arr, index);
 }
@@ -400,9 +400,9 @@ JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccessNZ(
 JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccess(
  jlongArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jlong, arr, index);
 }
@@ -410,7 +410,7 @@ JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccess(
 JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccessNZ(
  jlongArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jlong, arr, index);
 }
@@ -418,9 +418,9 @@ JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccessNZ(
 JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccess(
  jfloatArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jfloat, arr, index);
 }
@@ -428,7 +428,7 @@ JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccess(
 JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccessNZ(
  jfloatArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jfloat, arr, index);
 }
@@ -436,9 +436,9 @@ JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccessNZ(
 JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccess(
  jdoubleArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExc();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jdouble, arr, index);
 }
@@ -446,7 +446,7 @@ JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccess(
 JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccessNZ(
  jdoubleArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
  return &JCGO_ARR_INTERNALACC(jdouble, arr, index);
 }
@@ -456,9 +456,9 @@ JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccessNZ(
 JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccessX(
  jObjectArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jObject, arr, index);
 }
@@ -466,7 +466,7 @@ JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccessX(
 JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccessNZX(
  jObjectArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jObject, arr, index);
 }
@@ -474,9 +474,9 @@ JCGO_NOSEP_INLINE jObject *JCGO_INLFRW_FASTCALL jcgo_jObjectArrAccessNZX(
 JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccessX(
  jbooleanArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jboolean, arr, index);
 }
@@ -484,7 +484,7 @@ JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccessX(
 JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccessNZX(
  jbooleanArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jboolean, arr, index);
 }
@@ -492,9 +492,9 @@ JCGO_NOSEP_INLINE jboolean *JCGO_INLFRW_FASTCALL jcgo_jbooleanArrAccessNZX(
 JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccessX(
  jbyteArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jbyte, arr, index);
 }
@@ -502,7 +502,7 @@ JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccessX(
 JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccessNZX(
  jbyteArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jbyte, arr, index);
 }
@@ -510,9 +510,9 @@ JCGO_NOSEP_INLINE jbyte *JCGO_INLFRW_FASTCALL jcgo_jbyteArrAccessNZX(
 JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccessX(
  jcharArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jchar, arr, index);
 }
@@ -520,7 +520,7 @@ JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccessX(
 JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccessNZX(
  jcharArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jchar, arr, index);
 }
@@ -528,9 +528,9 @@ JCGO_NOSEP_INLINE jchar *JCGO_INLFRW_FASTCALL jcgo_jcharArrAccessNZX(
 JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccessX(
  jshortArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jshort, arr, index);
 }
@@ -538,7 +538,7 @@ JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccessX(
 JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccessNZX(
  jshortArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jshort, arr, index);
 }
@@ -546,9 +546,9 @@ JCGO_NOSEP_INLINE jshort *JCGO_INLFRW_FASTCALL jcgo_jshortArrAccessNZX(
 JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccessX( jintArr arr,
  jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jint, arr, index);
 }
@@ -556,7 +556,7 @@ JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccessX( jintArr arr,
 JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccessNZX(
  jintArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jint, arr, index);
 }
@@ -564,9 +564,9 @@ JCGO_NOSEP_INLINE jint *JCGO_INLFRW_FASTCALL jcgo_jintArrAccessNZX(
 JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccessX(
  jlongArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jlong, arr, index);
 }
@@ -574,7 +574,7 @@ JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccessX(
 JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccessNZX(
  jlongArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jlong, arr, index);
 }
@@ -582,9 +582,9 @@ JCGO_NOSEP_INLINE jlong *JCGO_INLFRW_FASTCALL jcgo_jlongArrAccessNZX(
 JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccessX(
  jfloatArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jfloat, arr, index);
 }
@@ -592,7 +592,7 @@ JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccessX(
 JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccessNZX(
  jfloatArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jfloat, arr, index);
 }
@@ -600,9 +600,9 @@ JCGO_NOSEP_INLINE jfloat *JCGO_INLFRW_FASTCALL jcgo_jfloatArrAccessNZX(
 JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccessX(
  jdoubleArr arr, jint index )
 {
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jdouble, arr, index);
 }
@@ -610,7 +610,7 @@ JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccessX(
 JCGO_NOSEP_INLINE jdouble *JCGO_INLFRW_FASTCALL jcgo_jdoubleArrAccessNZX(
  jdoubleArr arr, jint index )
 {
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExcX();
  return &JCGO_ARR_INTERNALACC(jdouble, arr, index);
 }
@@ -657,7 +657,7 @@ JCGO_NOSEP_STATIC int CFASTCALL jcgo_instanceOf( int objId, int maxId,
  int typenum;
  int iface = 0;
  java_lang_Class aclass;
- if (obj != jnull)
+ if (JCGO_EXPECT_TRUE(obj != jnull))
  {
   typenum = JCGO_METHODS_OF(obj)->jcgo_typeid;
   if (dims < 0)
@@ -688,7 +688,7 @@ JCGO_NOSEP_STATIC int CFASTCALL jcgo_instanceOf( int objId, int maxId,
   }
   if (typenum >= objId && typenum <= maxId)
    return 1;
-  if (typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
+  if (JCGO_EXPECT_FALSE(typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX))
   {
 #ifdef OBJT_java_lang_Cloneable
    if (objId == OBJT_java_lang_Cloneable && typenum > OBJT_jarray)
@@ -719,11 +719,11 @@ JCGO_NOSEP_STATIC int CFASTCALL jcgo_instanceOf( int objId, int maxId,
 STATIC int CFASTCALL jcgo_isAssignable( java_lang_Class srcClass,
  java_lang_Class destClass, int srcDims, int destDims )
 {
- int typenum;
+ int typenum = ((jvtable)&JCGO_METHODS_OF(
+                JCGO_FIELD_NZACCESS(srcClass, vmdata)))->jcgo_typeid;
  int objId;
- if ((typenum = ((jvtable)&JCGO_METHODS_OF(
-     JCGO_FIELD_NZACCESS(srcClass, vmdata)))->jcgo_typeid) > OBJT_jarray &&
-     typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
+ if (JCGO_EXPECT_FALSE(typenum > OBJT_jarray &&
+     typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX))
  {
   if (typenum <= OBJT_jarray + OBJT_void)
    typenum = OBJT_jarray + OBJT_void;
@@ -736,9 +736,10 @@ STATIC int CFASTCALL jcgo_isAssignable( java_lang_Class srcClass,
   typenum = ((jvtable)&JCGO_METHODS_OF(
              JCGO_FIELD_NZACCESS(srcClass, vmdata)))->jcgo_typeid;
  }
- if ((objId = ((jvtable)&JCGO_METHODS_OF(
-     JCGO_FIELD_NZACCESS(destClass, vmdata)))->jcgo_typeid) > OBJT_jarray &&
-     objId < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
+ objId = ((jvtable)&JCGO_METHODS_OF(
+          JCGO_FIELD_NZACCESS(destClass, vmdata)))->jcgo_typeid;
+ if (JCGO_EXPECT_FALSE(objId > OBJT_jarray &&
+     objId < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX))
  {
   if (objId <= OBJT_jarray + OBJT_void)
    objId = OBJT_jarray + OBJT_void;
@@ -751,9 +752,9 @@ STATIC int CFASTCALL jcgo_isAssignable( java_lang_Class srcClass,
   objId = ((jvtable)&JCGO_METHODS_OF(
            JCGO_FIELD_NZACCESS(destClass, vmdata)))->jcgo_typeid;
  }
- if (srcDims == destDims)
+ if (JCGO_EXPECT_TRUE(srcDims == destDims))
  {
-  if (srcClass == destClass)
+  if (JCGO_EXPECT_TRUE(srcClass == destClass))
    return 1;
   if (typenum > OBJT_jarray && objId >= OBJT_jarray)
   {
@@ -781,7 +782,7 @@ STATIC int CFASTCALL jcgo_isAssignable( java_lang_Class srcClass,
  }
   else
   {
-   if (srcDims > destDims)
+   if (JCGO_EXPECT_FALSE(srcDims > destDims))
    {
     if (objId == OBJT_jarray)
      return 1;
@@ -801,8 +802,9 @@ STATIC int CFASTCALL jcgo_isAssignable( java_lang_Class srcClass,
 JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkCast0( int objId,
  int maxId, jObject obj )
 {
- if (obj != jnull && (unsigned)(JCGO_METHODS_OF(obj)->jcgo_typeid - objId) >
-     (unsigned)(maxId - objId))
+ if (obj != jnull &&
+     JCGO_EXPECT_FALSE((unsigned)(JCGO_METHODS_OF(obj)->jcgo_typeid - objId) >
+     (unsigned)(maxId - objId)))
   jcgo_throwClassCastExc();
  return obj;
 }
@@ -810,7 +812,8 @@ JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkCast0( int objId,
 JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkCast( int objId,
  int maxId, int dims, jObject obj )
 {
- if (obj != jnull && !jcgo_instanceOf(objId, maxId, dims, obj))
+ if (obj != jnull &&
+     JCGO_EXPECT_FALSE(!jcgo_instanceOf(objId, maxId, dims, obj)))
   jcgo_throwClassCastExc();
  return obj;
 }
@@ -824,9 +827,9 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_objArraySet( jObjectArr arr,
  int typenum;
  int destDims;
 #endif
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   JCGO_THROW_EXC(jnull);
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
   jcgo_throwArrayIndexExc();
 #ifdef OBJT_java_lang_VMThrowable
  if (obj != jnull)
@@ -841,8 +844,8 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_objArraySet( jObjectArr arr,
        typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
     srcClass = JCGO_OBJARR_COMPCLASS((jObjectArr)obj);
     else typenum = OBJT_jarray + OBJT_void - 1;
-   if (!jcgo_isAssignable(srcClass, destClass,
-       typenum - (OBJT_jarray + OBJT_void - 1), destDims))
+   if (JCGO_EXPECT_FALSE(!jcgo_isAssignable(srcClass, destClass,
+       typenum - (OBJT_jarray + OBJT_void - 1), destDims)))
     java_lang_VMThrowable__throwArrayStoreException0X__();
   }
  }
@@ -856,8 +859,9 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_objArraySet( jObjectArr arr,
 JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkCast0X( int objId,
  int maxId, jObject obj )
 {
- if (obj != jnull && (unsigned)(JCGO_METHODS_OF(obj)->jcgo_typeid - objId) >
-     (unsigned)(maxId - objId))
+ if (obj != jnull &&
+     JCGO_EXPECT_FALSE((unsigned)(JCGO_METHODS_OF(obj)->jcgo_typeid - objId) >
+     (unsigned)(maxId - objId)))
   jcgo_throwClassCastExcX();
  return obj;
 }
@@ -865,7 +869,8 @@ JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkCast0X( int objId,
 JCGO_NOSEP_INLINE jObject JCGO_INLFRW_FASTCALL jcgo_checkCastX( int objId,
  int maxId, int dims, jObject obj )
 {
- if (obj != jnull && !jcgo_instanceOf(objId, maxId, dims, obj))
+ if (obj != jnull &&
+     JCGO_EXPECT_FALSE(!jcgo_instanceOf(objId, maxId, dims, obj)))
   jcgo_throwClassCastExcX();
  return obj;
 }
@@ -877,9 +882,9 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_objArraySetX( jObjectArr arr,
  java_lang_Class destClass;
  int typenum;
  int destDims;
- if (arr == jnull)
+ if (JCGO_EXPECT_FALSE(arr == jnull))
   jcgo_throwNullPtrExcX();
- if ((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index)
+ if (JCGO_EXPECT_FALSE((u_jint)JCGO_ARRAY_NZLENGTH(arr) <= (u_jint)index))
  {
 #ifdef JCGO_INDEXCHK
   jcgo_throwArrayIndexExcX();
@@ -899,8 +904,8 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_objArraySetX( jObjectArr arr,
        typenum < OBJT_jarray + OBJT_void + JCGO_DIMS_MAX)
     srcClass = JCGO_OBJARR_COMPCLASS((jObjectArr)obj);
     else typenum = OBJT_jarray + OBJT_void - 1;
-   if (!jcgo_isAssignable(srcClass, destClass,
-       typenum - (OBJT_jarray + OBJT_void - 1), destDims))
+   if (JCGO_EXPECT_FALSE(!jcgo_isAssignable(srcClass, destClass,
+       typenum - (OBJT_jarray + OBJT_void - 1), destDims)))
     jcgo_throwArrayStoreExcX();
   }
  }
@@ -925,7 +930,7 @@ JCGO_NOSEP_INLINE java_lang_Class CFASTCALL jcgo_findClass(
   cmp = java_lang_VMClassLoader__compareClassNames0X__LsLc(name,
          (java_lang_Class)JCGO_ARR_INTERNALACC(jObject,
          (jObjectArr)JCGO_OBJREF_OF(jcgo_classTable), i));
-  if (!cmp)
+  if (JCGO_EXPECT_FALSE(!cmp))
   {
    if (nextInner && ++i >= (unsigned)JCGO_ARRAY_NZLENGTH(
        (jObjectArr)JCGO_OBJREF_OF(jcgo_classTable)))
@@ -936,7 +941,7 @@ JCGO_NOSEP_INLINE java_lang_Class CFASTCALL jcgo_findClass(
   if (cmp > 0)
    low = i + 1;
    else high = i;
- } while (low < high);
+ } while (JCGO_EXPECT_TRUE(low < high));
 #endif
  return jnull;
 }

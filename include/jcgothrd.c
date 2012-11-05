@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -311,7 +311,7 @@ STATIC void CFASTCALL jcgo_threadYield( void )
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_PARALLEL
  JCGO_THREAD_YIELD;
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
@@ -320,7 +320,7 @@ STATIC void CFASTCALL jcgo_threadYield( void )
  (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
  JCGO_THREAD_YIELD;
  (void)JCGO_MUTEX_LOCK(&jcgo_nonParallelMutex);
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
@@ -369,18 +369,19 @@ STATIC int CFASTCALL jcgo_restoreTCB( struct jcgo_tcb_s *tcb )
 #endif
 #ifdef JCGO_PARALLEL
  JCGO_GET_CURTCB(&othertcb);
- if (othertcb != tcb)
+ if (JCGO_EXPECT_FALSE(othertcb != tcb))
   return -1;
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
   } while (tcb->suspended);
 #else
- if (tcb->jcgo_methods != (jvtable)(&java_lang_Object_methods))
+ if (JCGO_EXPECT_FALSE(tcb->jcgo_methods !=
+     (jvtable)(&java_lang_Object_methods)))
   return -1;
  (void)JCGO_MUTEX_LOCK(&jcgo_nonParallelMutex);
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
@@ -415,7 +416,7 @@ int CFASTCALL jcgo_monEnterInner( jObject obj, struct jcgo_tcb_s *tcb )
 #ifdef JCGO_PARALLEL
  othertcb = JCGO_GETMON_OF(obj);
 #endif
- if (othertcb != NULL)
+ if (JCGO_EXPECT_FALSE(othertcb != NULL))
  {
   if (othertcb->monObj != obj)
   {
@@ -449,7 +450,7 @@ int CFASTCALL jcgo_monEnterInner( jObject obj, struct jcgo_tcb_s *tcb )
  }
   else JCGO_FIELD_NZACCESS(obj, jcgo_mon) = tcb;
  JCGO_MONCRIT_END
- if (othertcb != NULL)
+ if (JCGO_EXPECT_FALSE(othertcb != NULL))
  {
   do
   {
@@ -476,7 +477,8 @@ STATIC int CFASTCALL jcgo_monLeaveInner( jObject obj, struct jcgo_tcb_s *tcb )
  struct jcgo_tcb_s *prevtcb2;
  int res = 0;
  JCGO_MONCRIT_BEGIN(obj)
- if ((othertcb = JCGO_GETMON_OF(obj)) != tcb)
+ othertcb = JCGO_GETMON_OF(obj);
+ if (JCGO_EXPECT_FALSE(othertcb != tcb))
  {
   if (othertcb != NULL && othertcb->monObj == obj &&
       othertcb->tcbMonOwner == tcb)
@@ -488,7 +490,7 @@ STATIC int CFASTCALL jcgo_monLeaveInner( jObject obj, struct jcgo_tcb_s *tcb )
      break;
    if (othertcb != NULL)
    {
-    if (othertcb->suspended)
+    if (JCGO_EXPECT_FALSE(othertcb->suspended != 0))
      for (prevtcb2 = othertcb; (othertcb2 = prevtcb2->tcbWaitNext) != NULL;
           prevtcb2 = othertcb2)
       if ((othertcb2->suspended | othertcb2->waitsleep) == 0)
@@ -533,12 +535,12 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_monitorEnter( jObject obj )
 #ifndef JCGO_PARALLEL
  jObject ex;
 #endif
- if (obj == jnull)
+ if (JCGO_EXPECT_FALSE(obj == jnull))
   JCGO_THROW_EXC(jnull);
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_PARALLEL
  jcgo_checkStop(tcb);
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
@@ -548,7 +550,8 @@ JCGO_NOSEP_STATIC jObject CFASTCALL jcgo_monitorEnter( jObject obj )
 #else
  if (!jcgo_monEnterInner(obj, tcb))
   return jnull;
- if ((ex = tcb->stopExc) != jnull && !tcb->insideCallback)
+ ex = tcb->stopExc;
+ if (JCGO_EXPECT_FALSE(ex != jnull) && !tcb->insideCallback)
  {
   tcb->stopExc = jnull;
   if (obj != jnull)
@@ -564,16 +567,16 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_monitorLeave( jObject obj )
  struct jcgo_tcb_s *tcb;
 #ifdef JCGO_PARALLEL
  JCGO_GET_CURTCB(&tcb);
- if (obj != jnull)
+ if (JCGO_EXPECT_TRUE(obj != jnull))
   jcgo_monLeaveInner(obj, tcb);
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
   } while (tcb->suspended);
  jcgo_checkStop(tcb);
 #else
- if (obj != jnull)
+ if (JCGO_EXPECT_TRUE(obj != jnull))
  {
   JCGO_GET_CURTCB(&tcb);
   jcgo_monLeaveInner(obj, tcb);
@@ -587,13 +590,13 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_monitorEnter(
  struct jcgo_curmon_s *pCurMon, jObject obj )
 {
  struct jcgo_tcb_s *tcb;
- if (obj == jnull)
+ if (JCGO_EXPECT_FALSE(obj == jnull))
   JCGO_THROW_EXC(jnull);
  pCurMon->monObj = jnull;
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_PARALLEL
  jcgo_checkStop(tcb);
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
@@ -604,7 +607,8 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_monitorEnter(
  pCurMon->last = tcb->pCurMon;
  *(struct jcgo_curmon_s *volatile *)&tcb->pCurMon = pCurMon;
 #ifndef JCGO_PARALLEL
- if ((obj = tcb->stopExc) != jnull && !tcb->insideCallback)
+ obj = tcb->stopExc;
+ if (JCGO_EXPECT_FALSE(obj != jnull) && !tcb->insideCallback)
  {
   tcb->stopExc = jnull;
   JCGO_THROW_EXC(obj);
@@ -623,7 +627,7 @@ JCGO_NOSEP_STATIC void CFASTCALL jcgo_monitorLeave( void )
  if ((obj = pCurMon->monObj) != jnull)
   jcgo_monLeaveInner(obj, tcb);
 #ifdef JCGO_PARALLEL
- if (tcb->suspended && !tcb->insideCallback)
+ if (JCGO_EXPECT_FALSE(tcb->suspended != 0) && !tcb->insideCallback)
   do
   {
    (void)JCGO_EVENT_WAIT(&tcb->resumeEvent);
@@ -644,7 +648,7 @@ JCGO_NOSEP_INLINE struct jcgo_tcb_s *CFASTCALL jcgo_getSelfTCB( void )
 #else
  JCGO_THREAD_T thrhandle;
  tcb = NULL;
- if (!JCGO_THREAD_IDENTSELF(&thrhandle))
+ if (JCGO_EXPECT_TRUE(!JCGO_THREAD_IDENTSELF(&thrhandle)))
  {
   tcb = &jcgo_mainTCB;
   while (!JCGO_THREADT_ISEQUALIDENT(&tcb->thrhandle, &thrhandle))
@@ -744,7 +748,7 @@ EXTRASTATIC void *GC_CALLBACK jcgo_threadLaunchBody(
   JCGO_TRY_CATCHALLSTORE(&throwable)
  }
 #ifndef JCGO_NOFATALMSG
- if (throwable != jnull)
+ if (JCGO_EXPECT_FALSE(throwable != jnull))
   jcgo_printFatalMsg("Out of memory or internal error in non-main thread!");
 #endif
 #endif
