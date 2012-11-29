@@ -3,7 +3,7 @@
  * VM specific methods for native direct byte buffer implementation.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  **
  * Class specification origin: GNU Classpath v0.93 vm/reference
@@ -140,6 +140,8 @@ final class VMDirectByteBuffer /* hard-coded class name */
 
  static final Object newDirectByteBuffer0X(Object vmdata, long capacity)
  { /* called from native code */
+  if (vmdata == null)
+   throw new NullPointerException();
   if (capacity < 0L)
    throw new NegativeArraySizeException();
   int len = capacity < (long) (-1 >>> 1) ? (int) capacity : -1 >>> 1;
@@ -148,9 +150,10 @@ final class VMDirectByteBuffer /* hard-coded class name */
  }
 
  static final Object getDirectBufferAddressVmData0X(Object bufObj)
-  throws ClassCastException
  { /* called from native code */
-  return ((DirectPointer) ((DirectByteBufferImpl) bufObj).address).vmdata;
+  return bufObj instanceof DirectByteBufferImpl ?
+          ((DirectPointer) ((DirectByteBufferImpl) bufObj).address).vmdata :
+          null;
  }
 
  static final int getDirectBufferAddressOffset0X(Object bufObj)
@@ -159,9 +162,9 @@ final class VMDirectByteBuffer /* hard-coded class name */
  }
 
  static final long getDirectBufferCapacity0X(Object bufObj)
-  throws ClassCastException
  { /* called from native code */
-  return ((DirectByteBufferImpl) bufObj).capacity();
+  return bufObj instanceof DirectByteBufferImpl ?
+          ((DirectByteBufferImpl) bufObj).capacity() : -1L;
  }
 
  private static native Object allocate0(int capacity); /* JVM-core */

@@ -1272,9 +1272,10 @@ jcgo_JniGetDirectBufferAddress( JNIEnv *pJniEnv, jobject buf )
  addr =
   (void *)java_nio_VMDirectByteBuffer__getDirectBufferAddressVmData0X__Lo(
   (java_lang_Object)buffer);
- addr = (char JCGO_HPTR_MOD *)addr + (JCGO_ALLOCSIZE_T)
-         java_nio_VMDirectByteBuffer__getDirectBufferAddressOffset0X__Lo(
-         (java_lang_Object)buffer);
+ if (addr != NULL)
+  addr = (char JCGO_HPTR_MOD *)addr + (JCGO_ALLOCSIZE_T)
+          java_nio_VMDirectByteBuffer__getDirectBufferAddressOffset0X__Lo(
+          (java_lang_Object)buffer);
  JCGO_NATCBACK_END(pJniEnv)
 #endif
  return (void *)addr;
