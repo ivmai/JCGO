@@ -150,21 +150,24 @@ final class VMDirectByteBuffer /* hard-coded class name */
  }
 
  static final Object getDirectBufferAddressVmData0X(Object bufObj)
+  throws ClassCastException
  { /* called from native code */
-  return bufObj instanceof DirectByteBufferImpl ?
-          ((DirectPointer) ((DirectByteBufferImpl) bufObj).address).vmdata :
-          null;
+  Pointer address = ((Buffer) bufObj).address;
+  return address instanceof DirectPointer ?
+          ((DirectPointer) address).vmdata : null;
  }
 
  static final int getDirectBufferAddressOffset0X(Object bufObj)
+  throws ClassCastException
  { /* called from native code */
-  return ((DirectPointer) ((DirectByteBufferImpl) bufObj).address).offset;
+  return ((DirectPointer) ((Buffer) bufObj).address).offset;
  }
 
  static final long getDirectBufferCapacity0X(Object bufObj)
+  throws ClassCastException
  { /* called from native code */
-  return bufObj instanceof DirectByteBufferImpl ?
-          ((DirectByteBufferImpl) bufObj).capacity() : -1L;
+  Buffer buf = (Buffer) bufObj;
+  return buf.address != null ? buf.capacity() : -1;
  }
 
  private static native Object allocate0(int capacity); /* JVM-core */
