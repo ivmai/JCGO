@@ -116,6 +116,8 @@ JCGO_NOSEP_INLINE int CFASTCALL jcgo_restoreTCB( struct jcgo_tcb_s *tcb )
 
 #define JCGO_JNI_GETTCB(pJniEnv) ((struct jcgo_tcb_s *)((volatile char *)pJniEnv - JCGO_OFFSET_OF(struct jcgo_tcb_s, jniEnv)))
 
+#define JCGO_ACCMOD_FINAL 0x10
+
 #ifdef JCGO_SEHTRY
 #define JCGO_TRY_CATCHIGNOREALL(tcb) { if (tcb->throwable != jnull) { tcb->throwable = jnull; goto jcgo_tryallcaught; } } JCGO_TRY_SEHNOP; jcgo_tryallcaught:;
 #else

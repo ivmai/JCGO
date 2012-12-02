@@ -50,7 +50,6 @@
 
 #define JCGO_ACCMOD_PRIVATE 0x2
 #define JCGO_ACCMOD_STATIC 0x8
-#define JCGO_ACCMOD_FINAL 0x10
 
 #ifdef OBJT_java_lang_reflect_VMMethod
 

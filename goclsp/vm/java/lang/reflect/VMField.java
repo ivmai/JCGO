@@ -3,7 +3,7 @@
  * VM specific methods for Java "Field" implementation.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
  * All rights reserved.
  */
 
@@ -87,28 +87,32 @@ final class VMField /* hard-coded class name */
  {
   checkAllowGet(field, obj, caller);
   Class type = getType(field);
+  int mods = getModifiersInternal(field);
   if (type == double.class)
-   return new Double(getDouble0(fieldObjectOrClass(field, obj), field.slot));
+   return new Double(getDouble0(fieldObjectOrClass(field, obj), field.slot,
+           mods));
   if (type == float.class)
-   return new Float(getFloat0(fieldObjectOrClass(field, obj), field.slot));
+   return new Float(getFloat0(fieldObjectOrClass(field, obj), field.slot,
+           mods));
   if (type == long.class)
-   return new Long(getLong0(fieldObjectOrClass(field, obj), field.slot));
+   return new Long(getLong0(fieldObjectOrClass(field, obj), field.slot,
+           mods));
   if (type == int.class)
    return new Integer(getInt0(fieldObjectOrClass(field, obj), field.slot,
-           TYPECODE_INT));
+           mods, TYPECODE_INT));
   if (type == short.class)
    return new Short((short) getInt0(fieldObjectOrClass(field, obj),
-           field.slot, TYPECODE_SHORT));
+           field.slot, mods, TYPECODE_SHORT));
   if (type == char.class)
    return new Character((char) getInt0(fieldObjectOrClass(field, obj),
-           field.slot, TYPECODE_CHAR));
+           field.slot, mods, TYPECODE_CHAR));
   if (type == byte.class)
    return new Byte((byte) getInt0(fieldObjectOrClass(field, obj), field.slot,
-           TYPECODE_BYTE));
+           mods, TYPECODE_BYTE));
   if (type == boolean.class)
-   return getInt0(fieldObjectOrClass(field, obj), field.slot,
+   return getInt0(fieldObjectOrClass(field, obj), field.slot, mods,
            TYPECODE_BOOLEAN) != 0 ? Boolean.TRUE : Boolean.FALSE;
-  return get0(fieldObjectOrClass(field, obj), field.slot);
+  return get0(fieldObjectOrClass(field, obj), field.slot, mods);
  }
 
  static final boolean getBoolean(Field field, Object obj, Class caller)
@@ -118,7 +122,7 @@ final class VMField /* hard-coded class name */
   if (getType(field) != boolean.class)
    throw new IllegalArgumentException("field type mismatch");
   return getInt0(fieldObjectOrClass(field, obj), field.slot,
-          TYPECODE_BOOLEAN) != 0;
+          getModifiersInternal(field), TYPECODE_BOOLEAN) != 0;
  }
 
  static final byte getByte(Field field, Object obj, Class caller)
@@ -128,7 +132,7 @@ final class VMField /* hard-coded class name */
   if (getType(field) != byte.class)
    throw new IllegalArgumentException("field type mismatch");
   return (byte) getInt0(fieldObjectOrClass(field, obj), field.slot,
-          TYPECODE_BYTE);
+          getModifiersInternal(field), TYPECODE_BYTE);
  }
 
  static final char getChar(Field field, Object obj, Class caller)
@@ -138,7 +142,7 @@ final class VMField /* hard-coded class name */
   if (getType(field) != char.class)
    throw new IllegalArgumentException("field type mismatch");
   return (char) getInt0(fieldObjectOrClass(field, obj), field.slot,
-          TYPECODE_CHAR);
+          getModifiersInternal(field), TYPECODE_CHAR);
  }
 
  static final short getShort(Field field, Object obj, Class caller)
@@ -154,7 +158,7 @@ final class VMField /* hard-coded class name */
     else throw new IllegalArgumentException("field type mismatch");
   }
   return (short) getInt0(fieldObjectOrClass(field, obj), field.slot,
-          typecode);
+          getModifiersInternal(field), typecode);
  }
 
  static final int getInt(Field field, Object obj, Class caller)
@@ -169,7 +173,8 @@ final class VMField /* hard-coded class name */
  {
   checkAllowGet(field, obj, caller);
   if (getType(field) == long.class)
-   return getLong0(fieldObjectOrClass(field, obj), field.slot);
+   return getLong0(fieldObjectOrClass(field, obj), field.slot,
+           getModifiersInternal(field));
   return getIntInner(field, obj);
  }
 
@@ -179,9 +184,11 @@ final class VMField /* hard-coded class name */
   checkAllowGet(field, obj, caller);
   Class type = getType(field);
   if (type == float.class)
-   return getFloat0(fieldObjectOrClass(field, obj), field.slot);
+   return getFloat0(fieldObjectOrClass(field, obj), field.slot,
+           getModifiersInternal(field));
   if (type == long.class)
-   return getLong0(fieldObjectOrClass(field, obj), field.slot);
+   return getLong0(fieldObjectOrClass(field, obj), field.slot,
+           getModifiersInternal(field));
   return getIntInner(field, obj);
  }
 
@@ -191,11 +198,14 @@ final class VMField /* hard-coded class name */
   checkAllowGet(field, obj, caller);
   Class type = getType(field);
   if (type == double.class)
-   return getDouble0(fieldObjectOrClass(field, obj), field.slot);
+   return getDouble0(fieldObjectOrClass(field, obj), field.slot,
+           getModifiersInternal(field));
   if (type == float.class)
-   return getFloat0(fieldObjectOrClass(field, obj), field.slot);
+   return getFloat0(fieldObjectOrClass(field, obj), field.slot,
+           getModifiersInternal(field));
   if (type == long.class)
-   return getLong0(fieldObjectOrClass(field, obj), field.slot);
+   return getLong0(fieldObjectOrClass(field, obj), field.slot,
+           getModifiersInternal(field));
   return getIntInner(field, obj);
  }
 
@@ -204,12 +214,13 @@ final class VMField /* hard-coded class name */
  {
   checkAllowWrite(field, obj, caller);
   Class type = getType(field);
+  int mods = getModifiersInternal(field);
   if (type == boolean.class)
   {
    if (!(value instanceof Boolean))
     throw new IllegalArgumentException("field type mismatch");
    int intValue = ((Boolean) value).booleanValue() ? 1 : 0;
-   setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_BOOLEAN,
+   setInt0(fieldObjectOrClass(field, obj), field.slot, mods, TYPECODE_BOOLEAN,
     intValue);
   }
    else if (type == byte.class)
@@ -217,7 +228,7 @@ final class VMField /* hard-coded class name */
     if (!(value instanceof Byte))
      throw new IllegalArgumentException("field type mismatch");
     int intValue = ((Byte) value).intValue();
-    setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_BYTE,
+    setInt0(fieldObjectOrClass(field, obj), field.slot, mods, TYPECODE_BYTE,
      intValue);
    }
     else if (type == char.class)
@@ -225,7 +236,7 @@ final class VMField /* hard-coded class name */
      if (!(value instanceof Character))
       throw new IllegalArgumentException("field type mismatch");
      int intValue = ((Character) value).charValue();
-     setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_CHAR,
+     setInt0(fieldObjectOrClass(field, obj), field.slot, mods, TYPECODE_CHAR,
       intValue);
     }
      else if (type == short.class)
@@ -236,13 +247,13 @@ final class VMField /* hard-coded class name */
        else if (value instanceof Byte)
         intValue = ((Byte) value).intValue();
         else throw new IllegalArgumentException("field type mismatch");
-      setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_SHORT,
-       intValue);
+      setInt0(fieldObjectOrClass(field, obj), field.slot, mods,
+       TYPECODE_SHORT, intValue);
      }
       else if (type == int.class)
       {
        int intValue = unwrapIntValue(value);
-       setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_INT,
+       setInt0(fieldObjectOrClass(field, obj), field.slot, mods, TYPECODE_INT,
         intValue);
       }
        else if (type == long.class)
@@ -251,23 +262,23 @@ final class VMField /* hard-coded class name */
         if (value instanceof Long)
          longValue = ((Long) value).longValue();
          else longValue = unwrapIntValue(value);
-        setLong0(fieldObjectOrClass(field, obj), longValue, field.slot);
+        setLong0(fieldObjectOrClass(field, obj), longValue, field.slot, mods);
        }
         else if (type == float.class)
          setFloat0(fieldObjectOrClass(field, obj), value instanceof Float ||
           value instanceof Long ? ((Number) value).floatValue() :
-          unwrapIntValue(value), field.slot);
+          unwrapIntValue(value), field.slot, mods);
          else if (type == double.class)
           setDouble0(fieldObjectOrClass(field, obj),
            value instanceof Double || value instanceof Float ||
            value instanceof Long ? ((Number) value).doubleValue() :
-           unwrapIntValue(value), field.slot);
+           unwrapIntValue(value), field.slot, mods);
           else
           {
            if (value != null && !type.isInstance(value))
             throw new IllegalArgumentException(
                    "field reference type mismatch");
-           set0(fieldObjectOrClass(field, obj), value, field.slot);
+           set0(fieldObjectOrClass(field, obj), value, field.slot, mods);
           }
  }
 
@@ -278,8 +289,8 @@ final class VMField /* hard-coded class name */
   checkAllowWrite(field, obj, caller);
   if (getType(field) != boolean.class)
    throw new IllegalArgumentException("field type mismatch");
-  setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_BOOLEAN,
-   value ? 1 : 0);
+  setInt0(fieldObjectOrClass(field, obj), field.slot,
+   getModifiersInternal(field), TYPECODE_BOOLEAN, value ? 1 : 0);
  }
 
  static final void setByte(Field field, Object obj, byte value, Class caller)
@@ -288,10 +299,11 @@ final class VMField /* hard-coded class name */
   checkAllowWrite(field, obj, caller);
   Class type = getType(field);
   if (type == byte.class)
-   setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_BYTE, value);
+   setInt0(fieldObjectOrClass(field, obj), field.slot,
+    getModifiersInternal(field), TYPECODE_BYTE, value);
    else if (type == short.class)
-    setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_SHORT,
-     value);
+    setInt0(fieldObjectOrClass(field, obj), field.slot,
+     getModifiersInternal(field), TYPECODE_SHORT, value);
     else setIntInner(field, obj, value);
  }
 
@@ -300,7 +312,8 @@ final class VMField /* hard-coded class name */
  {
   checkAllowWrite(field, obj, caller);
   if (getType(field) == char.class)
-   setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_CHAR, value);
+   setInt0(fieldObjectOrClass(field, obj), field.slot,
+    getModifiersInternal(field), TYPECODE_CHAR, value);
    else setIntInner(field, obj, value);
  }
 
@@ -310,7 +323,8 @@ final class VMField /* hard-coded class name */
  {
   checkAllowWrite(field, obj, caller);
   if (getType(field) == short.class)
-   setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_SHORT, value);
+   setInt0(fieldObjectOrClass(field, obj), field.slot,
+    getModifiersInternal(field), TYPECODE_SHORT, value);
    else setIntInner(field, obj, value);
  }
 
@@ -326,15 +340,16 @@ final class VMField /* hard-coded class name */
  {
   checkAllowWrite(field, obj, caller);
   Class type = getType(field);
+  int mods = getModifiersInternal(field);
   if (type == long.class)
-   setLong0(fieldObjectOrClass(field, obj), value, field.slot);
+   setLong0(fieldObjectOrClass(field, obj), value, field.slot, mods);
    else if (type == float.class)
-    setFloat0(fieldObjectOrClass(field, obj), value, field.slot);
+    setFloat0(fieldObjectOrClass(field, obj), value, field.slot, mods);
     else
     {
      if (type != double.class)
       throw new IllegalArgumentException("field type mismatch");
-     setDouble0(fieldObjectOrClass(field, obj), value, field.slot);
+     setDouble0(fieldObjectOrClass(field, obj), value, field.slot, mods);
     }
  }
 
@@ -344,13 +359,14 @@ final class VMField /* hard-coded class name */
  {
   checkAllowWrite(field, obj, caller);
   Class type = getType(field);
+  int mods = getModifiersInternal(field);
   if (type == float.class)
-   setFloat0(fieldObjectOrClass(field, obj), value, field.slot);
+   setFloat0(fieldObjectOrClass(field, obj), value, field.slot, mods);
    else
    {
     if (type != double.class)
      throw new IllegalArgumentException("field type mismatch");
-    setDouble0(fieldObjectOrClass(field, obj), value, field.slot);
+    setDouble0(fieldObjectOrClass(field, obj), value, field.slot, mods);
    }
  }
 
@@ -361,7 +377,8 @@ final class VMField /* hard-coded class name */
   checkAllowWrite(field, obj, caller);
   if (getType(field) != double.class)
    throw new IllegalArgumentException("field type mismatch");
-  setDouble0(fieldObjectOrClass(field, obj), value, field.slot);
+  setDouble0(fieldObjectOrClass(field, obj), value, field.slot,
+   getModifiersInternal(field));
  }
 
  static final Field createNonFinalAccessible(Field field)
@@ -560,23 +577,26 @@ final class VMField /* hard-coded class name */
       typecode = TYPECODE_BYTE;
       else throw new IllegalArgumentException("field type mismatch");
   }
-  return getInt0(fieldObjectOrClass(field, obj), field.slot, typecode);
+  return getInt0(fieldObjectOrClass(field, obj), field.slot,
+          getModifiersInternal(field), typecode);
  }
 
  private static void setIntInner(Field field, Object obj, int value)
  {
   Class type = getType(field);
+  int mods = getModifiersInternal(field);
   if (type == int.class)
-   setInt0(fieldObjectOrClass(field, obj), field.slot, TYPECODE_INT, value);
+   setInt0(fieldObjectOrClass(field, obj), field.slot, mods, TYPECODE_INT,
+    value);
    else if (type == long.class)
-    setLong0(fieldObjectOrClass(field, obj), value, field.slot);
+    setLong0(fieldObjectOrClass(field, obj), value, field.slot, mods);
     else if (type == float.class)
-     setFloat0(fieldObjectOrClass(field, obj), value, field.slot);
+     setFloat0(fieldObjectOrClass(field, obj), value, field.slot, mods);
      else
      {
       if (type != double.class)
        throw new IllegalArgumentException("field type mismatch");
-      setDouble0(fieldObjectOrClass(field, obj), value, field.slot);
+      setDouble0(fieldObjectOrClass(field, obj), value, field.slot, mods);
      }
  }
 
@@ -685,35 +705,35 @@ final class VMField /* hard-coded class name */
  private static native String[] getFieldsSignature0(
    Class klass); /* JVM-core */ /* const data */
 
- private static native int getInt0(Object objOrClass, int slot,
+ private static native int getInt0(Object objOrClass, int slot, int mods,
    int typecode); /* JVM-core */
 
- private static native int setInt0(Object objOrClass, int slot, int typecode,
-   int value); /* JVM-core */
+ private static native int setInt0(Object objOrClass, int slot, int mods,
+   int typecode, int value); /* JVM-core */
 
  private static native long getLong0(Object objOrClass,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native int setLong0(Object objOrClass, long value,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native float getFloat0(Object objOrClass,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native int setFloat0(Object objOrClass, float value,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native double getDouble0(Object objOrClass,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native int setDouble0(Object objOrClass, double value,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native Object get0(Object objOrClass,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native int set0(Object objOrClass, Object value,
-   int slot); /* JVM-core */
+   int slot, int mods); /* JVM-core */
 
  private static native long objectFieldOffset0(Class aclass,
    int slot); /* JVM-core */

@@ -107,10 +107,41 @@ java_lang_reflect_VMField__getFieldsSignature0__Lc( java_lang_Class klass )
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL
-java_lang_reflect_VMField__getInt0__LoII( java_lang_Object objOrClass,
- jint slot, jint typecode )
+java_lang_reflect_VMField__getInt0__LoIII( java_lang_Object objOrClass,
+ jint slot, jint mods, jint typecode )
 {
  jint value = 0;
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & JCGO_ACCMOD_VOLATILE) != 0)
+ {
+  switch ((int)typecode)
+  {
+  case JCGO_FIELDTYPECODE_BOOLEAN:
+   value = jcgo_AO_fetchZ((volatile jboolean *)
+            ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+   break;
+  case JCGO_FIELDTYPECODE_BYTE:
+   value = jcgo_AO_fetchB((volatile jbyte *)
+            ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+   break;
+  case JCGO_FIELDTYPECODE_CHAR:
+   value = (jint)jcgo_AO_fetchC((volatile jchar *)
+            ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+   break;
+  case JCGO_FIELDTYPECODE_SHORT:
+   value = jcgo_AO_fetchS((volatile jshort *)
+            ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+   break;
+  case JCGO_FIELDTYPECODE_INT:
+   value = jcgo_AO_fetchI((volatile jint *)
+            ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+   break;
+  }
+  return value;
+ }
+#endif
+#endif
  switch ((int)typecode)
  {
  case JCGO_FIELDTYPECODE_BOOLEAN:
@@ -138,9 +169,40 @@ java_lang_reflect_VMField__getInt0__LoII( java_lang_Object objOrClass,
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL
-java_lang_reflect_VMField__setInt0__LoIII( java_lang_Object objOrClass,
- jint slot, jint typecode, jint value )
+java_lang_reflect_VMField__setInt0__LoIIII( java_lang_Object objOrClass,
+ jint slot, jint mods, jint typecode, jint value )
 {
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_FINAL)) != 0)
+ {
+  switch ((int)typecode)
+  {
+  case JCGO_FIELDTYPECODE_BOOLEAN:
+   jcgo_AO_storeZ((volatile jboolean *)((char *)&JCGO_METHODS_OF(objOrClass) +
+    (unsigned)slot), (jboolean)(value != 0));
+   break;
+  case JCGO_FIELDTYPECODE_BYTE:
+   jcgo_AO_storeB((volatile jbyte *)((char *)&JCGO_METHODS_OF(objOrClass) +
+    (unsigned)slot), (jbyte)value);
+   break;
+  case JCGO_FIELDTYPECODE_CHAR:
+   jcgo_AO_storeC((volatile jchar *)((char *)&JCGO_METHODS_OF(objOrClass) +
+    (unsigned)slot), (jchar)value);
+   break;
+  case JCGO_FIELDTYPECODE_SHORT:
+   jcgo_AO_storeS((volatile jshort *)((char *)&JCGO_METHODS_OF(objOrClass) +
+    (unsigned)slot), (jshort)value);
+   break;
+  case JCGO_FIELDTYPECODE_INT:
+   jcgo_AO_storeI((volatile jint *)((char *)&JCGO_METHODS_OF(objOrClass) +
+    (unsigned)slot), value);
+   break;
+  }
+  return 0;
+ }
+#endif
+#endif
  switch ((int)typecode)
  {
  case JCGO_FIELDTYPECODE_BOOLEAN:
@@ -168,69 +230,130 @@ java_lang_reflect_VMField__setInt0__LoIII( java_lang_Object objOrClass,
 }
 
 JCGO_NOSEP_STATIC jlong CFASTCALL
-java_lang_reflect_VMField__getLong0__LoI( java_lang_Object objOrClass,
- jint slot )
+java_lang_reflect_VMField__getLong0__LoII( java_lang_Object objOrClass,
+ jint slot, jint mods )
 {
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & JCGO_ACCMOD_VOLATILE) != 0)
+  return jcgo_AO_fetchJ((volatile jlong *)
+          ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+#endif
+#endif
  return *(volatile jlong *)((char *)&JCGO_METHODS_OF(objOrClass) +
          (unsigned)slot);
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL
-java_lang_reflect_VMField__setLong0__LoJI( java_lang_Object objOrClass,
- jlong value, jint slot )
+java_lang_reflect_VMField__setLong0__LoJII( java_lang_Object objOrClass,
+ jlong value, jint slot, jint mods )
 {
- *(volatile jlong *)((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot) =
-  value;
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_FINAL)) != 0)
+  jcgo_AO_storeJ((volatile jlong *)((char *)&JCGO_METHODS_OF(objOrClass) +
+   (unsigned)slot), value);
+  else
+#endif
+#endif
+  /* else */ *(volatile jlong *)((char *)&JCGO_METHODS_OF(objOrClass) +
+              (unsigned)slot) = value;
  return 0;
 }
 
 JCGO_NOSEP_STATIC jfloat CFASTCALL
-java_lang_reflect_VMField__getFloat0__LoI( java_lang_Object objOrClass,
- jint slot )
+java_lang_reflect_VMField__getFloat0__LoII( java_lang_Object objOrClass,
+ jint slot, jint mods )
 {
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & JCGO_ACCMOD_VOLATILE) != 0)
+  return jcgo_AO_fetchF((volatile jfloat *)
+          ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+#endif
+#endif
  return *(volatile jfloat *)((char *)&JCGO_METHODS_OF(objOrClass) +
          (unsigned)slot);
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL
-java_lang_reflect_VMField__setFloat0__LoFI( java_lang_Object objOrClass,
- jfloat value, jint slot )
+java_lang_reflect_VMField__setFloat0__LoFII( java_lang_Object objOrClass,
+ jfloat value, jint slot, jint mods )
 {
- *(volatile jfloat *)((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot) =
-  value;
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_FINAL)) != 0)
+  jcgo_AO_storeF((volatile jfloat *)((char *)&JCGO_METHODS_OF(objOrClass) +
+   (unsigned)slot), value);
+  else
+#endif
+#endif
+  /* else */ *(volatile jfloat *)((char *)&JCGO_METHODS_OF(objOrClass) +
+              (unsigned)slot) = value;
  return 0;
 }
 
 JCGO_NOSEP_STATIC jdouble CFASTCALL
-java_lang_reflect_VMField__getDouble0__LoI( java_lang_Object objOrClass,
- jint slot )
+java_lang_reflect_VMField__getDouble0__LoII( java_lang_Object objOrClass,
+ jint slot, jint mods )
 {
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & JCGO_ACCMOD_VOLATILE) != 0)
+  return jcgo_AO_fetchD((volatile jdouble *)
+          ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+#endif
+#endif
  return *(volatile jdouble *)((char *)&JCGO_METHODS_OF(objOrClass) +
          (unsigned)slot);
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL
-java_lang_reflect_VMField__setDouble0__LoDI( java_lang_Object objOrClass,
- jdouble value, jint slot )
+java_lang_reflect_VMField__setDouble0__LoDII( java_lang_Object objOrClass,
+ jdouble value, jint slot, jint mods )
 {
- *(volatile jdouble *)((char *)&JCGO_METHODS_OF(objOrClass) +
-  (unsigned)slot) = value;
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_FINAL)) != 0)
+  jcgo_AO_storeD((volatile jdouble *)((char *)&JCGO_METHODS_OF(objOrClass) +
+   (unsigned)slot), value);
+  else
+#endif
+#endif
+  /* else */ *(volatile jdouble *)((char *)&JCGO_METHODS_OF(objOrClass) +
+              (unsigned)slot) = value;
  return 0;
 }
 
 JCGO_NOSEP_STATIC java_lang_Object CFASTCALL
-java_lang_reflect_VMField__get0__LoI( java_lang_Object objOrClass, jint slot )
+java_lang_reflect_VMField__get0__LoII( java_lang_Object objOrClass,
+ jint slot, jint mods )
 {
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & JCGO_ACCMOD_VOLATILE) != 0)
+  return (java_lang_Object)jcgo_AO_fetchL(*(jObject volatile *)(
+         (char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
+#endif
+#endif
  return (java_lang_Object)(*(java_lang_Object volatile *)(
          (char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
 }
 
 JCGO_NOSEP_STATIC jint CFASTCALL
-java_lang_reflect_VMField__set0__LoLoI( java_lang_Object objOrClass,
- java_lang_Object value, jint slot )
+java_lang_reflect_VMField__set0__LoLoII( java_lang_Object objOrClass,
+ java_lang_Object value, jint slot, jint mods )
 {
- *(java_lang_Object volatile *)((char *)&JCGO_METHODS_OF(objOrClass) +
-  (unsigned)slot) = value;
+#ifdef JCGO_THREADS
+#ifdef JCGO_PARALLEL
+ if (((int)mods & (JCGO_ACCMOD_VOLATILE | JCGO_ACCMOD_FINAL)) != 0)
+  jcgo_AO_storeL((jObject volatile *)((char *)&JCGO_METHODS_OF(objOrClass) +
+   (unsigned)slot), (jObject)value);
+  else
+#endif
+#endif
+  /* else */ *(java_lang_Object volatile *)
+              ((char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot) = value;
  return 0;
 }
 
