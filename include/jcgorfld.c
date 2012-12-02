@@ -332,7 +332,7 @@ java_lang_reflect_VMField__get0__LoII( java_lang_Object objOrClass,
 #ifdef JCGO_THREADS
 #ifdef JCGO_PARALLEL
  if (((int)mods & JCGO_ACCMOD_VOLATILE) != 0)
-  return (java_lang_Object)jcgo_AO_fetchL(*(jObject volatile *)(
+  return (java_lang_Object)jcgo_AO_fetchL((jObject volatile *)(
          (char *)&JCGO_METHODS_OF(objOrClass) + (unsigned)slot));
 #endif
 #endif
