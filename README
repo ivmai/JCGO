@@ -849,6 +849,10 @@ Appendix D: C macros used to control compilation
  not defined: do not use C "utimbuf" struct and utime() system call */
 #define JCGO_NOUTIMBUF
 
+/* Only if JCGO_NATSEP and JCGO_NOTIME are not defined: do not treat
+ tv_sec value returned by gettimeofday() and ftime() as unsigned */
+#define JCGO_TIMEALLOWNEG
+
 /* Only if JCGO_NATSEP and JCGO_NOFILES are not defined: do not use
  realpath() C library call */
 #define JCGO_NOREALPATH

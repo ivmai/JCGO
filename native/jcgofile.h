@@ -10,8 +10,8 @@
 /*
  * Used control macros: JCGO_EXEC, JCGO_FCHSIZES, JCGO_FFBLK, JCGO_FFDATA,
  * JCGO_FFDOS, JCGO_LARGEFILE, JCGO_MACOSX, JCGO_NOCWDIR, JCGO_NOFILES,
- * JCGO_NOREALPATH, JCGO_NOTIME, JCGO_NOUTIMBUF, JCGO_SYSWCHAR, JCGO_UNIFSYS,
- * JCGO_UNIX, JCGO_WIN32, JCGO_WINFILE.
+ * JCGO_NOREALPATH, JCGO_NOTIME, JCGO_NOUTIMBUF, JCGO_SYSWCHAR,
+ * JCGO_TIMEALLOWNEG, JCGO_UNIFSYS, JCGO_UNIX, JCGO_WIN32, JCGO_WINFILE.
  */
 
 /*
@@ -233,7 +233,11 @@
 #endif
 
 #define JCGO_CURTIME_T struct timeval
+#ifdef JCGO_TIMEALLOWNEG
+#define JCGO_CURTIME_ASMILLIS(type, pcurt) ((type)(pcurt)->tv_sec * (type)1000L + (type)((pcurt)->tv_usec / 1000L))
+#else
 #define JCGO_CURTIME_ASMILLIS(type, pcurt) ((type)((unsigned long)(pcurt)->tv_sec) * (type)1000L + (type)((pcurt)->tv_usec / 1000L))
+#endif
 #define JCGO_CURTIME_ASNANOS(type, pcurt) (((type)((unsigned long)(pcurt)->tv_sec) * ((type)1000L * (type)1000L) + (type)(pcurt)->tv_usec) * (type)1000L)
 
 #endif /* ! JCGO_NOTIME */
@@ -249,7 +253,11 @@
 
 #define JCGO_CURTIME_T struct timeb
 #define JCGO_CURTIME_GET(pcurt) ftime(pcurt)
+#ifdef JCGO_TIMEALLOWNEG
+#define JCGO_CURTIME_ASMILLIS(type, pcurt) ((type)(pcurt)->time * (type)1000L + (type)(pcurt)->millitm)
+#else
 #define JCGO_CURTIME_ASMILLIS(type, pcurt) ((type)((unsigned long)(pcurt)->time) * (type)1000L + (type)(pcurt)->millitm)
+#endif
 #define JCGO_CURTIME_ASNANOS(type, pcurt) (JCGO_CURTIME_ASMILLIS(type, pcurt) * ((type)1000L * (type)1000L))
 
 #endif /* ! JCGO_NOTIME */
