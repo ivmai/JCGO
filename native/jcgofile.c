@@ -3,7 +3,7 @@
  * a part of the JCGO native layer library (file I/O impl).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -562,8 +562,8 @@ STATIC jlong jcgo_lseek( int fd, jlong ofs, int whence, int *perrcode )
 {
  JCGO_BIGFLSEEK_T pos = (JCGO_BIGFLSEEK_T)ofs;
  if (sizeof(pos) < sizeof(jlong) && whence == SEEK_SET &&
-     (ofs & ~(((jlong)2L << ((int)sizeof(pos) * 8 - 1)) - (jlong)1L)) !=
-     (jlong)0L)
+     (ofs & ~(((jlong)2L << (sizeof(pos) < sizeof(jlong) ?
+     (int)sizeof(pos) * 8 - 1 : 0)) - (jlong)1L)) != (jlong)0L)
   pos = (JCGO_BIGFLSEEK_T)-1;
  JCGO_BIGF_VLSEEK(fd, &pos, whence);
  ofs = (jlong)-1L;
@@ -572,7 +572,8 @@ STATIC jlong jcgo_lseek( int fd, jlong ofs, int whence, int *perrcode )
  {
   ofs = (jlong)(pos - 1);
   if (sizeof(pos) < sizeof(jlong) && ofs < (jlong)0L)
-   ofs = ((jlong)2L << ((int)sizeof(pos) * 8 - 1)) + ofs;
+   ofs = ((jlong)2L << (sizeof(pos) < sizeof(jlong) ?
+          (int)sizeof(pos) * 8 - 1 : 0)) + ofs;
  }
   else *perrcode = errno;
  return ofs;
@@ -1199,7 +1200,8 @@ Java_java_io_VMFile_length)( JNIEnv *pJniEnv, jclass This, jstring path )
   {
    filelen = (jlong)st.st_size;
    if (sizeof(st.st_size) < sizeof(jlong) && filelen < (jlong)0L)
-    filelen = ((jlong)2L << ((int)sizeof(st.st_size) * 8 - 1)) + filelen;
+    filelen = ((jlong)2L << (sizeof(st.st_size) < sizeof(jlong) ?
+               (int)sizeof(st.st_size) * 8 - 1 : 0)) + filelen;
   }
 #endif
   JCGO_FILEIOCALL_END(pJniEnv)
