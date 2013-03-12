@@ -1194,7 +1194,6 @@ public final class String /* hard-coded class name */ /* const data */
    index = searchForNonUpper(bytes, offset, count) - offset;
    if (index >= count)
     return this;
-   char ch;
    if (!isTurkish &&
        Character.toUpperCase((char) (bytes[offset + index] & 0xff)) <= 0xff)
    {
