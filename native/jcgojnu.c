@@ -3,7 +3,7 @@
  * a part of the JCGO native layer library (native layer API implementation).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -208,7 +208,7 @@ jcgo_JnuStringSizeOfPlatform( JNIEnv *pJniEnv, jstring str )
 #endif
   {
 #ifdef MB_CUR_MAX
-   if ((unsigned)count - (unsigned)1 < (unsigned)(MB_LEN_MAX - 1))
+   if ((unsigned)count < (unsigned)MB_LEN_MAX && *(volatile int *)&count != 0)
     len = ((((unsigned)-1) >> 1) - (unsigned)16) / (unsigned)count >= len ?
            (unsigned)count * len : (((unsigned)-1) >> 1) - (unsigned)16;
     else
