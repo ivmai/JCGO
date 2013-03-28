@@ -13,8 +13,9 @@
  */
 
 /*
- * Used control macros: JCGO_CREATHREAD, JCGO_GCGETPAR, JCGO_OS2,
- * JCGO_PARALLEL, JCGO_SOLTHR, JCGO_TIMEHIRES, JCGO_UNIX, JCGO_WIN32.
+ * Used control macros: JCGO_CREATHREAD, JCGO_GCGETPAR, JCGO_MONOTWAIT,
+ * JCGO_OS2, JCGO_PARALLEL, JCGO_SOLTHR, JCGO_TIMEHIRES, JCGO_UNIX,
+ * JCGO_WIN32.
  * Macros for tuning: CLIBDECL.
  */
 
@@ -429,12 +430,16 @@ struct jcgo_win32Mutex_s
 #endif
 #endif
 
+#ifdef JCGO_MONOTWAIT
+#include <time.h>
+/* int clock_gettime(clockid_t, struct timespec *); */
+#endif
+
 #ifndef _PTHREAD_H
 #include <pthread.h>
 /* int pthread_cond_destroy(pthread_cond_t *); */
 /* int pthread_cond_init(pthread_cond_t *, const pthread_condattr_t *); */
 /* int pthread_cond_signal(pthread_cond_t *); */
-/* int pthread_cond_timedwait(pthread_cond_t *, pthread_mutex_t *, const struct timespec *); */
 /* int pthread_cond_wait(pthread_cond_t *, pthread_mutex_t *); */
 /* int pthread_create(pthread_t *, const pthread_attr_t *, void *(*)(void *), void *); */
 /* int pthread_mutex_destroy(pthread_mutex_t *); */
@@ -544,9 +549,15 @@ struct jcgo_win32Mutex_s
 #define JCGO_EVENT_CLEAR(pevent) (pthread_mutex_lock(&(pevent)->mutex) ? -1 : ((pevent)->signaled = 0, pthread_mutex_unlock(&(pevent)->mutex)))
 #define JCGO_EVENT_SET(pevent) (JCGO_EXPECT_FALSE(pthread_mutex_lock(&(pevent)->mutex) != 0) ? -1 : ((pevent)->signaled = 1, pthread_cond_signal(&(pevent)->cond), pthread_mutex_unlock(&(pevent)->mutex)))
 #define JCGO_EVENT_WAIT(pevent) (JCGO_EXPECT_FALSE(pthread_mutex_lock(&(pevent)->mutex) != 0) ? 0 : (pevent)->signaled || (pthread_cond_wait(&(pevent)->cond, &(pevent)->mutex), JCGO_EXPECT_TRUE((pevent)->signaled)) ? ((pevent)->signaled = 0, pthread_mutex_unlock(&(pevent)->mutex), 0) : (pthread_mutex_unlock(&(pevent)->mutex), -1))
-#define JCGO_EVENT_TIMEDWAIT(pevent, pwaittime) (JCGO_EXPECT_FALSE(pthread_mutex_lock(&(pevent)->mutex) != 0) ? 0 : (pevent)->signaled || pthread_cond_timedwait(&(pevent)->cond, &(pevent)->mutex, &(pwaittime)->ts) == ETIMEDOUT || *(volatile int *)&(pevent)->signaled != 0 ? ((pevent)->signaled = 0, pthread_mutex_unlock(&(pevent)->mutex), 0) : (pthread_mutex_unlock(&(pevent)->mutex), -1))
 #define JCGO_EVENT_DESTROY(pevent) (pthread_cond_destroy(&(pevent)->cond), pthread_mutex_destroy(&(pevent)->mutex))
 
+#ifdef JCGO_MONOTWAIT
+/* #include <pthread.h> */
+/* int pthread_cond_timedwait_monotonic_np(pthread_cond_t *, pthread_mutex_t *, const struct timespec *); */
+#define JCGO_EVENTTIME_T struct timespec
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) ((timeout) > 0L && JCGO_EXPECT_TRUE(clock_gettime(CLOCK_MONOTONIC, pwaittime) == 0) ? ((pwaittime)->tv_sec += (time_t)((timeout) / 1000L), ((pwaittime)->tv_nsec += ((timeout) % 1000L) * (1000L * 1000L)) >= 1000L * 1000L * 1000L ? ((pwaittime)->tv_sec++, (pwaittime)->tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->tv_sec = 0, (pwaittime)->tv_nsec = 0, 0))
+#define JCGO_EVENT_CONDTMWAIT(pcond, pmutex, pwaittime) pthread_cond_timedwait_monotonic_np(pcond, pmutex, pwaittime)
+#else
 #ifdef JCGO_UNIX
 #define JCGO_EVENTTIME_T struct { struct timespec ts; struct timeval tv; }
 #ifdef _SVID_GETTOD
@@ -563,6 +574,12 @@ struct jcgo_win32Mutex_s
 #define JCGO_EVENTTIME_T struct { struct timespec ts; struct timeb tb; }
 #define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) ((timeout) > 0L ? (ftime(&(pwaittime)->tb), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tb.time + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = ((timeout) % 1000L + (pwaittime)->tb.millitm) * (1000L * 1000L)) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
 #endif
+/* #include <pthread.h> */
+/* int pthread_cond_timedwait(pthread_cond_t *, pthread_mutex_t *, const struct timespec *); */
+#define JCGO_EVENT_CONDTMWAIT(pcond, pmutex, pwaittime) pthread_cond_timedwait(pcond, pmutex, &(pwaittime)->ts)
+#endif
+
+#define JCGO_EVENT_TIMEDWAIT(pevent, pwaittime) (JCGO_EXPECT_FALSE(pthread_mutex_lock(&(pevent)->mutex) != 0) ? 0 : (pevent)->signaled || JCGO_EVENT_CONDTMWAIT(&(pevent)->cond, &(pevent)->mutex, pwaittime) == ETIMEDOUT || *(volatile int *)&(pevent)->signaled != 0 ? ((pevent)->signaled = 0, pthread_mutex_unlock(&(pevent)->mutex), 0) : (pthread_mutex_unlock(&(pevent)->mutex), -1))
 
 #ifdef JCGO_PARALLEL
 /* #include <pthread.h> */
