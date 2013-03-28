@@ -6,7 +6,7 @@
                                User's Guide
                                ------------
 
-Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
+Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
 Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com
 All rights reserved.
 
@@ -994,6 +994,11 @@ Appendix D: C macros used to control compilation
 /* Only if JCGO_THREADS and JCGO_WIN32 are defined: allow to switch the
  system timer to the highest possible resolution when needed */
 #define JCGO_TIMEHIRES
+
+/* Only if JCGO_THREADS is defined, and all of JCGO_WIN32, JCGO_OS2 and
+ JCGO_SOLTHR are not defined: use PThread timed wait based on monotonic
+ clock */
+#define JCGO_MONOTWAIT
 
 /* Only if JCGO_THREADS is defined, and JCGO_OS2 or JCGO_WIN32
  is defined: use OS CreateThread() API call instead of C
