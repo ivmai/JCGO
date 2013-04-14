@@ -829,7 +829,9 @@ Appendix D: C macros used to control compilation
 
 /* Only if JCGO_NATSEP, JCGO_NOTIME and JCGO_WINFILE are not defined:
  use clock_gettime(CLOCK_MONOTONIC) to obtain nanoTime() value if
- possible */
+ possible; only if JCGO_THREADS is defined, and JCGO_WIN32 and JCGO_OS2
+ are not defined: use clock_gettime(CLOCK_REALTIME) instead of
+ gettimeofday() for timed wait */
 #define JCGO_CLOCKGETTM
 
 /* Only if JCGO_NATSEP is not defined: do not use any C time-related

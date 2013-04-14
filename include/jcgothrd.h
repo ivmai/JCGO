@@ -13,9 +13,9 @@
  */
 
 /*
- * Used control macros: JCGO_CREATHREAD, JCGO_GCGETPAR, JCGO_MONOTWAIT,
- * JCGO_OS2, JCGO_PARALLEL, JCGO_SOLTHR, JCGO_TIMEHIRES, JCGO_UNIX,
- * JCGO_WIN32.
+ * Used control macros: JCGO_CLOCKGETTM, JCGO_CREATHREAD, JCGO_GCGETPAR,
+ * JCGO_MONOTWAIT, JCGO_OS2, JCGO_PARALLEL, JCGO_SOLTHR, JCGO_TIMEHIRES,
+ * JCGO_UNIX, JCGO_WIN32.
  * Macros for tuning: CLIBDECL.
  */
 
@@ -166,7 +166,7 @@ struct jcgo_win32Mutex_s
 #define JCGO_EVENT_WAIT(pevent) (WaitForSingleObject(*(pevent), INFINITE) != WAIT_FAILED ? 0 : -1)
 #define JCGO_EVENT_DESTROY(pevent) (CloseHandle(*(pevent)) ? 0 : -1)
 #define JCGO_EVENTTIME_T long
-#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) (*(pwaittime) = (timeout), 0)
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (*(pwaittime) = ((timeout) != 0L ? (timeout) : 1L), 0)
 
 #ifdef JCGO_TIMEHIRES
 #ifndef JCGO_EVENTHIGHRES_MODVAL
@@ -310,7 +310,7 @@ struct jcgo_win32Mutex_s
 #define JCGO_EVENT_TIMEDWAIT(pevent, pwaittime) ((unsigned)(DosWaitEventSem(*(pevent), (ULONG)(*(pwaittime))) - 1) < (unsigned)(ERROR_TIMEOUT - 1) || DosResetEventSem(*(pevent), (ULONG *)&jcgo_trashVar) == ERROR_INVALID_HANDLE ? -1 : 0)
 #define JCGO_EVENT_DESTROY(pevent) (DosCloseEventSem(*(pevent)) ? -1 : 0)
 #define JCGO_EVENTTIME_T long
-#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) (*(pwaittime) = (timeout), 0)
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (*(pwaittime) = ((timeout) != 0L ? (timeout) : 1L), 0)
 
 #ifndef JCGO_THREAD_YIELD
 /* #include <os2.h> */
@@ -340,6 +340,11 @@ struct jcgo_win32Mutex_s
 
 #ifndef _SYS_TIME_H
 #include <sys/time.h>
+#endif
+
+#ifdef JCGO_CLOCKGETTM
+#include <time.h>
+/* int clock_gettime(clockid_t, struct timespec *); */
 #endif
 
 #ifndef _THREAD_H
@@ -388,6 +393,10 @@ struct jcgo_win32Mutex_s
 #define JCGO_EVENT_TIMEDWAIT(pevent, pwaittime) (JCGO_EXPECT_FALSE(mutex_lock(&(pevent)->mutex) != 0) ? 0 : (pevent)->signaled || cond_timedwait(&(pevent)->cond, &(pevent)->mutex, &(pwaittime)->ts) == ETIMEDOUT || *(volatile int *)&(pevent)->signaled != 0 ? ((pevent)->signaled = 0, mutex_unlock(&(pevent)->mutex), 0) : (mutex_unlock(&(pevent)->mutex), -1))
 #define JCGO_EVENT_DESTROY(pevent) (cond_destroy(&(pevent)->cond), mutex_destroy(&(pevent)->mutex))
 
+#ifdef JCGO_CLOCKGETTM
+#define JCGO_EVENTTIME_T struct { timestruc_t ts; }
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (((timeout) | (ns)) > 0L ? (clock_gettime(CLOCK_REALTIME, &(pwaittime)->ts), (pwaittime)->ts.tv_sec += (time_t)((timeout) / 1000L), ((pwaittime)->ts.tv_nsec += ((timeout) % 1000L) * (1000L * 1000L) + (ns)) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
+#else
 #define JCGO_EVENTTIME_T struct { timestruc_t ts; struct timeval tv; }
 #ifdef _SVID_GETTOD
 /* #include <sys/time.h> */
@@ -398,7 +407,8 @@ struct jcgo_win32Mutex_s
 /* int gettimeofday(struct timeval *, void *); */
 #define JCGO_EVENTTIME_GETTOD(ptv) gettimeofday((void *)(ptv), NULL)
 #endif
-#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) ((timeout) > 0L ? (JCGO_EVENTTIME_GETTOD(&(pwaittime)->tv), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tv.tv_sec + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = (((timeout) % 1000L) * 1000L + (pwaittime)->tv.tv_usec) * 1000L) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (((timeout) | (ns)) > 0L ? (JCGO_EVENTTIME_GETTOD(&(pwaittime)->tv), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tv.tv_sec + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = (((timeout) % 1000L) * 1000L + (pwaittime)->tv.tv_usec) * 1000L + (ns)) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
+#endif
 
 #ifndef JCGO_THREAD_YIELD
 /* #include <thread.h> */
@@ -433,6 +443,11 @@ struct jcgo_win32Mutex_s
 #ifdef JCGO_MONOTWAIT
 #include <time.h>
 /* int clock_gettime(clockid_t, struct timespec *); */
+#else
+#ifdef JCGO_CLOCKGETTM
+#include <time.h>
+/* int clock_gettime(clockid_t, struct timespec *); */
+#endif
 #endif
 
 #ifndef _PTHREAD_H
@@ -555,8 +570,15 @@ struct jcgo_win32Mutex_s
 /* #include <pthread.h> */
 /* int pthread_cond_timedwait_monotonic_np(pthread_cond_t *, pthread_mutex_t *, const struct timespec *); */
 #define JCGO_EVENTTIME_T struct timespec
-#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) ((timeout) > 0L && JCGO_EXPECT_TRUE(clock_gettime(CLOCK_MONOTONIC, pwaittime) == 0) ? ((pwaittime)->tv_sec += (time_t)((timeout) / 1000L), ((pwaittime)->tv_nsec += ((timeout) % 1000L) * (1000L * 1000L)) >= 1000L * 1000L * 1000L ? ((pwaittime)->tv_sec++, (pwaittime)->tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->tv_sec = 0, (pwaittime)->tv_nsec = 0, 0))
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (((timeout) | (ns)) > 0L ? (clock_gettime(CLOCK_MONOTONIC, pwaittime), (pwaittime)->tv_sec += (time_t)((timeout) / 1000L), ((pwaittime)->tv_nsec += ((timeout) % 1000L) * (1000L * 1000L) + (ns)) >= 1000L * 1000L * 1000L ? ((pwaittime)->tv_sec++, (pwaittime)->tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->tv_sec = 0, (pwaittime)->tv_nsec = 0, 0))
 #define JCGO_EVENT_CONDTMWAIT(pcond, pmutex, pwaittime) pthread_cond_timedwait_monotonic_np(pcond, pmutex, pwaittime)
+#else
+/* #include <pthread.h> */
+/* int pthread_cond_timedwait(pthread_cond_t *, pthread_mutex_t *, const struct timespec *); */
+#ifdef JCGO_CLOCKGETTM
+#define JCGO_EVENTTIME_T struct timespec
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (((timeout) | (ns)) > 0L ? (clock_gettime(CLOCK_REALTIME, pwaittime), (pwaittime)->tv_sec += (time_t)((timeout) / 1000L), ((pwaittime)->tv_nsec += ((timeout) % 1000L) * (1000L * 1000L) + (ns)) >= 1000L * 1000L * 1000L ? ((pwaittime)->tv_sec++, (pwaittime)->tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->tv_sec = 0, (pwaittime)->tv_nsec = 0, 0))
+#define JCGO_EVENT_CONDTMWAIT(pcond, pmutex, pwaittime) pthread_cond_timedwait(pcond, pmutex, pwaittime)
 #else
 #ifdef JCGO_UNIX
 #define JCGO_EVENTTIME_T struct { struct timespec ts; struct timeval tv; }
@@ -569,14 +591,13 @@ struct jcgo_win32Mutex_s
 /* int gettimeofday(struct timeval *, struct timezone *); */
 #define JCGO_EVENTTIME_GETTOD(ptv) gettimeofday((void *)(ptv), NULL)
 #endif
-#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) ((timeout) > 0L ? (JCGO_EVENTTIME_GETTOD(&(pwaittime)->tv), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tv.tv_sec + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = (((timeout) % 1000L) * 1000L + (pwaittime)->tv.tv_usec) * 1000L) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (((timeout) | (ns)) > 0L ? (JCGO_EVENTTIME_GETTOD(&(pwaittime)->tv), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tv.tv_sec + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = (((timeout) % 1000L) * 1000L + (pwaittime)->tv.tv_usec) * 1000L + (ns)) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
 #else
 #define JCGO_EVENTTIME_T struct { struct timespec ts; struct timeb tb; }
-#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout) ((timeout) > 0L ? (ftime(&(pwaittime)->tb), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tb.time + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = ((timeout) % 1000L + (pwaittime)->tb.millitm) * (1000L * 1000L)) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
+#define JCGO_EVENTTIME_PREPARE(pwaittime, timeout, ns) (((timeout) | (ns)) > 0L ? (ftime(&(pwaittime)->tb), (pwaittime)->ts.tv_sec = (time_t)((pwaittime)->tb.time + (timeout) / 1000L), ((pwaittime)->ts.tv_nsec = ((timeout) % 1000L + (pwaittime)->tb.millitm) * (1000L * 1000L) + (ns)) >= 1000L * 1000L * 1000L ? ((pwaittime)->ts.tv_sec++, (pwaittime)->ts.tv_nsec -= 1000L * 1000L * 1000L, 0) : 0) : ((pwaittime)->ts.tv_sec = 0, (pwaittime)->ts.tv_nsec = 0, 0))
 #endif
-/* #include <pthread.h> */
-/* int pthread_cond_timedwait(pthread_cond_t *, pthread_mutex_t *, const struct timespec *); */
 #define JCGO_EVENT_CONDTMWAIT(pcond, pmutex, pwaittime) pthread_cond_timedwait(pcond, pmutex, &(pwaittime)->ts)
+#endif
 #endif
 
 #define JCGO_EVENT_TIMEDWAIT(pevent, pwaittime) (JCGO_EXPECT_FALSE(pthread_mutex_lock(&(pevent)->mutex) != 0) ? 0 : (pevent)->signaled || JCGO_EVENT_CONDTMWAIT(&(pevent)->cond, &(pevent)->mutex, pwaittime) == ETIMEDOUT || *(volatile int *)&(pevent)->signaled != 0 ? ((pevent)->signaled = 0, pthread_mutex_unlock(&(pevent)->mutex), 0) : (pthread_mutex_unlock(&(pevent)->mutex), -1))

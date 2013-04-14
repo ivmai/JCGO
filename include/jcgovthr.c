@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -143,11 +143,12 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
 #ifdef JCGO_PARALLEL
  int monMutexInd;
 #endif
- if (JCGO_EXPECT_FALSE(ms == (jlong)0L && ns))
-  ms = (jlong)1L;
  if (JCGO_EXPECT_FALSE(ms >= (jlong)0x7fffffffL))
+ {
   ms = (jlong)0x7fffffffL;
- (void)JCGO_EVENTTIME_PREPARE(&waittime, (long)ms);
+  ns = 0;
+ }
+ (void)JCGO_EVENTTIME_PREPARE(&waittime, (long)ms, (long)ns);
  JCGO_GET_CURTCB(&tcb);
 #ifdef JCGO_PARALLEL
  monMutexInd = JCGO_MUTEXIND_HASHF(JCGO_CAST_PTRTONUM(obj),
@@ -160,7 +161,7 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
  {
   if (JCGO_EXPECT_TRUE(!tcb->interruptReq))
   {
-   tcb->waitsleep = ms > (jlong)0L ? 1 : -1;
+   tcb->waitsleep = (ms | (jlong)ns) > (jlong)0L ? 1 : -1;
    tcb->monObj = (jObject)obj;
    (void)JCGO_EVENT_CLEAR(&tcb->event);
    if (othertcb != tcb)
@@ -239,7 +240,7 @@ java_lang_VMThread__wait0__LoJI( java_lang_Object obj, jlong ms, jint ns )
 #ifndef JCGO_PARALLEL
   (void)JCGO_MUTEX_UNLOCK(&jcgo_nonParallelMutex);
 #endif
-  if (ms > (jlong)0L)
+  if ((ms | (jlong)ns) > (jlong)0L)
   {
    for (;;)
    {
