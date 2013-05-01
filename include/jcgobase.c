@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -261,6 +261,22 @@ struct jcgo_globData_s
 JCGO_NOSEP_GCDATA struct jcgo_globData_s jcgo_globData ATTRIBGCBSS =
 {
  jnull
+#ifdef OBJT_java_lang_ref_SoftReference
+ , NULL
+#endif
+#ifndef JCGO_NOJNI
+ , jnull,
+#ifndef JCGO_FNLZDATA_OMITREFQUE
+ jnull,
+#endif
+ jnull,
+ NULL
+#endif
+#ifdef JCGO_STDCLINIT
+#ifdef JCGO_THREADS
+ , jnull
+#endif
+#endif
 };
 
 JCGO_NOSEP_GCDATA struct jcgo_jobjectarr_s jcgo_noTypesClassArr ATTRIBGCDATA =
