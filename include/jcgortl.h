@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -20,8 +20,8 @@
  * JCGO_SFTNULLP, JCGO_STDCLINIT, JCGO_THREADS, JCGO_UNIX, JCGO_USEGCJ,
  * JCGO_USELONG.
  * Macros for tuning: ATTRIBGCBSS, ATTRIBGCDATA, ATTRIBMALLOC, ATTRIBNONGC,
- * CFASTCALL, DECLSPECNORET, GCSTATICDATA, EXTRASTATIC, INLINE, STATIC,
- * STATICDATA.
+ * BUILTINEXPECTR, CFASTCALL, DECLSPECNORET, GCSTATICDATA, EXTRASTATIC,
+ * INLINE, STATIC, STATICDATA.
  */
 
 /*
@@ -232,8 +232,19 @@
 #define JCGO_JNI_FUNC(func) func
 #endif
 
+#ifdef __GNUC__
+#ifndef BUILTINEXPECTR
+#define BUILTINEXPECTR(expect, expr) __builtin_expect(expr, expect)
+#endif
+#endif
+
+#ifdef BUILTINEXPECTR
+#define JCGO_EXPECT_FALSE(cond) BUILTINEXPECTR(jfalse, cond)
+#define JCGO_EXPECT_TRUE(cond) BUILTINEXPECTR(jtrue, cond)
+#else
 #define JCGO_EXPECT_FALSE(cond) (cond)
 #define JCGO_EXPECT_TRUE(cond) (cond)
+#endif
 
 #define JCGO_OBJREF_OF(objname) (&objname)
 #define JCGO_METHODS_OF(obj) (obj)->jcgo_methods

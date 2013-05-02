@@ -1186,6 +1186,9 @@ Appendix D: C macros used to control compilation
 /* Ignore 'noreturn' attribute of the Java 'throw' statement */
 #define DECLSPECNORET /**/
 
+/* Ignore branch probabilities specified via GNU C __builtin_expect */
+#define BUILTINEXPECTR /**/
+
 /* Explicitly specify the decl and the name of C main entry function */
 #define MAINENTRY int/**/__cdecl/**/main
 
