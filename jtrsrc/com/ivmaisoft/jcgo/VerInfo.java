@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2012 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -51,7 +51,7 @@ final class VerInfo {
      */
     static/* final */int VER_NUM = 114;
 
-    static final String COPYRIGHT_AUTHOR = "Copyright (C) 2001-2012 Ivan Maidanski"
+    static final String COPYRIGHT_AUTHOR = "Copyright (C) 2001-2013 Ivan Maidanski"
             .toString();
 
     static final String COPYRIGHT = "Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com/jcgo/"
