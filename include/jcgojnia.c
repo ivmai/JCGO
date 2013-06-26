@@ -344,7 +344,7 @@ jcgo_JniNewObjectArray( JNIEnv *pJniEnv, jsize len, jclass clazz,
   jcgo_jniThrowNullPointerException(pJniEnv);
   return NULL;
  }
- if ((jobj = jcgo_jniDeRef(value)) != jnull)
+ if ((jobj = jcgo_jniDeRef(value)) != jnull && JCGO_EXPECT_TRUE(len != 0))
  {
   typenum = JCGO_METHODS_OF(jobj)->jcgo_typeid;
   srcClass = JCGO_METHODS_OF(jobj)->jcgo_class;
@@ -363,7 +363,7 @@ jcgo_JniNewObjectArray( JNIEnv *pJniEnv, jsize len, jclass clazz,
  JCGO_NATCBACK_BEGIN(pJniEnv)
  jArr = (jObjectArr)jcgo_newArray(aclass, 0, (jint)len);
  JCGO_NATCBACK_END(pJniEnv)
- if (jobj != jnull)
+ if (jobj != jnull && JCGO_EXPECT_TRUE(jArr != jnull))
   while (len-- > 0)
    JCGO_ARR_INTERNALACC(jObject, jArr, (jint)len) = jobj;
  return (jobjectArray)jcgo_jniToLocalRef(pJniEnv, (jObject)jArr);
