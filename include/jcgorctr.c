@@ -55,23 +55,23 @@ java_lang_reflect_VMConstructor__constructNative0__LcLcBAIAJAFADALoAII(
   ((jvtable)&JCGO_METHODS_OF(
   JCGO_FIELD_NZACCESS(declaringClass, vmdata)))->jcgo_reflect;
  CONST struct jcgo_methodentry_s *pentry = NULL;
- java_lang_Object obj = jnull;
- if (((JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
+ jObject obj = jnull;
+ if ((JCGO_EXPECT_TRUE(jcgo_reflect != NULL) &&
      (pentry = jcgo_reflect->methodsEntry) != NULL) ||
      (rtn = ((jvtable)&JCGO_METHODS_OF(JCGO_FIELD_NZACCESS(declaringClass,
-     vmdata)))->jcgo_thisRtn) != 0) &&
-     (obj = (java_lang_Object)jcgo_newObject((jvtable)&JCGO_METHODS_OF(
-     JCGO_FIELD_NZACCESS(objClass, vmdata)))) != jnull)
+     vmdata)))->jcgo_thisRtn) != 0)
  {
+  obj = jcgo_newObject((jvtable)&JCGO_METHODS_OF(JCGO_FIELD_NZACCESS(objClass,
+         vmdata)));
   if (pentry != NULL)
   {
    pentry = pentry + (unsigned)slot;
-   obj = (java_lang_Object)(*pentry->mproxy)(pentry->jmethod, (jObject)obj,
-          intArgs, longArgs, floatArgs, doubleArgs, objectArgs);
+   obj = (*pentry->mproxy)(pentry->jmethod, obj, intArgs, longArgs, floatArgs,
+          doubleArgs, objectArgs);
   }
-   else obj = (java_lang_Object)(*rtn)((jObject)obj);
+   else obj = (*rtn)(obj);
  }
- return obj;
+ return (java_lang_Object)obj;
 }
 
 #endif
