@@ -3,8 +3,8 @@
  * Compile-time Java VM configuration constants.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@ivmaisoft.com>
- * All rights reserved. Distributed under the Terms of GNU GPL.
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Distributed under the Terms of GNU Classpath License.
  **
  * File content origin: GNU Classpath v0.93
  */

@@ -1,7 +1,7 @@
 /*
  * @(#) $(JCGO)/goclsp/clsp_res/gnu/java/locale/LocaleData.java -
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
- * All rights reserved. Distributed under the Terms of GNU GPL.
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Distributed under the Terms of GNU Classpath License.
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
  * File content origin: GNU Classpath v0.93 scripts
  */

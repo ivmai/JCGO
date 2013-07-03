@@ -3,8 +3,8 @@
  * Compile-time Java AWT peer configuration constants (Gtk).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2007 Ivan Maidanski <ivmai@ivmaisoft.com>
- * All rights reserved. Distributed under the Terms of GNU GPL.
+ * Copyright (C) 2001-2010 Ivan Maidanski <ivmai@mail.ru>
+ * Distributed under the Terms of GNU Classpath License.
  **
  * Not a part of GNU Classpath.
  */
