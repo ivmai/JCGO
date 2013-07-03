@@ -3,7 +3,7 @@
  * VM specific methods for VM system properties initialization.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  **
  * Class specification origin: GNU Classpath v0.93 vm/reference
@@ -265,19 +265,20 @@ final class VMSystemProperties
    JAVA_SPECIFICATION_VENDOR);
   properties.setProperty("java.specification.version",
    JAVA_SPECIFICATION_VERSION);
-  properties.setProperty("java.vendor", getJavaVendor());
-  properties.setProperty("java.vendor.url", getJavaVendorUrl0());
-  properties.setProperty("java.vendor.url.bug", getJavaVendorUrlBug0());
+  properties.setProperty("java.vendor", VMVendorInfo.JAVA_VENDOR);
+  properties.setProperty("java.vendor.url", VMVendorInfo.JAVA_VENDOR_URL);
+  properties.setProperty("java.vendor.url.bug",
+   VMVendorInfo.JAVA_VENDOR_URL_BUG);
   properties.setProperty("java.version", JAVA_RUNTIME_VERSION);
-  properties.setProperty("java.vm.info", getJavaVmInfoName0(0));
-  properties.setProperty("java.vm.name", getJavaVmInfoName0(1));
+  properties.setProperty("java.vm.info", VMVendorInfo.JAVA_VM_INFO);
+  properties.setProperty("java.vm.name", VMVendorInfo.JAVA_VM_NAME);
   properties.setProperty("java.vm.specification.name",
    JAVA_VM_SPECIFICATION_NAME);
   properties.setProperty("java.vm.specification.vendor",
    JAVA_VM_SPECIFICATION_VENDOR);
   properties.setProperty("java.vm.specification.version",
    JAVA_VM_SPECIFICATION_VERSION);
-  properties.setProperty("java.vm.vendor", getJavaVmVendor0());
+  properties.setProperty("java.vm.vendor", VMVendorInfo.JAVA_VM_VENDOR);
   properties.setProperty("java.vm.version",
    VMAccessorJavaLang.getJavaVmVersionVMRuntime());
  }
@@ -819,11 +820,6 @@ final class VMSystemProperties
   return "";
  }
 
- private static String getJavaVendor()
- {
-  return getJavaVmVendor0();
- }
-
  private static String getJavaCompiler()
  {
   /* dummy */
@@ -1042,19 +1038,11 @@ final class VMSystemProperties
   return VMAccessorJavaIo.normPlatformPathVMFile(path);
  }
 
- private static native String getJavaVmVendor0();
-
- private static native String getJavaVendorUrl0();
-
- private static native String getJavaVendorUrlBug0();
-
  private static native int isCpuUnicodeEndianLittle0(int isUnicode);
 
  private static native int getArchDataModel0();
 
  private static native String getOsArch0();
-
- private static native String getJavaVmInfoName0(int isName);
 
  private static native String getOsNameVersion0(int isVersion);
 

@@ -3,7 +3,7 @@
  * a part of the JCGO native layer library (get system props impl).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -65,33 +65,6 @@ JCGO_USEWCHAR_VAREXPORT int jcgo_sysWCharOn;
 #endif
 #endif
 
-#ifndef NOJAVA_gnu_classpath_VMSystemProperties_getJavaVmVendor0
-JCGO_JNI_EXPF(jstring,
-Java_gnu_classpath_VMSystemProperties_getJavaVmVendor0)( JNIEnv *pJniEnv,
- jclass This )
-{
- return jcgo_JnuNewStringPlatform(pJniEnv, "IvMaiSoft LLC");
-}
-#endif
-
-#ifndef NOJAVA_gnu_classpath_VMSystemProperties_getJavaVendorUrl0
-JCGO_JNI_EXPF(jstring,
-Java_gnu_classpath_VMSystemProperties_getJavaVendorUrl0)( JNIEnv *pJniEnv,
- jclass This )
-{
- return jcgo_JnuNewStringPlatform(pJniEnv, "http://www.ivmaisoft.com/jcgo/");
-}
-#endif
-
-#ifndef NOJAVA_gnu_classpath_VMSystemProperties_getJavaVendorUrlBug0
-JCGO_JNI_EXPF(jstring,
-Java_gnu_classpath_VMSystemProperties_getJavaVendorUrlBug0)( JNIEnv *pJniEnv,
- jclass This )
-{
- return jcgo_JnuNewStringPlatform(pJniEnv, "");
-}
-#endif
-
 #ifndef NOJAVA_gnu_classpath_VMSystemProperties_isCpuUnicodeEndianLittle0
 JCGO_JNI_EXPF(jint,
 Java_gnu_classpath_VMSystemProperties_isCpuUnicodeEndianLittle0)(
@@ -118,16 +91,6 @@ Java_gnu_classpath_VMSystemProperties_getOsArch0)( JNIEnv *pJniEnv,
  jclass This )
 {
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_OSARCH_STR);
-}
-#endif
-
-#ifndef NOJAVA_gnu_classpath_VMSystemProperties_getJavaVmInfoName0
-JCGO_JNI_EXPF(jstring,
-Java_gnu_classpath_VMSystemProperties_getJavaVmInfoName0)( JNIEnv *pJniEnv,
- jclass This, jint isName )
-{
- return jcgo_JnuNewStringPlatform(pJniEnv, (int)isName ? "JCGO client VM" :
-         "native mode");
 }
 #endif
 
