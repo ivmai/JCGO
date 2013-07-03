@@ -51,29 +51,6 @@ import java.util.Properties;
 final class VMSystemProperties
 {
 
- private static final String JAVA_CLASS_VERSION = "48.0";
-
- private static final String JAVA_RUNTIME_VERSION = "1.4.2";
-
- private static final String JAVA_SPECIFICATION_VERSION = "1.4";
-
- private static final String JAVA_RUNTIME_NAME =
-  "Java(TM) 2 Runtime Environment";
-
- private static final String JAVA_SPECIFICATION_NAME =
-  "Java Platform API Specification";
-
- private static final String JAVA_SPECIFICATION_VENDOR =
-  "Sun Microsystems Inc.";
-
- private static final String JAVA_VM_SPECIFICATION_NAME =
-  "Java Virtual Machine Specification";
-
- private static final String JAVA_VM_SPECIFICATION_VENDOR =
-  "Sun Microsystems Inc.";
-
- private static final String JAVA_VM_SPECIFICATION_VERSION = "1.0";
-
  private static final String[] LOCALE_INFO_TABLE =
  {
   "Abkhazian", "ab", "AB",
@@ -257,27 +234,30 @@ final class VMSystemProperties
 
  private static void preInitJavaInfo(Properties properties)
  {
-  properties.setProperty("java.class.version", JAVA_CLASS_VERSION);
-  properties.setProperty("java.runtime.name", JAVA_RUNTIME_NAME);
-  properties.setProperty("java.runtime.version", JAVA_RUNTIME_VERSION);
-  properties.setProperty("java.specification.name", JAVA_SPECIFICATION_NAME);
+  properties.setProperty("java.class.version",
+   VMVendorInfo.JAVA_CLASS_VERSION);
+  properties.setProperty("java.runtime.name", VMVendorInfo.JAVA_RUNTIME_NAME);
+  properties.setProperty("java.runtime.version",
+   VMVendorInfo.JAVA_RUNTIME_VERSION);
+  properties.setProperty("java.specification.name",
+   VMVendorInfo.JAVA_SPECIFICATION_NAME);
   properties.setProperty("java.specification.vendor",
-   JAVA_SPECIFICATION_VENDOR);
+   VMVendorInfo.JAVA_SPECIFICATION_VENDOR);
   properties.setProperty("java.specification.version",
-   JAVA_SPECIFICATION_VERSION);
+   VMVendorInfo.JAVA_SPECIFICATION_VERSION);
   properties.setProperty("java.vendor", VMVendorInfo.JAVA_VENDOR);
   properties.setProperty("java.vendor.url", VMVendorInfo.JAVA_VENDOR_URL);
   properties.setProperty("java.vendor.url.bug",
    VMVendorInfo.JAVA_VENDOR_URL_BUG);
-  properties.setProperty("java.version", JAVA_RUNTIME_VERSION);
+  properties.setProperty("java.version", VMVendorInfo.JAVA_VERSION);
   properties.setProperty("java.vm.info", VMVendorInfo.JAVA_VM_INFO);
   properties.setProperty("java.vm.name", VMVendorInfo.JAVA_VM_NAME);
   properties.setProperty("java.vm.specification.name",
-   JAVA_VM_SPECIFICATION_NAME);
+   VMVendorInfo.JAVA_VM_SPECIFICATION_NAME);
   properties.setProperty("java.vm.specification.vendor",
-   JAVA_VM_SPECIFICATION_VENDOR);
+   VMVendorInfo.JAVA_VM_SPECIFICATION_VENDOR);
   properties.setProperty("java.vm.specification.version",
-   JAVA_VM_SPECIFICATION_VERSION);
+   VMVendorInfo.JAVA_VM_SPECIFICATION_VERSION);
   properties.setProperty("java.vm.vendor", VMVendorInfo.JAVA_VM_VENDOR);
   properties.setProperty("java.vm.version",
    VMAccessorJavaLang.getJavaVmVersionVMRuntime());
