@@ -259,6 +259,8 @@ final class VMSystemProperties
   properties.setProperty("java.vm.specification.version",
    VMVendorInfo.JAVA_VM_SPECIFICATION_VERSION);
   properties.setProperty("java.vm.vendor", VMVendorInfo.JAVA_VM_VENDOR);
+  properties.setProperty("java.vm.vendor.url",
+   VMVendorInfo.JAVA_VM_VENDOR_URL);
   properties.setProperty("java.vm.version",
    VMAccessorJavaLang.getJavaVmVersionVMRuntime());
  }

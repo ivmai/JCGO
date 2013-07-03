@@ -26,9 +26,9 @@ interface VMVendorInfo
 
  String JAVA_SPECIFICATION_VERSION = "1.4";
 
- String JAVA_VENDOR = JAVA_VM_VENDOR;
+ String JAVA_VENDOR = "GNU Classpath";
 
- String JAVA_VENDOR_URL = "http://www.ivmaisoft.com/jcgo/";
+ String JAVA_VENDOR_URL = "http://www.classpath.org";
 
  String JAVA_VENDOR_URL_BUG = "";
 
@@ -45,4 +45,6 @@ interface VMVendorInfo
  String JAVA_VM_SPECIFICATION_VERSION = "1.0";
 
  String JAVA_VM_VENDOR = "IvMaiSoft LLC";
+
+ String JAVA_VM_VENDOR_URL = "http://www.ivmaisoft.com/jcgo/";
 }
