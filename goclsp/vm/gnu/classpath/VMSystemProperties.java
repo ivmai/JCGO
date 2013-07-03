@@ -57,6 +57,23 @@ final class VMSystemProperties
 
  private static final String JAVA_SPECIFICATION_VERSION = "1.4";
 
+ private static final String JAVA_RUNTIME_NAME =
+  "Java(TM) 2 Runtime Environment";
+
+ private static final String JAVA_SPECIFICATION_NAME =
+  "Java Platform API Specification";
+
+ private static final String JAVA_SPECIFICATION_VENDOR =
+  "Sun Microsystems Inc.";
+
+ private static final String JAVA_VM_SPECIFICATION_NAME =
+  "Java Virtual Machine Specification";
+
+ private static final String JAVA_VM_SPECIFICATION_VENDOR =
+  "Sun Microsystems Inc.";
+
+ private static final String JAVA_VM_SPECIFICATION_VERSION = "1.0";
+
  private static final String[] LOCALE_INFO_TABLE =
  {
   "Abkhazian", "ab", "AB",
@@ -241,13 +258,11 @@ final class VMSystemProperties
  private static void preInitJavaInfo(Properties properties)
  {
   properties.setProperty("java.class.version", JAVA_CLASS_VERSION);
-  properties.setProperty("java.runtime.name",
-   "Java(TM) 2 Runtime Environment");
+  properties.setProperty("java.runtime.name", JAVA_RUNTIME_NAME);
   properties.setProperty("java.runtime.version", JAVA_RUNTIME_VERSION);
-  properties.setProperty("java.specification.name",
-   "Java Platform API Specification");
+  properties.setProperty("java.specification.name", JAVA_SPECIFICATION_NAME);
   properties.setProperty("java.specification.vendor",
-   "Sun Microsystems Inc.");
+   JAVA_SPECIFICATION_VENDOR);
   properties.setProperty("java.specification.version",
    JAVA_SPECIFICATION_VERSION);
   properties.setProperty("java.vendor", getJavaVendor());
@@ -257,10 +272,11 @@ final class VMSystemProperties
   properties.setProperty("java.vm.info", getJavaVmInfoName0(0));
   properties.setProperty("java.vm.name", getJavaVmInfoName0(1));
   properties.setProperty("java.vm.specification.name",
-   "Java Virtual Machine Specification");
+   JAVA_VM_SPECIFICATION_NAME);
   properties.setProperty("java.vm.specification.vendor",
-   "Sun Microsystems Inc.");
-  properties.setProperty("java.vm.specification.version", "1.0");
+   JAVA_VM_SPECIFICATION_VENDOR);
+  properties.setProperty("java.vm.specification.version",
+   JAVA_VM_SPECIFICATION_VERSION);
   properties.setProperty("java.vm.vendor", getJavaVmVendor0());
   properties.setProperty("java.vm.version",
    VMAccessorJavaLang.getJavaVmVersionVMRuntime());
