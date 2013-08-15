@@ -71,6 +71,8 @@ Java_gnu_classpath_VMSystemProperties_isCpuUnicodeEndianLittle0)(
  JNIEnv *pJniEnv, jclass This, jint isUnicode )
 {
  int value = 1;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (int)isUnicode ? (jint)JCGO_OSUNICODE_ISLITTLE :
          (jint)(*(volatile char *)&value);
 }
@@ -81,6 +83,8 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_classpath_VMSystemProperties_getArchDataModel0)( JNIEnv *pJniEnv,
  jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (jint)(sizeof(void *) * 8);
 }
 #endif
@@ -90,6 +94,7 @@ JCGO_JNI_EXPF(jstring,
 Java_gnu_classpath_VMSystemProperties_getOsArch0)( JNIEnv *pJniEnv,
  jclass This )
 {
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_OSARCH_STR);
 }
 #endif
@@ -100,6 +105,7 @@ Java_gnu_classpath_VMSystemProperties_getOsNameVersion0)( JNIEnv *pJniEnv,
  jclass This, jint isVersion )
 {
  JCGO_OSNAME_T data;
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, (int)isVersion ?
          JCGO_OSNAME_GETRELEASE(&data) : JCGO_OSNAME_GETNAME(&data));
 }
@@ -111,6 +117,8 @@ Java_gnu_classpath_VMSystemProperties_getOsVerMajorMinor0)( JNIEnv *pJniEnv,
  jclass This, jint isMinor )
 {
  JCGO_OSVER_T data;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_OSVER_GET(&data);
  return (jint)((int)isMinor ? JCGO_OSVER_MINOR(&data) :
          JCGO_OSVER_MAJOR(&data));
@@ -127,6 +135,7 @@ Java_gnu_classpath_VMSystemProperties_getCTypeLocale0)( JNIEnv *pJniEnv,
  if (cstr != NULL)
   return jcgo_JnuNewStringPlatform(pJniEnv, cstr);
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -137,6 +146,7 @@ Java_gnu_classpath_VMSystemProperties_getUserLanguage0)( JNIEnv *pJniEnv,
  jclass This )
 {
  JCGO_USERLANG_T data;
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_USERLANG_GETABBR(&data));
 }
 #endif
@@ -148,6 +158,7 @@ Java_gnu_classpath_VMSystemProperties_getUserCountry0)( JNIEnv *pJniEnv,
 {
  JCGO_USERCNTRY_T data;
  JCGO_USERCNTRY_PREPARESTMT(&data);
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_USERCNTRY_GETABBR(&data));
 }
 #endif
@@ -157,6 +168,7 @@ JCGO_JNI_EXPF(jstring,
 Java_gnu_classpath_VMSystemProperties_getUserVariant0)( JNIEnv *pJniEnv,
  jclass This )
 {
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -166,6 +178,8 @@ JCGO_JNI_EXPF(jstring,
 Java_gnu_classpath_VMSystemProperties_getFileConsoleEncoding0)(
  JNIEnv *pJniEnv, jclass This, jint isConsole )
 {
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(isConsole);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -175,6 +189,8 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_classpath_VMSystemProperties_getFileConsoleCodePage0)(
  JNIEnv *pJniEnv, jclass This, jint isConsole )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  if ((int)isConsole)
   return (jint)JCGO_OSCONSOLE_CODEPAGE;
  return (jint)JCGO_OSFILE_CODEPAGE;
@@ -194,6 +210,7 @@ Java_gnu_classpath_VMSystemProperties_getUserName0)( JNIEnv *pJniEnv,
      GetUserNameW(tbuf, &bufSize)))
   return JCGO_JNU_TNEWSTRING(pJniEnv, tbuf);
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_USERINFO_GETNAME(&data));
 }
 #endif
@@ -213,6 +230,7 @@ Java_gnu_classpath_VMSystemProperties_getUserHome0)( JNIEnv *pJniEnv,
   return JCGO_JNU_TNEWSTRING(pJniEnv, tbuf);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_USERINFO_GETHOME(&data));
 }
 #endif
@@ -231,6 +249,7 @@ Java_gnu_classpath_VMSystemProperties_getJavaIoTmpdir0)( JNIEnv *pJniEnv,
   return JCGO_JNU_TNEWSTRING(pJniEnv, tbuf);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_TMPDIR_PATH);
 }
 #endif

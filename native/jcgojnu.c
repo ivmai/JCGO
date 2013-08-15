@@ -125,6 +125,8 @@ jcgo_JnuGetByteArrayElemsRegion( JNIEnv *pJniEnv, jbyteArray arr, jint offset,
  jint len )
 {
 #ifdef JCGO_NOJNI
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(len);
  return (jbyte *)&JCGO_ARR_INTERNALACC(jbyte, (jbyteArr)arr, offset);
 #else
  jbyte *bytes = (*pJniEnv)->GetByteArrayElements(pJniEnv, arr, NULL);
@@ -144,7 +146,12 @@ JNIEXPORT void JNICALL
 jcgo_JnuReleaseByteArrayElemsRegion( JNIEnv *pJniEnv, jbyteArray arr,
  jbyte *bytes, jint offset )
 {
-#ifndef JCGO_NOJNI
+#ifdef JCGO_NOJNI
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(arr);
+ JCGO_UNUSED_VAR(bytes);
+ JCGO_UNUSED_VAR(offset);
+#else
  (*pJniEnv)->ReleaseByteArrayElements(pJniEnv, arr,
   (jbyte *)((jbyte JCGO_HPTR_MOD *)bytes - (JCGO_ALLOCSIZE_T)offset), 0);
 #endif
@@ -154,6 +161,7 @@ JNIEXPORT jint JNICALL
 jcgo_JnuGetIntArrayElement( JNIEnv *pJniEnv, jintArray arr, jint index )
 {
 #ifdef JCGO_NOJNI
+ JCGO_UNUSED_VAR(pJniEnv);
  return JCGO_ARR_INTERNALACC(jint, (jintArr)arr, index);
 #else
  jint value = 0;
@@ -167,6 +175,7 @@ jcgo_JnuSetIntArrayElement( JNIEnv *pJniEnv, jintArray arr, jint index,
  jint value )
 {
 #ifdef JCGO_NOJNI
+ JCGO_UNUSED_VAR(pJniEnv);
  JCGO_ARR_INTERNALACC(jint, (jintArr)arr, index) = value;
 #else
  (*pJniEnv)->SetIntArrayRegion(pJniEnv, arr, (jsize)index, 1, &value);
@@ -178,6 +187,7 @@ jcgo_JnuSetLongArrayElement( JNIEnv *pJniEnv, jlongArray arr, jint index,
  jlong value )
 {
 #ifdef JCGO_NOJNI
+ JCGO_UNUSED_VAR(pJniEnv);
  JCGO_ARR_INTERNALACC(jlong, (jlongArr)arr, index) = value;
 #else
  (*pJniEnv)->SetLongArrayRegion(pJniEnv, arr, (jsize)index, 1, &value);
@@ -190,6 +200,7 @@ jcgo_JnuStringSizeOfPlatform( JNIEnv *pJniEnv, jstring str )
  unsigned len = 0;
 #ifdef JCGO_NOJNI
  jint count = *jcgo_jnuStringLengthPtr(str);
+ JCGO_UNUSED_VAR(pJniEnv);
 #else
  jint count = (jint)(*pJniEnv)->GetStringLength(pJniEnv, str);
 #endif
@@ -253,6 +264,7 @@ jcgo_JnuStringToPlatformChars( JNIEnv *pJniEnv, jstring str, char *cbuf,
  if (cbuf != NULL && size)
  {
 #ifdef JCGO_NOJNI
+  JCGO_UNUSED_VAR(pJniEnv);
   chars = jcgo_jnuStringChars(str, &isbytes);
   count = *jcgo_jnuStringLengthPtr(str);
 #else
@@ -500,6 +512,7 @@ jcgo_JnuStringSizeOfWide( JNIEnv *pJniEnv, jstring str )
 {
 #ifdef JCGO_NOJNI
  jint count = *jcgo_jnuStringLengthPtr(str);
+ JCGO_UNUSED_VAR(pJniEnv);
 #else
  jint count = (jint)(*pJniEnv)->GetStringLength(pJniEnv, str);
 #endif
@@ -523,6 +536,7 @@ jcgo_JnuStringToWideChars( JNIEnv *pJniEnv, jstring str, wchar_t *wbuf,
  if (wbuf != NULL && size >= sizeof(wchar_t))
  {
 #ifdef JCGO_NOJNI
+  JCGO_UNUSED_VAR(pJniEnv);
   chars = jcgo_jnuStringChars(str, &isbytes);
   count = *jcgo_jnuStringLengthPtr(str);
 #else

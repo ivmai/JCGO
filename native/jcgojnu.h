@@ -60,6 +60,10 @@
 #define NULL ((void *)0)
 #endif
 
+#ifndef JCGO_UNUSED_VAR
+#define JCGO_UNUSED_VAR(var) (void)var
+#endif
+
 #ifdef JCGO_JNIUSCORE
 #define JCGO_JNI_EXPF(jnitype, func) JNIEXPORT jnitype JNICALL _##func
 #define jcgo_JnuGetByteArrayElemsRegion _jcgo_JnuGetByteArrayElemsRegion

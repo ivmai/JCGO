@@ -3,7 +3,7 @@
  * a part of the JCGO native layer library (inet gethostby impl).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -54,6 +54,8 @@
 JCGO_JNI_EXPF(jint,
 Java_java_net_VMInetAddress_getHostNeedsSync0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return JCGO_GETHOSTBY_NEEDSYNC;
 #else
@@ -74,6 +76,7 @@ Java_java_net_VMInetAddress_getHostByAddr0)( JNIEnv *pJniEnv, jclass This,
  char *address =
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ip, 0, iplen);
  JCGO_GETHOSTBY_T data;
+ JCGO_UNUSED_VAR(This);
  if (address == NULL)
   return NULL;
 #ifdef AF_INET6
@@ -87,6 +90,9 @@ Java_java_net_VMInetAddress_getHostByAddr0)( JNIEnv *pJniEnv, jclass This,
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, ip, (jbyte *)address, 0);
  return hostname;
 #else
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(iplen);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #endif
 }
@@ -109,6 +115,7 @@ Java_java_net_VMInetAddress_getHostByName0)( JNIEnv *pJniEnv, jclass This,
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ipAddrsBuf, 0, bufSize);
  char cbuf[MAXHOSTNAMELEN + 1];
  JCGO_GETHOSTBY_T data;
+ JCGO_UNUSED_VAR(This);
  if (addrsbuf == NULL)
   return 0;
  if (jcgo_JnuStringToPlatformChars(pJniEnv, hostname, cbuf, sizeof(cbuf)) > 0)
@@ -141,6 +148,11 @@ Java_java_net_VMInetAddress_getHostByName0)( JNIEnv *pJniEnv, jclass This,
   (jbyte *)addrsbuf, 0);
  return cnt;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(hostname);
+ JCGO_UNUSED_VAR(ipAddrsBuf);
+ JCGO_UNUSED_VAR(bufSize);
  return 0;
 #endif
 }

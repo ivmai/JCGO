@@ -3,7 +3,7 @@
  * a part of the JCGO native layer library (process exec impl).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -368,7 +368,10 @@ STATIC jlong jcgo_tspawnvpeDir( int mode, JCGO_JNUTCHAR_T **targv,
   pid = (jlong)-1L;
  }
 #else
-#ifndef JCGO_NOCWDIR
+#ifdef JCGO_NOCWDIR
+ JCGO_UNUSED_VAR(tcurdir);
+ JCGO_UNUSED_VAR(perrcode);
+#else
  if (tcurdir != NULL)
  {
   tbuf[0] = (JCGO_JNUTCHAR_T)0;
@@ -603,6 +606,7 @@ JCGO_JNI_EXPF(jstring,
 Java_java_lang_VMProcess_getValidProgExtsList0)( JNIEnv *pJniEnv,
  jclass This )
 {
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_EXEC
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_SPAWN_PROGEXTS);
 #else
@@ -615,6 +619,8 @@ Java_java_lang_VMProcess_getValidProgExtsList0)( JNIEnv *pJniEnv,
 JCGO_JNI_EXPF(jint,
 Java_java_lang_VMProcess_isProgSearchNeeded0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_EXEC
  return JCGO_SPAWN_ISPROGSEARCHNEEDED;
 #else
@@ -627,6 +633,8 @@ Java_java_lang_VMProcess_isProgSearchNeeded0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_java_lang_VMProcess_isCmdSpaceDelimited0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_EXEC
 #ifdef JCGO_WINFILE
 #ifdef _WIN32_WCE
@@ -650,6 +658,9 @@ Java_java_lang_VMProcess_checkPermissions0)( JNIEnv *pJniEnv, jclass This,
 {
 #ifdef JCGO_EXEC
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(path);
  return (jint)((int)isDirCheck ? -EACCES : 0);
 #else
  int res = -EACCES;
@@ -659,6 +670,7 @@ Java_java_lang_VMProcess_checkPermissions0)( JNIEnv *pJniEnv, jclass This,
  struct stat st;
 #endif
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
+ JCGO_UNUSED_VAR(This);
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0)
  {
   JCGO_SPAWNCALL_BEGIN(pJniEnv)
@@ -727,6 +739,9 @@ Java_java_lang_VMProcess_checkPermissions0)( JNIEnv *pJniEnv, jclass This,
  return (jint)res;
 #endif
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(path);
  return (jint)((int)isDirCheck ? 0 : -EACCES);
 #endif
 }
@@ -738,7 +753,10 @@ Java_java_lang_VMProcess_getSpawnWorkBufSize0)( JNIEnv *pJniEnv, jclass This,
  jstring cmdZBlock, jstring envZBlock, jint cmdArrLen, jint envArrLen )
 {
  jint size;
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_WINFILE
+ JCGO_UNUSED_VAR(cmdArrLen);
+ JCGO_UNUSED_VAR(envArrLen);
  size = (jint)JCGO_JNUTCHAR_E(jcgo_JnuStringSizeOfPlatform(pJniEnv,
          cmdZBlock), jcgo_JnuStringSizeOfWide(pJniEnv, cmdZBlock));
  return (size += (jint)JCGO_JNUTCHAR_E(jcgo_JnuStringSizeOfPlatform(pJniEnv,
@@ -791,9 +809,12 @@ Java_java_lang_VMProcess_nativeSpawn0)( JNIEnv *pJniEnv, jclass This,
 #else
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
 #endif
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_WINFILE
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, progName, tnamebuf) <= 0)
   return -EACCES;
+#else
+ JCGO_UNUSED_VAR(progName);
 #endif
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, dirpath, tbuf) <= 0)
   return -ENOTDIR;
@@ -862,6 +883,18 @@ Java_java_lang_VMProcess_nativeSpawn0)( JNIEnv *pJniEnv, jclass This,
   }
 #endif
  }
+#else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(progName);
+ JCGO_UNUSED_VAR(cmdZBlock);
+ JCGO_UNUSED_VAR(envZBlock);
+ JCGO_UNUSED_VAR(dirpath);
+ JCGO_UNUSED_VAR(fdsArr);
+ JCGO_UNUSED_VAR(pidArr);
+ JCGO_UNUSED_VAR(workBuf);
+ JCGO_UNUSED_VAR(bufLen);
+ JCGO_UNUSED_VAR(redirect);
 #endif
  return -errcode;
 }
@@ -877,6 +910,8 @@ Java_java_lang_VMProcess_nativeWaitFor0)( JNIEnv *pJniEnv, jclass This,
  HANDLE handle = JCGO_WINF_NUMTOHANDLE(pid);
  DWORD exitcode;
  int status;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_SPAWNCALL_BEGIN(pJniEnv)
  if (!(int)nohang)
   (void)WaitForSingleObject(handle, INFINITE);
@@ -894,6 +929,8 @@ Java_java_lang_VMProcess_nativeWaitFor0)( JNIEnv *pJniEnv, jclass This,
  int res;
  int errcode;
  int status = 0;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_SPAWNCALL_BEGIN(pJniEnv)
  res = JCGO_SPAWN_WAITPID(pid, &status, (int)nohang, &errcode);
  JCGO_SPAWNCALL_END(pJniEnv)
@@ -907,6 +944,10 @@ Java_java_lang_VMProcess_nativeWaitFor0)( JNIEnv *pJniEnv, jclass This,
   status = -status;
  return (jint)status;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(pid);
+ JCGO_UNUSED_VAR(nohang);
  return 0;
 #endif
 }
@@ -919,11 +960,16 @@ Java_java_lang_VMProcess_nativeKill)( JNIEnv *pJniEnv, jclass This,
 {
 #ifdef JCGO_EXEC
  int res;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_SPAWNCALL_BEGIN(pJniEnv)
  res = JCGO_SPAWN_KILL(pid);
  JCGO_SPAWNCALL_END(pJniEnv)
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(pid);
  return 0;
 #endif
 }
@@ -938,6 +984,7 @@ Java_java_lang_VMProcess_pipe0)( JNIEnv *pJniEnv, jclass This,
  int res;
 #ifdef JCGO_WINFILE
 #ifdef _WINBASE_NO_CREATEPIPE
+ JCGO_UNUSED_VAR(fdsArr);
  res = -EACCES;
 #else
  HANDLE hReadPipe;
@@ -978,8 +1025,12 @@ Java_java_lang_VMProcess_pipe0)( JNIEnv *pJniEnv, jclass This,
  }
   else res = -errcode;
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fdsArr);
  return -EACCES;
 #endif
 }

@@ -417,7 +417,9 @@ jcgo_JavaInitInOutA)( char **argv, jint redirect )
  JCGO_ARGV_WILDCARDSTMT(&argv);
  jcgo_initFileIO();
 #ifdef JCGO_ERRTOLOG
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(redirect);
+#else
  if (((int)redirect & 0x1) != 0 &&
      !jcgo_initFileLogA((int)redirect, argv != NULL ? argv[0] : NULL))
   return argv;
@@ -430,6 +432,8 @@ jcgo_JavaInitInOutA)( char **argv, jint redirect )
  setmode(JCGO_FD_ERRFD, O_BINARY);
 #endif
 #endif
+#else
+ JCGO_UNUSED_VAR(redirect);
 #endif
  return argv;
 }
@@ -448,7 +452,9 @@ jcgo_JavaInitInOutW)( wchar_t **wargv, jint redirect )
  JCGO_ARGV_WWILDCARDSTMT(&wargv);
  jcgo_initFileIO();
 #ifdef JCGO_ERRTOLOG
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(redirect);
+#else
  if (((int)redirect & 0x1) != 0 &&
      !jcgo_initFileLogW((int)redirect, wargv != NULL ? wargv[0] : NULL))
   return wargv;
@@ -461,6 +467,8 @@ jcgo_JavaInitInOutW)( wchar_t **wargv, jint redirect )
  setmode(JCGO_FD_ERRFD, O_BINARY);
 #endif
 #endif
+#else
+ JCGO_UNUSED_VAR(redirect);
 #endif
  return wargv;
 }
@@ -609,6 +617,8 @@ STATIC int jcgo_ftruncate( int fd, int *perrcode )
 JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_getStdinFD0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return JCGO_FD_INFD;
 }
 #endif
@@ -617,6 +627,8 @@ Java_gnu_java_nio_VMChannel_getStdinFD0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_getStdoutFD0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_ERRTOLOG
  return jcgo_outLogFD;
 #else
@@ -629,6 +641,8 @@ Java_gnu_java_nio_VMChannel_getStdoutFD0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_getStderrFD0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_ERRTOLOG
  return jcgo_errLogFD;
 #else
@@ -646,6 +660,8 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_isIOErrorFileExists0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (int)res == -EEXIST ? 1 : 0;
 }
 #endif
@@ -655,6 +671,8 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_isIOErrorNoResources0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (int)res == -EAGAIN || (int)res == -EMFILE || (int)res == -ENFILE ||
          (int)res == -ENOMEM ? 1 : 0;
 }
@@ -665,6 +683,8 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_isIOErrorInterrupted0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (int)res == -EINTR || (int)res == -EAGAIN ? 1 : 0;
 }
 #endif
@@ -727,6 +747,7 @@ Java_gnu_java_nio_VMChannel_getIOErrorMsg0)( JNIEnv *pJniEnv, jclass This,
 #else
  char *cstr = strerror(-(int)res);
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, cstr != NULL ? cstr : "");
 }
 #endif
@@ -737,6 +758,11 @@ Java_gnu_java_nio_VMChannel_fileOpen0)( JNIEnv *pJniEnv, jclass This,
  jintArray fdArr, jstring path, jint mode )
 {
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fdArr);
+ JCGO_UNUSED_VAR(path);
+ JCGO_UNUSED_VAR(mode);
  return -ENOENT;
 #else
 #ifdef JCGO_WINFILE
@@ -753,6 +779,7 @@ Java_gnu_java_nio_VMChannel_fileOpen0)( JNIEnv *pJniEnv, jclass This,
 #endif
  int errcode = ENOENT;
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
+ JCGO_UNUSED_VAR(This);
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0)
  {
   JCGO_FILEIOCALL_BEGIN(pJniEnv)
@@ -851,6 +878,7 @@ Java_gnu_java_nio_VMChannel_fileRead0)( JNIEnv *pJniEnv, jclass This,
  if (fd == -2)
   return 0;
 #endif
+ JCGO_UNUSED_VAR(This);
  if (buf == NULL)
   return 0;
  res = (int)(((unsigned)-1) >> 2) + 1;
@@ -892,6 +920,7 @@ Java_gnu_java_nio_VMChannel_fileWrite0)( JNIEnv *pJniEnv, jclass This,
  if (fd == -2)
   return len > 0 ? len : 0;
 #endif
+ JCGO_UNUSED_VAR(This);
  if (buf == NULL)
   return 0;
  res = (int)(((unsigned)-1) >> 2) + 1;
@@ -949,6 +978,8 @@ Java_gnu_java_nio_VMChannel_fileAvailable0)( JNIEnv *pJniEnv, jclass This,
 #ifdef JCGO_FD_INAVAIL
  JCGO_FDINAVAIL_T avail = 0;
  int res;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
  res = JCGO_FD_INAVAIL((int)fd, &avail);
  if (res < 0 && (res = -errno) >= 0)
@@ -958,6 +989,9 @@ Java_gnu_java_nio_VMChannel_fileAvailable0)( JNIEnv *pJniEnv, jclass This,
   res = (int)(((unsigned)-1) >> 1);
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
  return -EINVAL;
 #endif
 }
@@ -985,7 +1019,12 @@ Java_gnu_java_nio_VMChannel_fileSelect0)( JNIEnv *pJniEnv, jclass This,
    res = -EINVAL;
   JCGO_FILEIOCALL_END(pJniEnv)
  }
+#else
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(iswrite);
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -996,6 +1035,11 @@ Java_gnu_java_nio_VMChannel_fileSeek0)( JNIEnv *pJniEnv, jclass This,
  jlong ofs, jint fd, jint direction )
 {
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(ofs);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(direction);
  return -ESPIPE;
 #else
  jlong pos;
@@ -1004,6 +1048,8 @@ Java_gnu_java_nio_VMChannel_fileSeek0)( JNIEnv *pJniEnv, jclass This,
 #else
  int errcode = EINVAL;
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
 #ifdef JCGO_WINFILE
  distanceToMoveHigh = (LONG)(((LONGLONG)ofs) >> (sizeof(LONG) * 8));
@@ -1034,6 +1080,8 @@ Java_gnu_java_nio_VMChannel_fileSeek0)( JNIEnv *pJniEnv, jclass This,
 JCGO_JNI_EXPF(jint,
 Java_gnu_java_nio_VMChannel_lockingOpHasPos0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_WINFILE
  return 1;
 #else
@@ -1057,13 +1105,29 @@ Java_gnu_java_nio_VMChannel_fileLock0)( JNIEnv *pJniEnv, jclass This,
 {
 #ifdef JCGO_WINFILE
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(pos);
+ JCGO_UNUSED_VAR(len);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(sharedOrUnlock);
+ JCGO_UNUSED_VAR(doWait);
  return -EINVAL;
 #else
 #ifdef _WINBASE_NO_LOCKFILEEX
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(pos);
+ JCGO_UNUSED_VAR(len);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(sharedOrUnlock);
+ JCGO_UNUSED_VAR(doWait);
  return -EINVAL;
 #else
  OVERLAPPED overlapped;
  int res = 0;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  overlapped.Offset = (DWORD)pos;
  overlapped.OffsetHigh = (DWORD)(((LONGLONG)pos) >> (sizeof(DWORD) * 8));
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
@@ -1082,6 +1146,8 @@ Java_gnu_java_nio_VMChannel_fileLock0)( JNIEnv *pJniEnv, jclass This,
 #ifdef JCGO_BIGFLOCK_T
  int res;
  JCGO_BIGFLOCK_T fl;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_BIGFLOCK_HASPOS
  if (pos - (jlong)1L >= (jlong)(~((JCGO_BIGFLKOFF_T)1L <<
      ((int)sizeof(JCGO_BIGFLKOFF_T) * 8 - 1))))
@@ -1100,6 +1166,13 @@ Java_gnu_java_nio_VMChannel_fileLock0)( JNIEnv *pJniEnv, jclass This,
  JCGO_FILEIOCALL_END(pJniEnv)
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(pos);
+ JCGO_UNUSED_VAR(len);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(sharedOrUnlock);
+ JCGO_UNUSED_VAR(doWait);
  return -EINVAL;
 #endif
 #endif
@@ -1112,11 +1185,18 @@ Java_gnu_java_nio_VMChannel_fileFlush0)( JNIEnv *pJniEnv, jclass This,
  jint fd, jint metadata )
 {
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(metadata);
  return 0;
 #else
  int res;
  int errcode = 0;
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(metadata);
 #ifdef JCGO_WINFILE
  res = 0;
  if (!FlushFileBuffers(JCGO_WINF_NUMTOHANDLE(fd)))
@@ -1140,6 +1220,8 @@ Java_gnu_java_nio_VMChannel_fileClose0)( JNIEnv *pJniEnv, jclass This,
 {
  int res;
  int errcode = 0;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
 #ifdef JCGO_WINFILE
  res = 0;
@@ -1178,6 +1260,7 @@ Java_java_io_VMFile_length)( JNIEnv *pJniEnv, jclass This, jstring path )
  JCGO_BIGFSTAT_T st;
 #endif
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
+ JCGO_UNUSED_VAR(This);
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0)
  {
   JCGO_FILEIOCALL_BEGIN(pJniEnv)
@@ -1206,6 +1289,10 @@ Java_java_io_VMFile_length)( JNIEnv *pJniEnv, jclass This, jstring path )
 #endif
   JCGO_FILEIOCALL_END(pJniEnv)
  }
+#else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(path);
 #endif
  return filelen;
 }
@@ -1216,6 +1303,9 @@ JCGO_JNI_EXPF(jlong,
 Java_java_io_VMFile_currentTime0)( JNIEnv *pJniEnv, jclass This, jint isNano )
 {
 #ifdef JCGO_NOTIME
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(isNano);
  return (jlong)0L;
 #else
 #ifdef JCGO_WINFILE
@@ -1232,6 +1322,8 @@ Java_java_io_VMFile_currentTime0)( JNIEnv *pJniEnv, jclass This, jint isNano )
   return (jlong)(timeCounter.QuadPart * jcgo_win32PerfTickNanos);
 #endif
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_WINFILE
  fileTime.dwLowDateTime = 0;
  fileTime.dwHighDateTime = 0;
@@ -1270,6 +1362,8 @@ Java_java_io_VMFile_currentTime0)( JNIEnv *pJniEnv, jclass This, jint isNano )
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_isCaseSensitive0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_NOFILES
  return 0;
 #else
@@ -1282,6 +1376,8 @@ Java_java_io_VMFile_isCaseSensitive0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_isLongNameSupported0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_NOFILES
  return 0;
 #else
@@ -1294,6 +1390,8 @@ Java_java_io_VMFile_isLongNameSupported0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_isUniRootFileSys0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_UNIFSYS
  return 1;
 #else
@@ -1310,6 +1408,8 @@ Java_java_io_VMFile_isUniRootFileSys0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_isDotFileHidden0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_UNIFSYS
  return 1;
 #else
@@ -1323,6 +1423,8 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_getFilePathSepChar0)( JNIEnv *pJniEnv, jclass This,
  jint isPath )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (jint)((int)isPath ? JCGO_PATH_WDELIM : JCGO_FILE_WSEP);
 }
 #endif
@@ -1331,6 +1433,7 @@ Java_java_io_VMFile_getFilePathSepChar0)( JNIEnv *pJniEnv, jclass This,
 JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_getLineSeparator0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_NEW_LINE);
 }
 #endif
@@ -1339,6 +1442,7 @@ Java_java_io_VMFile_getLineSeparator0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_getDosUnixDrivePrefix0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, JCGO_DOSUNIX_DRIVEPREFIX);
 }
 #endif
@@ -1348,7 +1452,9 @@ JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_getLibNamePrefixSuffix0)( JNIEnv *pJniEnv, jclass This,
  jint isSuffix )
 {
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(isSuffix);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #else
  return jcgo_JnuNewStringPlatform(pJniEnv, (int)isSuffix ?
@@ -1362,6 +1468,8 @@ JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_mapLibraryName0)( JNIEnv *pJniEnv, jclass This,
  jstring libname )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return libname;
 }
 #endif
@@ -1370,7 +1478,9 @@ Java_java_io_VMFile_mapLibraryName0)( JNIEnv *pJniEnv, jclass This,
 JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_getenv0)( JNIEnv *pJniEnv, jclass This, jstring name )
 {
-#ifndef _STDLIB_NO_GETENV
+#ifdef _STDLIB_NO_GETENV
+ JCGO_UNUSED_VAR(name);
+#else
 #ifdef _STDLIB_NO_WGETENV
  char *cstr;
  char cbuf[JCGO_GETENV_MAXNAMESIZE];
@@ -1394,6 +1504,7 @@ Java_java_io_VMFile_getenv0)( JNIEnv *pJniEnv, jclass This, jstring name )
   return JCGO_JNU_TNEWSTRING(pJniEnv, tstr);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -1404,7 +1515,11 @@ Java_java_io_VMFile_rename0)( JNIEnv *pJniEnv, jclass This, jstring path,
  jstring destpath )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+ JCGO_UNUSED_VAR(destpath);
+#else
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
  JCGO_JNUTCHAR_T tbuf2[JCGO_PATH_MAXSIZE];
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0 &&
@@ -1424,6 +1539,7 @@ Java_java_io_VMFile_rename0)( JNIEnv *pJniEnv, jclass This, jstring path,
   JCGO_FILEIOCALL_END(pJniEnv)
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1433,7 +1549,10 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_delete0)( JNIEnv *pJniEnv, jclass This, jstring path )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0)
  {
@@ -1450,6 +1569,7 @@ Java_java_io_VMFile_delete0)( JNIEnv *pJniEnv, jclass This, jstring path )
   JCGO_FILEIOCALL_END(pJniEnv)
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1459,7 +1579,10 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_mkdir0)( JNIEnv *pJniEnv, jclass This, jstring path )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0)
  {
@@ -1475,6 +1598,7 @@ Java_java_io_VMFile_mkdir0)( JNIEnv *pJniEnv, jclass This, jstring path )
   JCGO_FILEIOCALL_END(pJniEnv)
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1485,13 +1609,21 @@ Java_java_io_VMFile_access0)( JNIEnv *pJniEnv, jclass This, jstring path,
  jint chkRead, jint chkWrite, jint chkExec )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+ JCGO_UNUSED_VAR(chkRead);
+ JCGO_UNUSED_VAR(chkWrite);
+ JCGO_UNUSED_VAR(chkExec);
+#else
  int mode;
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
  if (JCGO_JNU_TSTRINGTOCHARS(pJniEnv, path, tbuf) > 0)
  {
   JCGO_FILEIOCALL_BEGIN(pJniEnv)
 #ifdef JCGO_WINFILE
+ JCGO_UNUSED_VAR(chkRead);
+ JCGO_UNUSED_VAR(chkExec);
   if ((mode = (int)JCGO_JNUTCHAR_E(GetFileAttributesA(JCGO_JNUTCHAR_C(tbuf)),
       GetFileAttributesW(tbuf))) == (int)INVALID_FILE_ATTRIBUTES)
    res = -jcgo_winFileErrnoGet();
@@ -1510,6 +1642,7 @@ Java_java_io_VMFile_access0)( JNIEnv *pJniEnv, jclass This, jstring path,
   JCGO_FILEIOCALL_END(pJniEnv)
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1520,7 +1653,10 @@ Java_java_io_VMFile_isRegFileOrDir0)( JNIEnv *pJniEnv, jclass This,
  jstring path )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_WINFILE
  DWORD attrs;
 #else
@@ -1547,6 +1683,7 @@ Java_java_io_VMFile_isRegFileOrDir0)( JNIEnv *pJniEnv, jclass This,
   JCGO_FILEIOCALL_END(pJniEnv)
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1557,8 +1694,14 @@ Java_java_io_VMFile_getLastModified0)( JNIEnv *pJniEnv, jclass This,
  jstring path )
 {
  jlong mtime = (jlong)0L;
-#ifndef JCGO_NOFILES
-#ifndef JCGO_NOTIME
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
+#ifdef JCGO_NOTIME
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_WINFILE
  HANDLE handle;
 #ifdef JCGO_SYSWCHAR
@@ -1599,6 +1742,7 @@ Java_java_io_VMFile_getLastModified0)( JNIEnv *pJniEnv, jclass This,
  }
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return mtime;
 }
 #endif
@@ -1609,8 +1753,16 @@ Java_java_io_VMFile_setLastModified0)( JNIEnv *pJniEnv, jclass This,
  jlong mtime, jstring path )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
-#ifndef JCGO_NOTIME
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(mtime);
+ JCGO_UNUSED_VAR(path);
+#else
+#ifdef JCGO_NOTIME
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(mtime);
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_WIN32
  HANDLE handle;
  LONGLONG wintime;
@@ -1638,7 +1790,9 @@ Java_java_io_VMFile_setLastModified0)( JNIEnv *pJniEnv, jclass This,
    else
 #endif
    {
-#ifndef JCGO_NOUTIMBUF
+#ifdef JCGO_NOUTIMBUF
+    JCGO_UNUSED_VAR(mtime);
+#else
 #ifndef JCGO_WINFILE
     ut.modtime = (time_t)(msectime = mtime / (jlong)1000L);
     ut.actime = st.st_atime;
@@ -1649,7 +1803,9 @@ Java_java_io_VMFile_setLastModified0)( JNIEnv *pJniEnv, jclass This,
 #endif
 #endif
      {
-#ifndef JCGO_WINFILE
+#ifdef JCGO_WINFILE
+      JCGO_UNUSED_VAR(mtime);
+#else
 #ifndef JCGO_NOUTIMBUF
       if ((res = -errno) >= 0)
        res = -EACCES;
@@ -1692,6 +1848,7 @@ Java_java_io_VMFile_setLastModified0)( JNIEnv *pJniEnv, jclass This,
  }
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1702,7 +1859,10 @@ Java_java_io_VMFile_setReadOnly0)( JNIEnv *pJniEnv, jclass This,
  jstring path )
 {
  int res = -EACCES;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_WINFILE
  DWORD attrs;
 #else
@@ -1733,6 +1893,7 @@ Java_java_io_VMFile_setReadOnly0)( JNIEnv *pJniEnv, jclass This,
   JCGO_FILEIOCALL_END(pJniEnv)
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1742,6 +1903,8 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_isIOErrorNoEntity0)( JNIEnv *pJniEnv, jclass This,
  jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return (int)res == -EACCES || (int)res == -ENOENT || (int)res == -ENOTDIR ?
          1 : 0;
 }
@@ -1752,7 +1915,9 @@ JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_realPath0)( JNIEnv *pJniEnv, jclass This, jstring path,
  jintArray resArr )
 {
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_PATH_TREALPATH
  int res;
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
@@ -1771,8 +1936,11 @@ Java_java_io_VMFile_realPath0)( JNIEnv *pJniEnv, jclass This, jstring path,
   jcgo_JnuSetIntArrayElement(pJniEnv, resArr, 0, (jint)res);
   return tbuf2[0] && res >= 0 ? JCGO_JNU_TNEWSTRING(pJniEnv, tbuf2) : path;
  }
+#else
+ JCGO_UNUSED_VAR(path);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  jcgo_JnuSetIntArrayElement(pJniEnv, resArr, 0, 0);
  return path;
 }
@@ -1782,6 +1950,8 @@ Java_java_io_VMFile_realPath0)( JNIEnv *pJniEnv, jclass This, jstring path,
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_getDrivesMask0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return -1;
 }
 #endif
@@ -1791,6 +1961,8 @@ JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_getVolumeRoot0)( JNIEnv *pJniEnv, jclass This,
  jint index )
 {
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(index);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -1800,7 +1972,10 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_checkVolumeRoot0)( JNIEnv *pJniEnv, jclass This,
  jstring path )
 {
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_PATHCHKVOLROOT_VIASTAT
  int res;
  struct stat st;
@@ -1819,8 +1994,12 @@ Java_java_io_VMFile_checkVolumeRoot0)( JNIEnv *pJniEnv, jclass This,
   if ((st.st_mode & S_IFMT) == S_IFDIR)
    return 1;
  }
+#else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return -EACCES;
 }
 #endif
@@ -1831,12 +2010,18 @@ Java_java_io_VMFile_getDriveCurDir0)( JNIEnv *pJniEnv, jclass This,
  jint drive )
 {
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(drive);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #else
 #ifdef JCGO_NOCWDIR
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(drive);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #else
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(drive);
  tbuf[0] = (JCGO_JNUTCHAR_T)0;
  JCGO_FILEIOCALL_BEGIN(pJniEnv)
  if (JCGO_PATH_TGETDCWD((int)drive, tbuf,
@@ -1854,8 +2039,12 @@ JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_getVolumeCurDir0)( JNIEnv *pJniEnv, jclass This,
  jstring path )
 {
-#ifndef JCGO_NOFILES
-#ifndef JCGO_NOCWDIR
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(path);
+#else
+#ifdef JCGO_NOCWDIR
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_PATHGETDCWD_VIACHDIR
  int res;
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
@@ -1881,9 +2070,12 @@ Java_java_io_VMFile_getVolumeCurDir0)( JNIEnv *pJniEnv, jclass This,
   JCGO_FILEIOCALL_END(pJniEnv)
   return JCGO_JNU_TNEWSTRING(pJniEnv, tbuf);
  }
+#else
+ JCGO_UNUSED_VAR(path);
 #endif
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -1893,7 +2085,9 @@ JCGO_JNI_EXPF(jstring,
 Java_java_io_VMFile_normPlatformPath0)( JNIEnv *pJniEnv, jclass This,
  jstring path )
 {
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_PATH_PLATFCONV
  int res;
  char cbuf[JCGO_REALPATH_BUFLEN];
@@ -1908,8 +2102,11 @@ Java_java_io_VMFile_normPlatformPath0)( JNIEnv *pJniEnv, jclass This,
   if (res != -1)
    return jcgo_JnuNewStringPlatform(pJniEnv, cbuf);
  }
+#else
+ JCGO_UNUSED_VAR(path);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 }
 #endif
@@ -1919,6 +2116,9 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_pathListPlatformSep0)( JNIEnv *pJniEnv, jclass This,
  jstring pathlist )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(pathlist);
  return 0;
 }
 #endif
@@ -1928,7 +2128,10 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_isHidden0)( JNIEnv *pJniEnv, jclass This, jstring path )
 {
  int res = -1;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
+#else
 #ifdef JCGO_WINFILE
  DWORD attrs;
  JCGO_JNUTCHAR_T tbuf[JCGO_PATH_MAXSIZE];
@@ -1941,8 +2144,12 @@ Java_java_io_VMFile_isHidden0)( JNIEnv *pJniEnv, jclass This, jstring path )
          (attrs & FILE_ATTRIBUTE_HIDDEN) != 0 ? 1 : 0;
   JCGO_FILEIOCALL_END(pJniEnv)
  }
+#else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(path);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return (jint)res;
 }
 #endif
@@ -1975,6 +2182,10 @@ Java_java_io_VMFile_getLnkDevInode0)( JNIEnv *pJniEnv, jclass This,
 #endif
 #endif
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(path);
+ JCGO_UNUSED_VAR(devInodeArr);
  return (jint)res;
 }
 #endif
@@ -1983,6 +2194,8 @@ Java_java_io_VMFile_getLnkDevInode0)( JNIEnv *pJniEnv, jclass This,
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_dirOpNeedsSync0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_NOFILES
  return 0;
 #else
@@ -1995,6 +2208,8 @@ Java_java_io_VMFile_dirOpNeedsSync0)( JNIEnv *pJniEnv, jclass This )
 JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_dirDataSizeAndIsFind0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_NOFILES
  return 0;
 #else
@@ -2013,6 +2228,9 @@ Java_java_io_VMFile_dirOpenReadFirst0)( JNIEnv *pJniEnv, jclass This,
  jbyteArray dirdata, jstring path )
 {
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(dirdata);
+ JCGO_UNUSED_VAR(path);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #else
  int res;
@@ -2072,6 +2290,7 @@ Java_java_io_VMFile_dirOpenReadFirst0)( JNIEnv *pJniEnv, jclass This,
   jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, dirdata, databuf, 0);
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return str;
 #endif
 }
@@ -2083,6 +2302,8 @@ Java_java_io_VMFile_dirReadNext0)( JNIEnv *pJniEnv, jclass This,
  jbyteArray dirdata )
 {
 #ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(dirdata);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #else
  jstring str = NULL;
@@ -2124,6 +2345,7 @@ Java_java_io_VMFile_dirReadNext0)( JNIEnv *pJniEnv, jclass This,
   jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, dirdata, databuf, 0);
  }
 #endif
+ JCGO_UNUSED_VAR(This);
  return str;
 #endif
 }
@@ -2135,7 +2357,10 @@ Java_java_io_VMFile_dirIsHiddenFound0)( JNIEnv *pJniEnv, jclass This,
  jbyteArray dirdata )
 {
  int ishidden = -1;
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(dirdata);
+#else
 #ifdef JCGO_TFIND_T
  jbyte *databuf = jcgo_JnuGetByteArrayElemsRegion(pJniEnv, dirdata, 0,
                    (jint)JCGO_ALIGNED_BUFSIZE(JCGO_TFIND_T));
@@ -2146,8 +2371,12 @@ Java_java_io_VMFile_dirIsHiddenFound0)( JNIEnv *pJniEnv, jclass This,
    ishidden = 1;
   jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, dirdata, databuf, 0);
  }
+#else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(dirdata);
 #endif
 #endif
+ JCGO_UNUSED_VAR(This);
  return ishidden;
 }
 #endif
@@ -2157,7 +2386,10 @@ JCGO_JNI_EXPF(jint,
 Java_java_io_VMFile_dirClose0)( JNIEnv *pJniEnv, jclass This,
  jbyteArray dirdata )
 {
-#ifndef JCGO_NOFILES
+#ifdef JCGO_NOFILES
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(dirdata);
+#else
 #ifdef JCGO_TFIND_T
  jbyte *databuf = jcgo_JnuGetByteArrayElemsRegion(pJniEnv, dirdata, 0,
                    (jint)JCGO_ALIGNED_BUFSIZE(JCGO_TFIND_T));
@@ -2181,6 +2413,7 @@ Java_java_io_VMFile_dirClose0)( JNIEnv *pJniEnv, jclass This,
 #endif
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, dirdata, databuf, 0);
 #endif
+ JCGO_UNUSED_VAR(This);
  return 0;
 }
 #endif
@@ -2221,6 +2454,8 @@ Java_java_util_VMTimeZone_getCTimezoneAndDaylight0)( JNIEnv *pJniEnv,
           (tzofs != tzofs2 ? 1 : 0));
 #endif
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return 0;
 }
 #endif

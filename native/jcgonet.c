@@ -3,7 +3,7 @@
  * a part of the JCGO native layer library (network I/O impl).
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -172,6 +172,8 @@ STATIC int jcgo_sockAddrDecode( union jcgo_sockaddr_u *psaddr, char *address,
 JCGO_JNI_EXPF(jint,
 Java_java_net_VMInetAddress_lookupInaddrAny0)( JNIEnv *pJniEnv, jclass This )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (jint)INADDR_ANY;
 #else
@@ -187,12 +189,14 @@ Java_java_net_VMInetAddress_getLocalHostname0)( JNIEnv *pJniEnv, jclass This )
 #ifdef JCGO_INET
  int res;
  char cbuf[JCGO_SOCKHOSTNAME_MAXSIZE];
+ JCGO_UNUSED_VAR(This);
  JCGO_SOCKCALL_BEGIN(pJniEnv)
  res = JCGO_SOCK_GETHOSTNAME(cbuf, sizeof(cbuf) - 1);
  JCGO_SOCKCALL_END(pJniEnv)
  cbuf[res != -1 ? sizeof(cbuf) - 1 : 0] = '\0';
  return jcgo_JnuNewStringPlatform(pJniEnv, cbuf);
 #else
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, "");
 #endif
 }
@@ -214,6 +218,8 @@ Java_gnu_java_net_VMPlainSocketImpl_socketsInit0)( JNIEnv *pJniEnv,
   return -1;
 #endif
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return 0;
 }
 #endif
@@ -223,10 +229,13 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrAddrNotAvail0)(
  JNIEnv *pJniEnv, jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCEACCES || (int)res == -SOCEADDRINUSE ||
          (int)res == -SOCEADDRNOTAVAIL ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -237,10 +246,13 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrConnInProgress0)(
  JNIEnv *pJniEnv, jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCEALREADY || (int)res == -SOCEINPROGRESS ||
          (int)res == -SOCEWOULDBLOCK ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -251,10 +263,13 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrConnRefused0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCECONNREFUSED || (int)res == -SOCEHOSTDOWN ||
          (int)res == -SOCETIMEDOUT ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -265,9 +280,12 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrConnected0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCEISCONN ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -278,10 +296,13 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrHostUnreach0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCEHOSTUNREACH || (int)res == -SOCENETDOWN ||
          (int)res == -SOCENETUNREACH ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -292,10 +313,13 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrInterrupted0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCEINTR || (int)res == -SOCEINPROGRESS ||
          (int)res == -SOCEWOULDBLOCK ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -306,10 +330,13 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrNoResources0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCEADDRINUSE || (int)res == -SOCEMFILE ||
          (int)res == -SOCENOBUFS || (int)res == -SOCETOOMANYREFS ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -320,9 +347,12 @@ JCGO_JNI_EXPF(jint,
 Java_gnu_java_net_VMPlainSocketImpl_isSocketErrResetConn0)( JNIEnv *pJniEnv,
  jclass This, jint res )
 {
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
 #ifdef JCGO_INET
  return (int)res == -SOCECONNRESET ? 1 : 0;
 #else
+ JCGO_UNUSED_VAR(res);
  return 0;
 #endif
 }
@@ -444,8 +474,11 @@ Java_gnu_java_net_VMPlainSocketImpl_getSocketErrorMsg0)( JNIEnv *pJniEnv,
 #else
  char *cstr = (int)res != -SOCEBADF ? strerror(-(int)res) : "Socket closed";
 #endif
+ JCGO_UNUSED_VAR(This);
  return jcgo_JnuNewStringPlatform(pJniEnv, cstr != NULL ? cstr : "");
 #else
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(res);
  return jcgo_JnuNewStringPlatform(pJniEnv, "Sockets not supported");
 #endif
 }
@@ -479,8 +512,10 @@ Java_gnu_java_net_VMPlainSocketImpl_socketCreate0)( JNIEnv *pJniEnv,
  }
  jcgo_JnuSetIntArrayElement(pJniEnv, resArr, 0, (jint)-errcode);
 #else
+ JCGO_UNUSED_VAR(stream);
  jcgo_JnuSetIntArrayElement(pJniEnv, resArr, 0, -1);
 #endif
+ JCGO_UNUSED_VAR(This);
  return -1;
 }
 #endif
@@ -495,6 +530,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketBind0)( JNIEnv *pJniEnv,
  int errcode = 0;
  char *address;
  union jcgo_sockaddr_u saddr;
+ JCGO_UNUSED_VAR(This);
  address = (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ip, 0, iplen);
  if (address == NULL)
   return 0;
@@ -510,6 +546,12 @@ Java_gnu_java_net_VMPlainSocketImpl_socketBind0)( JNIEnv *pJniEnv,
  JCGO_SOCKCALL_END(pJniEnv)
  return (jint)(res >= 0 ? res : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(iplen);
+ JCGO_UNUSED_VAR(port);
  return 0;
 #endif
 }
@@ -524,12 +566,17 @@ Java_gnu_java_net_VMPlainSocketImpl_socketDisconnect0)( JNIEnv *pJniEnv,
  int res;
  int errcode = 0;
  struct sockaddr_in saddr;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  saddr.sin_family = AF_UNSPEC;
  JCGO_SOCKCALL_BEGIN(pJniEnv)
  res = JCGO_SOCK_CONNECT((int)fd, &saddr, sizeof(saddr), &errcode);
  JCGO_SOCKCALL_END(pJniEnv)
  return (jint)(res >= 0 ? res : errcode != SOCEAFNOSUPPORT ? -errcode : 0);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
  return 0;
 #endif
 }
@@ -545,6 +592,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketConnect0)( JNIEnv *pJniEnv,
  int errcode = 0;
  char *address;
  union jcgo_sockaddr_u saddr;
+ JCGO_UNUSED_VAR(This);
  address = (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ip, 0, iplen);
  if (address == NULL)
   return 0;
@@ -557,6 +605,12 @@ Java_gnu_java_net_VMPlainSocketImpl_socketConnect0)( JNIEnv *pJniEnv,
  JCGO_SOCKCALL_END(pJniEnv)
  return (jint)(res >= 0 ? res : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(iplen);
+ JCGO_UNUSED_VAR(port);
  return 0;
 #endif
 }
@@ -576,6 +630,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketSendTo0)( JNIEnv *pJniEnv,
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, buffer, off, len);
  char *address;
  union jcgo_sockaddr_u saddr;
+ JCGO_UNUSED_VAR(This);
  if (buf == NULL)
   return 0;
  res = 0;
@@ -615,6 +670,16 @@ Java_gnu_java_net_VMPlainSocketImpl_socketSendTo0)( JNIEnv *pJniEnv,
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, buffer, (jbyte *)buf, off);
  return (jint)(res >= 0 ? res : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(buffer);
+ JCGO_UNUSED_VAR(off);
+ JCGO_UNUSED_VAR(len);
+ JCGO_UNUSED_VAR(urgent);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(iplen);
+ JCGO_UNUSED_VAR(port);
  return -1;
 #endif
 }
@@ -634,6 +699,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketRecvFrom0)( JNIEnv *pJniEnv,
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, buffer, off, len);
  char *address;
  union jcgo_sockaddr_u saddr;
+ JCGO_UNUSED_VAR(This);
  if (buf == NULL)
   return 0;
  if ((jint)res >= len)
@@ -677,6 +743,17 @@ Java_gnu_java_net_VMPlainSocketImpl_socketRecvFrom0)( JNIEnv *pJniEnv,
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, buffer, (jbyte *)buf, off);
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(buffer);
+ JCGO_UNUSED_VAR(off);
+ JCGO_UNUSED_VAR(len);
+ JCGO_UNUSED_VAR(urgent);
+ JCGO_UNUSED_VAR(peek);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(ipmaxlen);
+ JCGO_UNUSED_VAR(iplenPortArr);
  return -1;
 #endif
 }
@@ -719,8 +796,13 @@ Java_gnu_java_net_VMPlainSocketImpl_socketAccept0)( JNIEnv *pJniEnv,
  if (res != -1)
   return (jint)((unsigned)res);
 #else
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(ipmaxlen);
+ JCGO_UNUSED_VAR(iplenPortArr);
  jcgo_JnuSetIntArrayElement(pJniEnv, iplenPortArr, 0, -1);
 #endif
+ JCGO_UNUSED_VAR(This);
  return -1;
 }
 #endif
@@ -737,6 +819,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketGetLocalAddrPort0)( JNIEnv *pJniEnv,
  char *address =
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ip, 0, ipmaxlen);
  union jcgo_sockaddr_u saddr;
+ JCGO_UNUSED_VAR(This);
  if (address == NULL)
   return 0;
  JCGO_SOCKCALL_BEGIN(pJniEnv)
@@ -751,6 +834,12 @@ Java_gnu_java_net_VMPlainSocketImpl_socketGetLocalAddrPort0)( JNIEnv *pJniEnv,
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, ip, (jbyte *)address, 0);
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(ipmaxlen);
+ JCGO_UNUSED_VAR(portArr);
  return 0;
 #endif
 }
@@ -840,6 +929,15 @@ Java_gnu_java_net_VMPlainSocketImpl_socketSelect0)( JNIEnv *pJniEnv,
  }
 #endif
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(readFDs);
+ JCGO_UNUSED_VAR(readFDsLen);
+ JCGO_UNUSED_VAR(writeFDs);
+ JCGO_UNUSED_VAR(writeFDsLen);
+ JCGO_UNUSED_VAR(exceptFDs);
+ JCGO_UNUSED_VAR(exceptFDsLen);
+ JCGO_UNUSED_VAR(timeout);
  return 1;
 }
 #endif
@@ -861,8 +959,16 @@ Java_gnu_java_net_VMPlainSocketImpl_socketSetNonBlocking0)( JNIEnv *pJniEnv,
  JCGO_SOCKCALL_END(pJniEnv)
  if (res)
   return (jint)(res >= 0 ? res : -errcode);
+#else
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(on);
 #endif
+#else
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(on);
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return 0;
 }
 #endif
@@ -884,8 +990,14 @@ Java_gnu_java_net_VMPlainSocketImpl_socketAvailable0)( JNIEnv *pJniEnv,
   return (jint)-errcode;
  if ((jint)value > 0)
   return (jint)value;
+#else
+ JCGO_UNUSED_VAR(fd);
 #endif
+#else
+ JCGO_UNUSED_VAR(fd);
 #endif
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  return 0;
 }
 #endif
@@ -898,12 +1010,18 @@ Java_gnu_java_net_VMPlainSocketImpl_socketListen0)( JNIEnv *pJniEnv,
 #ifdef JCGO_INET
  int res;
  int errcode = 0;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_SOCKCALL_BEGIN(pJniEnv)
  res = JCGO_SOCK_LISTEN((int)fd, backlog < (jint)(((unsigned)-1) >> 1) ?
         (int)backlog : (int)(((unsigned)-1) >> 1) - 1, &errcode);
  JCGO_SOCKCALL_END(pJniEnv)
  return (jint)(res >= 0 ? res : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(backlog);
  return 0;
 #endif
 }
@@ -920,6 +1038,8 @@ Java_gnu_java_net_VMPlainSocketImpl_socketGetSetOption0)( JNIEnv *pJniEnv,
  int optionid;
  int level = (int)SOL_SOCKET;
  struct linger lingval;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  switch ((int)optionId)
  {
  case JCGO_JSOCKOPT_NODELAY:
@@ -1015,6 +1135,11 @@ Java_gnu_java_net_VMPlainSocketImpl_socketGetSetOption0)( JNIEnv *pJniEnv,
   }
  return res >= 0 ? optval : (jint)-errcode;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(optionId);
+ JCGO_UNUSED_VAR(optval);
  return 0;
 #endif
 }
@@ -1032,6 +1157,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketSetMulticastAddr0)( JNIEnv *pJniEnv,
  int optionid = IP_MULTICAST_IF;
  char *address =
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ip, 0, iplen);
+ JCGO_UNUSED_VAR(This);
  if (address == NULL)
   return 0;
 #ifdef JCGO_IPV6_PRESENT
@@ -1048,6 +1174,11 @@ Java_gnu_java_net_VMPlainSocketImpl_socketSetMulticastAddr0)( JNIEnv *pJniEnv,
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, ip, (jbyte *)address, 0);
  return (jint)(res >= 0 ? res : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(iplen);
  return 0;
 #endif
 }
@@ -1063,6 +1194,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketGetMulticastAddr0)( JNIEnv *pJniEnv,
  int errcode;
  char *address =
   (char *)jcgo_JnuGetByteArrayElemsRegion(pJniEnv, ip, 0, ipmaxlen);
+ JCGO_UNUSED_VAR(This);
  if (address == NULL)
   return 0;
  JCGO_SOCKCALL_BEGIN(pJniEnv)
@@ -1072,6 +1204,11 @@ Java_gnu_java_net_VMPlainSocketImpl_socketGetMulticastAddr0)( JNIEnv *pJniEnv,
  jcgo_JnuReleaseByteArrayElemsRegion(pJniEnv, ip, (jbyte *)address, 0);
  return (jint)(res >= 0 ? errcode : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(ipmaxlen);
  return 0;
 #endif
 }
@@ -1091,6 +1228,7 @@ Java_gnu_java_net_VMPlainSocketImpl_socketMulticastGroup0)( JNIEnv *pJniEnv,
  int i;
  char *address;
  struct ip_mreq mreq;
+ JCGO_UNUSED_VAR(This);
  if (iplen <= (jint)sizeof(mreq.imr_multiaddr) &&
      iplenNetIf <= (jint)sizeof(mreq.imr_interface))
  {
@@ -1126,6 +1264,14 @@ Java_gnu_java_net_VMPlainSocketImpl_socketMulticastGroup0)( JNIEnv *pJniEnv,
  }
  return (jint)res;
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(ip);
+ JCGO_UNUSED_VAR(iplen);
+ JCGO_UNUSED_VAR(ipNetIf);
+ JCGO_UNUSED_VAR(iplenNetIf);
+ JCGO_UNUSED_VAR(join);
  return 0;
 #endif
 }
@@ -1139,12 +1285,19 @@ Java_gnu_java_net_VMPlainSocketImpl_socketShutdown0)( JNIEnv *pJniEnv,
 #ifdef JCGO_INET
  int res;
  int errcode = 0;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_SOCKCALL_BEGIN(pJniEnv)
  res = JCGO_SOCK_SHUTDOWN((int)fd, (int)input ?
         ((int)output ? SD_BOTH : SD_RECEIVE) : SD_SEND, &errcode);
  JCGO_SOCKCALL_END(pJniEnv)
  return (jint)(res >= 0 ? res : -errcode);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
+ JCGO_UNUSED_VAR(input);
+ JCGO_UNUSED_VAR(output);
  return 0;
 #endif
 }
@@ -1158,12 +1311,17 @@ Java_gnu_java_net_VMPlainSocketImpl_socketClose0)( JNIEnv *pJniEnv,
 #ifdef JCGO_INET
  int res;
  int errcode = 0;
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
  JCGO_SOCKCALL_BEGIN(pJniEnv)
  res = JCGO_SOCK_CLOSE((int)fd, &errcode);
  JCGO_SOCKCALL_END(pJniEnv)
  return (jint)(res < 0 && errcode != SOCEBADF && errcode != SOCECONNRESET &&
          errcode != SOCENOTCONN ? -errcode : 0);
 #else
+ JCGO_UNUSED_VAR(pJniEnv);
+ JCGO_UNUSED_VAR(This);
+ JCGO_UNUSED_VAR(fd);
  return 0;
 #endif
 }
