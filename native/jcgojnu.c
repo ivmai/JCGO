@@ -208,7 +208,8 @@ jcgo_JnuStringSizeOfPlatform( JNIEnv *pJniEnv, jstring str )
 #endif
   {
 #ifdef MB_CUR_MAX
-   if ((unsigned)count < (unsigned)MB_LEN_MAX && *(volatile int *)&count != 0)
+   if ((unsigned)count < (unsigned)MB_LEN_MAX &&
+       *(volatile jint *)&count != 0)
     len = ((((unsigned)-1) >> 1) - (unsigned)16) / (unsigned)count >= len ?
            (unsigned)count * len : (((unsigned)-1) >> 1) - (unsigned)16;
     else
