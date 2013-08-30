@@ -132,7 +132,7 @@ JCGO_NOSEP_INLINE unsigned CFASTCALL jcgo_utfCountChars( CONST char *utfstrz )
  unsigned count = 0;
  char ch;
  for (pos = 0; (ch = *(utfstrz + pos)) != (char)0; pos++)
-  if (JCGO_EXPECT_FALSE((ch & 0xc0) != 0x80))
+  if (JCGO_EXPECT_TRUE((ch & 0xc0) != 0x80))
    count++;
  return count;
 }
