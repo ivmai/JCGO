@@ -67,7 +67,7 @@ typedef void * GC_PTR;  /* preserved only for backward compatibility    */
 #endif
 
 /* Get the GC library version. The returned value is a constant in the  */
-/* form: ((version_major<<16) | (version_minor<<8) | alpha_version).    */
+/* form: ((version_major<<16) | (version_minor<<8) | version_micro).    */
 GC_API unsigned GC_CALL GC_get_version(void);
 
 /* Public read-only variables */
@@ -192,8 +192,11 @@ GC_API GC_ATTR_DEPRECATED GC_finalizer_notifier_proc GC_finalizer_notifier;
 GC_API void GC_CALL GC_set_finalizer_notifier(GC_finalizer_notifier_proc);
 GC_API GC_finalizer_notifier_proc GC_CALL GC_get_finalizer_notifier(void);
 
-GC_API GC_ATTR_DEPRECATED int GC_dont_gc;
-                        /* != 0 ==> Don't collect.  In versions 6.2a1+, */
+GC_API
+# ifndef GC_DONT_GC
+    GC_ATTR_DEPRECATED
+# endif
+  int GC_dont_gc;       /* != 0 ==> Don't collect.  In versions 6.2a1+, */
                         /* this overrides explicit GC_gcollect() calls. */
                         /* Used as a counter, so that nested enabling   */
                         /* and disabling work correctly.  Should        */
@@ -398,8 +401,8 @@ GC_API void GC_CALL GC_init(void);
 /* new object is cleared.  GC_malloc_stubborn promises that no changes  */
 /* to the object will occur after GC_end_stubborn_change has been       */
 /* called on the result of GC_malloc_stubborn.  GC_malloc_uncollectable */
-/* allocates an object that is scanned for pointers to collectable      */
-/* objects, but is not itself collectable.  The object is scanned even  */
+/* allocates an object that is scanned for pointers to collectible      */
+/* objects, but is not itself collectible.  The object is scanned even  */
 /* if it does not appear to be reachable.  GC_malloc_uncollectable and  */
 /* GC_free called on the resulting object implicitly update             */
 /* GC_non_gc_bytes appropriately.                                       */
@@ -661,7 +664,7 @@ struct GC_prof_stats_s {
 /* should pass the size of the buffer (of GC_prof_stats_s type) to fill */
 /* in the values - this is for interoperability between different GC    */
 /* versions, an old client could have fewer fields, and vice versa,     */
-/* client could use newer gc.h (with more entires declared in the       */
+/* client could use newer gc.h (with more entries declared in the       */
 /* structure) than that of the linked libgc binary; in the latter case, */
 /* unsupported (unknown) fields are filled in with -1.  Return the size */
 /* (in bytes) of the filled in part of the structure (excluding all     */
@@ -951,7 +954,7 @@ GC_API void GC_CALL GC_debug_register_finalizer(void * /* obj */,
         /* allocated by GC_malloc or friends. Obj may also be   */
         /* NULL or point to something outside GC heap (in this  */
         /* case, fn is ignored, *ofn and *ocd are set to NULL). */
-        /* Note that any garbage collectable object referenced  */
+        /* Note that any garbage collectible object referenced  */
         /* by cd will be considered accessible until the        */
         /* finalizer is invoked.                                */
 
@@ -1606,10 +1609,12 @@ GC_API int GC_CALL GC_get_force_unmap_on_gcollect(void);
 # define GC_DATAEND ((void *)((ulong)_end))
 # define GC_INIT_CONF_ROOTS GC_add_roots(GC_DATASTART, GC_DATAEND)
 #elif (defined(PLATFORM_ANDROID) || defined(__ANDROID__)) \
-      && defined(__arm__) && !defined(GC_NOT_DLL)
+      && !defined(GC_NOT_DLL)
   /* Required if GC is built as shared lib with -D IGNORE_DYNAMIC_LOADING. */
+# pragma weak __data_start
   extern int __data_start[], _end[];
-# define GC_INIT_CONF_ROOTS GC_add_roots(__data_start, _end)
+# define GC_INIT_CONF_ROOTS (void)((GC_word)(__data_start) != 0 ? \
+                                (GC_add_roots(__data_start, _end), 0) : 0)
 #else
 # define GC_INIT_CONF_ROOTS /* empty */
 #endif

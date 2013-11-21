@@ -243,7 +243,9 @@
   /* 'alloc_size' attribute improves __builtin_object_size correctness. */
   /* Only single-argument form of 'alloc_size' attribute is used.       */
 # if defined(__GNUC__) && (__GNUC__ > 4 \
-        || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3 && !defined(__ICC)))
+        || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3 && !defined(__ICC)) \
+        || __clang_major__ > 3 \
+        || (__clang_major__ == 3 && __clang_minor__ >= 2))
 #   define GC_ATTR_ALLOC_SIZE(argnum) __attribute__((__alloc_size__(argnum)))
 # else
 #   define GC_ATTR_ALLOC_SIZE(argnum)
@@ -285,7 +287,7 @@
         && !defined(GC_HAVE_BUILTIN_BACKTRACE)
 #   define GC_HAVE_BUILTIN_BACKTRACE
 # endif
-# if defined(__i386__) || defined(__x86_64__)
+# if defined(__i386__) || defined(__amd64__) || defined(__x86_64__)
 #   define GC_CAN_SAVE_CALL_STACKS
 # endif
 #endif /* GLIBC */
@@ -321,6 +323,11 @@
     /* gcc knows how to retrieve return address, but we don't know      */
     /* how to generate call stacks.                                     */
 #   define GC_RETURN_ADDR (GC_word)__builtin_return_address(0)
+#   if (__GNUC__ >= 4) && (defined(__i386__) || defined(__amd64__) \
+        || defined(__x86_64__) /* and probably others... */)
+#     define GC_RETURN_ADDR_PARENT \
+        (GC_word)__builtin_extract_return_addr(__builtin_return_address(1))
+#   endif
 # else
     /* Just pass 0 for gcc compatibility.       */
 #   define GC_RETURN_ADDR 0
