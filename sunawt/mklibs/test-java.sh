@@ -35,8 +35,8 @@ javac -d .build_tmp/test-sunawt-fix_sql -source 1.3 sunawt/fix_sql/java/sql/* \
     sunawt/fix_sql/sun/jdbc/odbc/*
 
 # Test sunawt/fix_win:
-mkdir -p .build_tmp/test-sunawt-fix_Win
-(cd sunawt/fix_win; javac -d ../../.build_tmp/test-sunawt-fix_Win -source 1.3 \
+mkdir -p .build_tmp/test-sunawt-fix_win
+(cd sunawt/fix_win; javac -d ../../.build_tmp/test-sunawt-fix_win -source 1.3 \
     -sourcepath ../../$SCSL_SRC_RELPATH/windows/classes \
     ../../$SCSL_SRC_RELPATH/share/classes/sun/misc/Cache.java \
     java/awt/*.j* java/awt/print/* javax/print/* javax/swing/* sun/awt/*.j* sun/awt/shell/* \
@@ -51,11 +51,26 @@ mkdir -p .build_tmp/test-sunawt-fix_x11
     javax/swing/* sun/awt/*.j* sun/awt/image/* sun/awt/motif/* sun/awt/print/* sun/print/*)
 # Note: ignore warning about deprecated API usage.
 
-#cd sawt_out/rflg_com
-#javac -source 1.3 com/sun/comm/*
+if [ ! -d "sawt_out/rflg_out" ]; then
+    # Testing of 'sawt_out' content skipped since build-java.sh not executed.
+    exit 0
+fi
 
-#cd rflg_out
-#javac -source 1.3 -sourcepath ../../miscsrc/jpropjav com/sun/accessibility/internal/resources/* com/sun/imageio/plugins/jpeg/* com/sun/inputmethods/internal/indicim/resources/* com/sun/inputmethods/internal/thaiim/resources/* com/sun/java/swing/plaf/windows/* com/sun/swing/internal/plaf/basic/resources/* com/sun/swing/internal/plaf/metal/resources/* java/awt/*.j* java/awt/event/* java/awt/image/* sun/awt/*.j* sun/awt/color/* sun/awt/datatransfer/* sun/awt/font/* sun/awt/image/*.j* sun/awt/image/codec/* sun/awt/motif/* sun/awt/print/*.j* sun/awt/print/resources/* sun/awt/resources/* sun/awt/shell/* sun/awt/tiny/* sun/awt/windows/* sun/dc/pr/* sun/java2d/*.j* sun/java2d/loops/* sun/java2d/pipe/* sun/print/*.j* sun/print/resources/*
+mkdir -p .build_tmp/test-sunawt-rflg_com
+javac -d .build_tmp/test-sunawt-rflg_com -source 1.3 sawt_out/rflg_com/com/sun/comm/*
 
-#cd rflg_snd
-#javac -source 1.3 com/sun/media/sound/*
+mkdir -p .build_tmp/test-sunawt-rflg_out
+(cd sawt_out/rflg_out; javac -d ../../.build_tmp/test-sunawt-rflg_out -source 1.3 \
+    -sourcepath ../../miscsrc/jpropjav com/sun/accessibility/internal/resources/* \
+    com/sun/imageio/plugins/jpeg/* com/sun/inputmethods/internal/indicim/resources/* \
+    com/sun/inputmethods/internal/thaiim/resources/* com/sun/java/swing/plaf/windows/* \
+    com/sun/swing/internal/plaf/basic/resources/* \
+    com/sun/swing/internal/plaf/metal/resources/* java/awt/*.j* java/awt/event/* \
+    java/awt/image/* sun/awt/*.j* sun/awt/color/* sun/awt/datatransfer/* sun/awt/font/* \
+    sun/awt/image/*.j* sun/awt/image/codec/* sun/awt/motif/* sun/awt/print/*.j* \
+    sun/awt/print/resources/* sun/awt/resources/* sun/awt/shell/* sun/awt/tiny/* \
+    sun/awt/windows/* sun/dc/pr/* sun/java2d/*.j* sun/java2d/loops/* sun/java2d/pipe/* \
+    sun/print/*.j* sun/print/resources/*)
+
+mkdir -p .build_tmp/test-sunawt-rflg_snd
+javac -d .build_tmp/test-sunawt-rflg_snd -source 1.3 sawt_out/rflg_snd/com/sun/media/sound/*
