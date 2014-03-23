@@ -481,6 +481,8 @@ back-ends (useful only for non-standard C runtime environments);
 - "miscsrc" - miscellaneous C and Java sources ("JAWT" stub shared
 library source, "JPropJav" utility source, "T-PThread" library source
 and header, "WinMain" wrapper source);
+- "mkjcgo" - scripts to verify JCGO Java source (using JDK), generate
+contents of "rflg_out", and rebuild "auxbin", "libs", jcgo.jar/exe;
 - "native" - the JCGO C native back-ends (file I/O, network I/O,
 process execution, OS-specific properties retrieval);
 - "reflgen" - JNI method and field reflection usage data and the

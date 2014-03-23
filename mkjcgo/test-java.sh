@@ -93,5 +93,29 @@ javac $X_PREFER_SOURCE -d .build_tmp/test-clsp_asc -source 1.4 \
     -bootclasspath $CLSP_BOOT_RELPATH -sourcepath "goclsp/vm${PATHSEP}classpath-0.93" \
     goclsp/clsp_asc/java/io/*
 
-#cd rflg_out
-#javac -source 1.3 -sourcepath ../miscsrc/jpropjav gnu/classpath/tools/appletviewer/* gnu/classpath/tools/common/* gnu/classpath/tools/getopt/* gnu/io/* gnu/java/awt/dnd/peer/gtk/* gnu/java/awt/peer/gtk/* gnu/java/awt/peer/qt/* gnu/java/awt/peer/wce/*.j* gnu/java/awt/peer/wce/font/* gnu/java/locale/* gnu/java/net/local/* gnu/java/nio/charset/iconv/* gnu/java/util/prefs/gconf/* gnu/java/util/regex/* gnu/javax/comm/wce/* gnu/javax/print/* gnu/javax/security/auth/callback/* gnu/javax/sound/midi/alsa/* gnu/javax/sound/sampled/wce/* gnu/xml/libxmlj/dom/* gnu/xml/libxmlj/sax/* gnu/xml/libxmlj/transform/* java/util/* javax/imageio/plugins/jpeg/* org/eclipse/swt/internal/*.j* org/eclipse/swt/internal/accessibility/gtk/* org/eclipse/swt/internal/cairo/* org/eclipse/swt/internal/carbon/* org/eclipse/swt/internal/cde/* org/eclipse/swt/internal/cocoa/* org/eclipse/swt/internal/gdip/* org/eclipse/swt/internal/gnome/* org/eclipse/swt/internal/gtk/* org/eclipse/swt/internal/image/* org/eclipse/swt/internal/motif/* org/eclipse/swt/internal/mozilla/*.j* org/eclipse/swt/internal/mozilla/init/* org/eclipse/swt/internal/ole/win32/* org/eclipse/swt/internal/opengl/glx/* org/eclipse/swt/internal/opengl/win32/* org/eclipse/swt/internal/photon/* org/eclipse/swt/internal/win32/* org/eclipse/swt/internal/wpf/* org/ietf/jgss/*
+if [ ! -d "rflg_out" ]; then
+    # Testing of 'rflg_out' content skipped since build-java.sh not executed.
+    exit 0
+fi
+
+mkdir -p .build_tmp/test-rflg_out
+(cd rflg_out; javac -d ../.build_tmp/test-rflg_out -source 1.3 \
+    -sourcepath ../miscsrc/jpropjav gnu/classpath/tools/appletviewer/* \
+    gnu/classpath/tools/common/* gnu/classpath/tools/getopt/* gnu/io/* \
+    gnu/java/awt/dnd/peer/gtk/* gnu/java/awt/peer/gtk/* gnu/java/awt/peer/qt/* \
+    gnu/java/awt/peer/wce/*.j* gnu/java/awt/peer/wce/font/* gnu/java/locale/* \
+    gnu/java/net/local/* gnu/java/nio/charset/iconv/* gnu/java/util/prefs/gconf/* \
+    gnu/java/util/regex/* gnu/javax/comm/wce/* gnu/javax/print/* \
+    gnu/javax/security/auth/callback/* gnu/javax/sound/midi/alsa/* \
+    gnu/javax/sound/sampled/wce/* gnu/xml/libxmlj/dom/* gnu/xml/libxmlj/sax/* \
+    gnu/xml/libxmlj/transform/* java/util/* javax/imageio/plugins/jpeg/* \
+    org/eclipse/swt/internal/*.j* org/eclipse/swt/internal/accessibility/gtk/* \
+    org/eclipse/swt/internal/cairo/* org/eclipse/swt/internal/carbon/* \
+    org/eclipse/swt/internal/cde/* org/eclipse/swt/internal/cocoa/* \
+    org/eclipse/swt/internal/gdip/* org/eclipse/swt/internal/gnome/* \
+    org/eclipse/swt/internal/gtk/* org/eclipse/swt/internal/image/* \
+    org/eclipse/swt/internal/motif/* org/eclipse/swt/internal/mozilla/*.j* \
+    org/eclipse/swt/internal/mozilla/init/* org/eclipse/swt/internal/ole/win32/* \
+    org/eclipse/swt/internal/opengl/glx/* org/eclipse/swt/internal/opengl/win32/* \
+    org/eclipse/swt/internal/photon/* org/eclipse/swt/internal/win32/* \
+    org/eclipse/swt/internal/wpf/* org/ietf/jgss/*)
