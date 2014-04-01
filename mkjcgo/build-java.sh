@@ -5,10 +5,10 @@ set -ex
 #
 # Prerequisites:
 # * Oracle JDK 1.6.0 (or 1.4.2_19)
-# * unzip swt-3.8-win32-win32-x86.zip src.zip -t swt/swt-3.8-win32-win32-x86
-# * (cd swt/swt-3.8-win32-win32-x86; unzip src.zip -t src)
+# * unzip swt-3.8-win32-win32-x86.zip src.zip -t contrib/swt/swt-3.8-win32-win32-x86
+# * (cd contrib/swt/swt-3.8-win32-win32-x86; unzip src.zip -t src)
 
-SWT_SRC_RELPATH=swt/swt-3.8-win32-win32-x86/src
+SWT_SRC_RELPATH=contrib/swt/swt-3.8-win32-win32-x86/src
 
 # Set current working directory to JCGO root:
 cd $(dirname "$0")/..
