@@ -5,10 +5,11 @@ set -ex
 #
 # Prerequisites:
 # * Oracle JDK 1.6.0 (or 1.4.2_19)
-# * unzip swt-3.8-win32-win32-x86.zip src.zip -t contrib/swt/swt-3.8-win32-win32-x86
-# * (cd contrib/swt/swt-3.8-win32-win32-x86; unzip src.zip -t src)
+# * wget ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar xf -
+# * unzip swt-3.8-win32-win32-x86.zip src.zip -t contrib/swt/swt-win32-win32-x86
+# * (cd contrib/swt/swt-win32-win32-x86; unzip src.zip -t src)
 
-SWT_SRC_RELPATH=contrib/swt/swt-3.8-win32-win32-x86/src
+SWT_SRC_RELPATH=contrib/swt/swt-win32-win32-x86/src
 
 # Set current working directory to JCGO root:
 cd $(dirname "$0")/..
@@ -51,3 +52,18 @@ java -Dline.separator=$'\n' -jar $GENREFL_JAR -d rflg_out reflgen/*.dat
 java -Dline.separator=$'\n' -jar $JPROPJAV_JAR -d rflg_out \
     -sourcepath goclsp/clsp_fix/resource -sourcepath classpath-0.93/resource \
     -sourcepath $SWT_SRC_RELPATH @goclsp/clsp_res/jreslist.in
+
+# Translated C code for GenRefl:
+mkdir -p .build_tmp/genrefl/jcgo_Out
+java -jar jcgo.jar -d .build_tmp/genrefl/jcgo_Out -src reflgen -src goclsp/clsp_asc \
+    com.ivmaisoft.jcgorefl.GenRefl @stdpaths.in
+
+# Translated C code for JPropJav:
+mkdir -p .build_tmp/jpropjav/jcgo_Out
+java -jar jcgo.jar -d .build_tmp/jpropjav/jcgo_Out -src miscsrc/jpropjav -src goclsp/clsp_asc \
+    com.ivmaisoft.jpropjav.Main @stdpaths.in
+
+# Translated C code for jcgo native binary:
+mkdir -p .build_tmp/jtr/jcgo_Out
+java -Xss1M -jar jcgo.jar -d .build_tmp/jtr/jcgo_Out -src jtrsrc -src goclsp/clsp_asc \
+    com.ivmaisoft.jcgo.Main @stdpaths.in
