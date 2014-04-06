@@ -76,6 +76,16 @@ typedef unsigned long DWORD;
 #define TRUE 1
 #endif
 
+#ifndef LONG
+#ifdef _WIN64
+typedef int LONG; /* in case of LP64 */
+typedef unsigned ULONG;
+#else
+typedef long LONG;
+typedef unsigned long ULONG;
+#endif
+#endif
+
 #ifdef __cplusplus
 }
 #endif
@@ -95,16 +105,6 @@ extern "C"
 
 #ifndef BOOL
 typedef int BOOL;
-#endif
-
-#ifndef LONG
-#ifdef _WIN64
-typedef int LONG; /* in case of LP64 */
-typedef unsigned ULONG;
-#else
-typedef long LONG;
-typedef unsigned long ULONG;
-#endif
 #endif
 
 #ifndef HINSTANCE
