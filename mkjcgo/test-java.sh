@@ -19,6 +19,11 @@ fi
 # Set current working directory to JCGO root:
 cd $(dirname "$0")/..
 
+# Test simple examples source:
+mkdir -p .build_tmp/test-examples-simple
+javac -d .build_tmp/test-examples-simple examples/simple/*.java
+# Note: ignore warning about deprecated API usage.
+
 # Test clsp_pgk/pqt/res, noopmain source:
 mkdir -p .build_tmp/test-clsp_pgk .build_tmp/test-clsp_pqt .build_tmp/test-clsp_res
 javac -d .build_tmp/test-clsp_pgk -source 1.3 goclsp/clsp_pgk/gnu/classpath/*
