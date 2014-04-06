@@ -205,9 +205,9 @@ Java application starts with main() (even applets are started by some viewer
 class like sun.applet.AppletViewer). So, at least, you should specify the
 class name of your application containing main(). For the case when you
 convert a library which is e.g. invoked through JNI, you can pass "Empty1"
-class name (e.g., type "jcgo -sourcepath your_project_src;$~/examples Empty1
-@$~/stdpaths.in YourClass1 YourClass2 ..."). Any additional classes (specified
-in the command line) are not required to contain main().
+class name (e.g., type "jcgo -sourcepath your_project_src;$~/examples/simple
+Empty1 @$~/stdpaths.in YourClass1 YourClass2 ..."). Any additional classes
+(specified in the command line) are not required to contain main().
 
 
 21. How to convert multiple Java files in a directory with a single command?

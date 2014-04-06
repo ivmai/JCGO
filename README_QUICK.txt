@@ -19,11 +19,11 @@ the current directory to it;
 
 - type:
 
-C:\JCGO\jcgo.exe -sourcepath $~\examples Hello @$~\stdpaths.in
+C:\JCGO\jcgo.exe -sourcepath $~\examples\simple Hello @$~\stdpaths.in
 
 or, alternatively:
 
-java -jar C:\JCGO\jcgo.jar -sourcepath $~\examples Hello @$~\stdpaths.in
+java -jar C:\JCGO\jcgo.jar -sourcepath $~\examples\simple Hello @$~\stdpaths.in
 
 - invoke the MinGW C compiler (GCC):
 
@@ -55,11 +55,11 @@ the current directory to it;
 
 - type:
 
-/usr/share/JCGO/jcgo -src $~/examples Hello @$~/stdpaths.in
+/usr/share/JCGO/jcgo -src $~/examples/simple Hello @$~/stdpaths.in
 
 or, alternatively:
 
-java -jar /usr/share/JCGO/jcgo.jar -src $~/examples Hello @$~/stdpaths.in
+java -jar /usr/share/JCGO/jcgo.jar -src $~/examples/simple Hello @$~/stdpaths.in
 
 - invoke the GNU GCC:
 

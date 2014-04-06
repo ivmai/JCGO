@@ -564,7 +564,7 @@ here):
 
 cd C:\MyJcgoProjects
 mkdir .\Hello
-C:\JCGO\jcgo -d .\Hello -sourcepath $~\examples Hello @$~\stdpaths.in
+C:\JCGO\jcgo -d .\Hello -sourcepath $~\examples\simple Hello @$~\stdpaths.in
 gcc -IC:\JCGO\include -IC:\JCGO\include\boehmgc -IC:\JCGO\native
  -DJCGO_FFDATA -o hello .\Hello\Main.c C:\JCGO\libs\x86\mingw\libgc.a
 
@@ -572,7 +572,7 @@ For Linux (on x86) development host and target:
 
 cd /home/user/MyJcgoProjects
 mkdir ./Hello
-/usr/share/JCGO/jcgo -d ./Hello -sourcepath $~/examples Hello \
+/usr/share/JCGO/jcgo -d ./Hello -sourcepath $~/examples/simple Hello \
  @$~/stdpaths.in
 gcc -I /usr/share/JCGO/include -I /usr/share/JCGO/include/boehmgc \
  -I /usr/share/JCGO/native -fwrapv -DJCGO_UNIX -D_IEEEFP_H \
