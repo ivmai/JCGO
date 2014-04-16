@@ -49,10 +49,8 @@ exception statement from your version. */
 #include <stdio.h>
 #include <jcl.h>
 
-#ifndef __GNUC__
-  #ifndef __attribute__
-    #define __attribute__(x)    /* nothing */
-  #endif
+#if !defined(__GNUC__) && !defined(__attribute__)
+#   define __attribute__(x)     /* nothing */
 #endif
 
 /*
@@ -245,9 +243,10 @@ JCL_NewRawDataObject (JNIEnv * env, void *data)
     }
 
 #if SIZEOF_VOID_P == 8
-  return (*env)->NewObject (env, aclass, rawData_mid, (jlong) data);
+  return (*env)->NewObject (env, aclass, rawData_mid,
+                            (jlong) (ptrdiff_t) data);
 #else
-  return (*env)->NewObject (env, aclass, rawData_mid, (jint) data);
+  return (*env)->NewObject (env, aclass, rawData_mid, (jint) (ptrdiff_t) data);
 #endif
 }
 
@@ -269,8 +268,8 @@ JCL_GetRawData (JNIEnv * env, jobject rawdata)
     }
 
 #if SIZEOF_VOID_P == 8
-  return (void *) (*env)->GetLongField (env, rawdata, rawData_fid);
+  return (void *) (ptrdiff_t) (*env)->GetLongField (env, rawdata, rawData_fid);
 #else
-  return (void *) (*env)->GetIntField (env, rawdata, rawData_fid);
+  return (void *) (ptrdiff_t) (*env)->GetIntField (env, rawdata, rawData_fid);
 #endif
 }
