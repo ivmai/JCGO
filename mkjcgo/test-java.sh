@@ -5,7 +5,7 @@ set -ex
 #
 # Prerequisites:
 # * Oracle JDK 1.6.0
-# * wget ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar xf -
+# * curl ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar zxf -
 
 # Default environment variables:
 if [ -z "$X_PREFER_SOURCE" ]; then

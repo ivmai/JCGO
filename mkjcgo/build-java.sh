@@ -5,9 +5,10 @@ set -ex
 #
 # Prerequisites:
 # * Oracle JDK 1.6.0 (or 1.4.2_19)
-# * wget ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar xf -
-# * unzip swt-3.8-win32-win32-x86.zip src.zip -t contrib/swt/swt-win32-win32-x86
-# * (cd contrib/swt/swt-win32-win32-x86; unzip src.zip -t src)
+# * curl ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar zxf -
+# * mkdir -p contrib/swt
+# * unzip swt-3.8-win32-win32-x86.zip src.zip -d contrib/swt/swt-win32-win32-x86
+# * (cd contrib/swt/swt-win32-win32-x86; unzip src.zip -d src)
 
 SWT_SRC_RELPATH=contrib/swt/swt-win32-win32-x86/src
 

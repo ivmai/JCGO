@@ -5,10 +5,10 @@ set -ex
 #
 # Prerequisites:
 # * GCC 4.4.0+ (linux/x86)
-# * wget http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz | tar xf -C contrib - ; mv gc-7.4.0 bdwgc
-# * wget http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz | tar xf -C contrib - ; mv libatomic_ops-7.4.0 bdwgc/libatomic_ops
-# * wget tinygc-2_6.tar.bz2 | tar xf -C contrib
-# * wget ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar xf -
+# * (cd contrib; curl http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz | tar zxf -; mv gc-7.4.0 bdwgc)
+# * (cd contrib/bdwgc; curl http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz | tar zxf -; mv libatomic_ops-7.4.0 libatomic_ops)
+# * (cd contrib; tar zxf tinygc-2_6.tar.bz2)
+# * curl ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar zxf -
 # * apt-get install patch libx11-dev libgtk2.0-dev libxtst-dev
 
 AR=ar

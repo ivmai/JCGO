@@ -6,7 +6,7 @@ set -ex
 #
 # Prerequisites:
 # * Cygwin v2.8+ (GCC 4.8.2)
-# * wget ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar xf -
+# * curl ftp://ftp.gnu.org/gnu/classpath/classpath-0.93.tar.gz | tar zxf -
 
 CC=gcc
 SYST=cygwin

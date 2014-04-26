@@ -5,9 +5,9 @@ set -ex
 #
 # Prerequisites:
 # * MinGW v5.1.6 (GCC 4.4.0, mingwrt-3.17, w32api-3.14, binutils-2.20.1)
-# * wget http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz | tar xf -C contrib - ; mv gc-7.4.0 bdwgc
-# * wget http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz | tar xf -C contrib - ; mv libatomic_ops-7.4.0 bdwgc/libatomic_ops
-# * wget tinygc-2_6.tar.bz2 | tar xf -C contrib
+# * (cd contrib; curl http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz | tar zxf -; mv gc-7.4.0 bdwgc)
+# * (cd contrib/bdwgc; curl http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz | tar zxf -; mv libatomic_ops-7.4.0 libatomic_ops)
+# * (cd contrib; tar zxf tinygc-2_6.tar.bz2)
 # * Oracle JDK 1.4.2+
 # * set JAVA_HOME=<path_to_jdk>
 

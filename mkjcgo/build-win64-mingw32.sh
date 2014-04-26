@@ -5,8 +5,8 @@ set -ex
 #
 # Prerequisites:
 # * mingw-w64 x86_64-w64-mingw32-gcc.exe (GCC) 4.5.2+
-# * wget http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz | tar xf -C contrib - ; mv gc-7.4.0 bdwgc
-# * wget http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz | tar xf -C contrib - ; mv libatomic_ops-7.4.0 bdwgc/libatomic_ops
+# * (cd contrib; curl http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz | tar zxf -; mv gc-7.4.0 bdwgc)
+# * (cd contrib/bdwgc; curl http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz | tar zxf -; mv libatomic_ops-7.4.0 libatomic_ops)
 
 AR=x86_64-w64-mingw32-ar
 CC="x86_64-w64-mingw32-gcc -m64"
