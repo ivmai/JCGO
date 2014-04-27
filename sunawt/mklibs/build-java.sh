@@ -5,9 +5,9 @@ set -ex
 #
 # Prerequisites:
 # * Oracle JDK 1.4.2_19 (or 1.6.0+)
-# * unzip j2sdk-1_4_2-src-scsl.zip -d <JCGO>/j2sdk-1_4_2-src-scsl
+# * unzip j2sdk-1_4_2-src-scsl.zip -d <JCGO>/contrib/j2sdk-1_4_2-src-scsl
 
-SCSL_SRC_RELPATH=j2sdk-1_4_2-src-scsl/j2se/src
+SCSL_SRC_RELPATH=contrib/j2sdk-1_4_2-src-scsl/j2se/src
 
 # Set current working directory to JCGO root:
 cd $(dirname "$0")/../..

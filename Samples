@@ -236,7 +236,7 @@ Sample options for building 'jcgon' library (the JCGO native layer, built on dem
  pspdev gcc (libjcgon.a): -G2 -O2 -fwrapv -fno-strict-aliasing -Wall -DJCGO_UNIX -DJCGO_UNIFSYS -DJCGO_NOREALPATH -DJCGO_NOUTIMBUF -D_UNISTD_NO_FTRUNCATE -D_UNISTD_NO_FSYNC -D_SYS_STAT_NO_CHMOD -DJCGO_NOSYSNAME -D_PWD_H -D_PWD_NO_GETPWUID -DJCGO_INET -D_UNISTD_NETDB_NO_GETHOSTNAME -I c:/JCGO/include -c
 
 Sample options for rebuilding auxbin "trjnic" dynamic library:
- win32 wcl386 (auxbin\x86\win32\trjnic.dll): -ox -ot -6r -bt=nt -DJCGO_WIN32 -x -l=nt_dll -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export
+ win32 wcl386 (auxbin\x86\win32\trjnic.dll): -ox -ot -6r -bt=nt -DJCGO_WIN32 -x -l=nt_dll -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export
  linux gcc (auxbin/x86/linux/libtrjnic.so): -O2 -Wall -D_REENTRANT -DJCGO_UNIX -DSTATICDATA=static -I /usr/share/JCGO/classpath-0.93/include -shared -fPIC -o libtrjnic.so -s
  solaris cc (auxbin/x86/solaris/libtrjnic.so): -O2 -mt -erroff=E_WHITE_SPACE_IN_DIRECTIVE -DJCGO_UNIX -DSTATICDATA=static -I /usr/share/JCGO/classpath-0.93/include -shared -fPIC -o libtrjnic.so -s
 

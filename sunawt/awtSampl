@@ -11,14 +11,14 @@ Operating Systems (supported):
 
 
 Commands for rebuilding JCGO-specific "java" dynamic library:
- win32 (mingw): gcc -O2 -Wall -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export -DWITH_UNDERSCORE -shared -o java.dll -s -Wl,--subsystem,windows jio.c jni_util.c util.c win32\java_props_md.c
- win32 x86/ia64 alt (msvc): cl -Ox -W3 -GF -LD -MD -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export jio.c jni_util.c util.c win32\java_props_md.c /link /out:java.dll
+ win32 (mingw): gcc -O2 -Wall -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export -DWITH_UNDERSCORE -shared -o java.dll -s -Wl,--subsystem,windows jio.c jni_util.c util.c win32\java_props_md.c
+ win32 x86/ia64 alt (msvc): cl -Ox -W3 -GF -LD -MD -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export jio.c jni_util.c util.c win32\java_props_md.c /link /out:java.dll
  linux: gcc -O2 -Wall -D_REENTRANT -I /usr/share/JCGO/classpath-0.93/include -shared -fPIC -o libjava.so -s jio.c jni_util.c util.c -Wl,--version-script=linux/mapfile-vers
  solaris: cc -O2 -mt -fPIC -erroff=E_WHITE_SPACE_IN_DIRECTIVE -I /usr/share/JCGO/classpath-0.93/include -shared -o libjava.so -s jio.c jni_util.c util.c
 
 Commands for rebuilding JCGO-specific "jvm" dynamic library:
- win32 (mingw): gcc -O2 -Wall -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export -DWITH_UNDERSCORE -shared -o jvm.dll -s -Wl,--subsystem,windows jvm_os.c jvm_win.c
- win32 x86/ia64 alt (msvc): cl -Ox -W4 -GF -LD -MD -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export jvm_os.c jvm_win.c /link /out:jvm.dll
+ win32 (mingw): gcc -O2 -Wall -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export -DWITH_UNDERSCORE -shared -o jvm.dll -s -Wl,--subsystem,windows jvm_os.c jvm_win.c
+ win32 x86/ia64 alt (msvc): cl -Ox -W4 -GF -LD -MD -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\windows\javavm\export -IC:\JCGO\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\javavm\export jvm_os.c jvm_win.c /link /out:jvm.dll
  linux: gcc -O2 -Wall -D_REENTRANT -I /usr/share/JCGO/classpath-0.93/include -shared -fPIC -o libjvm.so -s jvm_os.c jvm_unix.c -Wl,--version-script=linux/mapfile-vers-product
  solaris: cc -O2 -mt -fPIC -erroff=E_WHITE_SPACE_IN_DIRECTIVE -I /usr/share/JCGO/classpath-0.93/include -shared -o libjvm.so -s jvm_os.c jvm_unix.c
 
@@ -34,12 +34,12 @@ Commands for rebuilding "jcgoawtl" dynamic proxy library (libjcgoawtl.so):
 
 
 Sample commands for the Java-to-C translation (same as in stdp_win.in, stdp_x11.in):
- win32: C:\JCGO\jcgo -src $~\sunawt\fix_snd -src $~\goclsp\vm_str;$~\goclsp\vm -src $~\sunawt\fix_win;$~\sunawt\fix;$~\sawt_out\rflg_out;$~\sawt_out\rflg_snd;$~\sawt_out\rflg_com -src $~\j2sdk1.4.2_19_src\$%java.awt;$~\j2sdk1.4.2_19_src\$%javax.imageio;$~\j2sdk1.4.2_19_src\$%javax.print;$~\j2sdk1.4.2_19_src\$%javax.swing -src $~\sunawt\fix_sql -src $~\goclsp\clsp_ldr;$~\goclsp\clsp_fix;$~\goclsp\clsp_res;$~\miscsrc\jpropjav;$~\rflg_out;$~\classpath-0.93;$~\classpath-0.93\external\relaxngDatatype;$~\classpath-0.93\external\sax;$~\classpath-0.93\external\w3c_dom -src $~\j2sdk1.4.2_19_src;$~\j2sdk-1_4_2-src-scsl\j2se\src\windows\classes;$~\j2sdk-1_4_2-src-scsl\j2se\src\share\classes %1 %2 %3
- x11 (linux/solaris): /usr/share/JCGO/jcgo -src $~/sunawt/fix_snd -src $~/goclsp/vm_str:$~/goclsp/vm -src $~/sunawt/fix_x11:$~/sunawt/fix:$~/sawt_out/rflg_out:$~/sawt_out/rflg_snd:$~/sawt_out/rflg_com -src $~/j2sdk1.4.2_19_src/$%java.awt:$~/j2sdk1.4.2_19_src/$%javax.imageio:$~/j2sdk1.4.2_19_src/$%javax.print:$~/j2sdk1.4.2_19_src/$%javax.swing -src $~/sunawt/fix_sql -src $~/goclsp/clsp_ldr:$~/goclsp/clsp_fix:$~/goclsp/clsp_res:$~/miscsrc/jpropjav:$~/rflg_out:$~/classpath-0.93:$~/classpath-0.93/external/relaxngDatatype:$~/classpath-0.93/external/sax:$~/classpath-0.93/external/w3c_dom -src $~/j2sdk1.4.2_19_src:$~/j2sdk-1_4_2-src-scsl/j2se/src/solaris/classes:$~/j2sdk-1_4_2-src-scsl/j2se/src/share/classes $1 $2 $3
+ win32: C:\JCGO\jcgo -src $~\sunawt\fix_snd -src $~\goclsp\vm_str;$~\goclsp\vm -src $~\sunawt\fix_win;$~\sunawt\fix;$~\sawt_out\rflg_out;$~\sawt_out\rflg_snd;$~\sawt_out\rflg_com -src $~\contrib\j2sdk1.4.2_19\src\$%java.awt;$~\contrib\j2sdk1.4.2_19\src\$%javax.imageio;$~\contrib\j2sdk1.4.2_19\src\$%javax.print;$~\contrib\j2sdk1.4.2_19\src\$%javax.swing -src $~\sunawt\fix_sql -src $~\goclsp\clsp_ldr;$~\goclsp\clsp_fix;$~\goclsp\clsp_res;$~\miscsrc\jpropjav;$~\rflg_out;$~\classpath-0.93;$~\classpath-0.93\external\relaxngDatatype;$~\classpath-0.93\external\sax;$~\classpath-0.93\external\w3c_dom -src $~\contrib\j2sdk1.4.2_19\src;$~\contrib\j2sdk-1_4_2-src-scsl\j2se\src\windows\classes;$~\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\classes %1 %2 %3
+ x11 (linux/solaris): /usr/share/JCGO/jcgo -src $~/sunawt/fix_snd -src $~/goclsp/vm_str:$~/goclsp/vm -src $~/sunawt/fix_x11:$~/sunawt/fix:$~/sawt_out/rflg_out:$~/sawt_out/rflg_snd:$~/sawt_out/rflg_com -src $~/contrib/j2sdk1.4.2_19/src/$%java.awt:$~/contrib/j2sdk1.4.2_19/src/$%javax.imageio:$~/contrib/j2sdk1.4.2_19/src/$%javax.print:$~/contrib/j2sdk1.4.2_19/src/$%javax.swing -src $~/sunawt/fix_sql -src $~/goclsp/clsp_ldr:$~/goclsp/clsp_fix:$~/goclsp/clsp_res:$~/miscsrc/jpropjav:$~/rflg_out:$~/classpath-0.93:$~/classpath-0.93/external/relaxngDatatype:$~/classpath-0.93/external/sax:$~/classpath-0.93/external/w3c_dom -src $~/contrib/j2sdk1.4.2_19/src:$~/contrib/j2sdk-1_4_2-src-scsl/j2se/src/solaris/classes:$~/contrib/j2sdk-1_4_2-src-scsl/j2se/src/share/classes $1 $2 $3
 
 Sample commands for the Java-to-C translation (without Sun J2SE AWT):
- win32: C:\JCGO\jcgo -src $~\sunawt\fix_snd;$~\sunawt\fix_sql @$~\stdpaths.in -src $~\sawt_out\rflg_snd;$~\sawt_out\rflg_com;$~\j2sdk-1_4_2-src-scsl\j2se\src\share\classes %1 %2 %3
- linux/solaris: /usr/share/JCGO/jcgo -src $~/sunawt/fix_snd:$~/sunawt/fix_sql @$~/stdpaths.in -src $~/sawt_out/rflg_snd:$~/sawt_out/rflg_com:$~/j2sdk-1_4_2-src-scsl/j2se/src/share/classes $1 $2 $3
+ win32: C:\JCGO\jcgo -src $~\sunawt\fix_snd;$~\sunawt\fix_sql @$~\stdpaths.in -src $~\sawt_out\rflg_snd;$~\sawt_out\rflg_com;$~\contrib\j2sdk-1_4_2-src-scsl\j2se\src\share\classes %1 %2 %3
+ linux/solaris: /usr/share/JCGO/jcgo -src $~/sunawt/fix_snd:$~/sunawt/fix_sql @$~/stdpaths.in -src $~/sawt_out/rflg_snd:$~/sawt_out/rflg_com:$~/contrib/j2sdk-1_4_2-src-scsl/j2se/src/share/classes $1 $2 $3
 
 Additional classes for translation (specified if needed):
  for ftp support: gnu.java.net.protocol.ftp.Handler

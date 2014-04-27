@@ -23,10 +23,10 @@
 -src $~/sawt_out/rflg_out
 -src $~/sawt_out/rflg_snd
 
--src $~/j2sdk1.4.2_19_src/$%java.awt
--src $~/j2sdk1.4.2_19_src/$%javax.imageio
--src $~/j2sdk1.4.2_19_src/$%javax.print
--src $~/j2sdk1.4.2_19_src/$%javax.swing
+-src $~/contrib/j2sdk1.4.2_19/src/$%java.awt
+-src $~/contrib/j2sdk1.4.2_19/src/$%javax.imageio
+-src $~/contrib/j2sdk1.4.2_19/src/$%javax.print
+-src $~/contrib/j2sdk1.4.2_19/src/$%javax.swing
 
 -src $~/sawt_out/rflg_com
 
@@ -43,9 +43,9 @@
 -src $~/classpath-0.93/external/sax
 -src $~/classpath-0.93/external/w3c_dom
 
--src $~/j2sdk1.4.2_19_src
--src $~/j2sdk-1_4_2-src-scsl/j2se/src/windows/classes
--src $~/j2sdk-1_4_2-src-scsl/j2se/src/share/classes
+-src $~/contrib/j2sdk1.4.2_19/src
+-src $~/contrib/j2sdk-1_4_2-src-scsl/j2se/src/windows/classes
+-src $~/contrib/j2sdk-1_4_2-src-scsl/j2se/src/share/classes
 
 #gnu.java.net.protocol.ftp.Handler
 #gnu.java.net.protocol.http.Handler
