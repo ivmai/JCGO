@@ -1,12 +1,12 @@
 
                   JCGO - Java source to C code translator
                   ---------------------------------------
-                          version 1.15 (internal)
-                          -----------------------
+                         version 1.16 (2014-04-29)
+                         -------------------------
                                User's Guide
                                ------------
 
-Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
+Copyright (C) 2001-2014 Ivan Maidanski <ivmai@mail.ru>
 Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com
 All rights reserved.
 

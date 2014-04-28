@@ -3,7 +3,7 @@
  * a part of JCGO translator.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2013 Ivan Maidanski <ivmai@mail.ru>
+ * Copyright (C) 2001-2014 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -49,9 +49,9 @@ final class VerInfo {
      * Note 1: odd version numbers are used for inner snapshots. Note 2: This
      * version should match that in README and in include/jcgover.h (JCGO_1xx).
      */
-    static/* final */int VER_NUM = 114;
+    static/* final */int VER_NUM = 116;
 
-    static final String COPYRIGHT_AUTHOR = "Copyright (C) 2001-2013 Ivan Maidanski"
+    static final String COPYRIGHT_AUTHOR = "Copyright (C) 2001-2014 Ivan Maidanski"
             .toString();
 
     static final String COPYRIGHT = "Copyright 2010 IvMaiSoft LLC. http://www.ivmaisoft.com/jcgo/"

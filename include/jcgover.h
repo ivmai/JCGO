@@ -3,7 +3,7 @@
  * a part of the JCGO runtime subsystem.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2011 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2014 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
@@ -42,9 +42,9 @@
  */
 
 #ifdef JCGO_BUILDING_NATIVE
-#define JCGO_114
+#define JCGO_116
 #endif
 
-#ifdef JCGO_114 /* translator version */
+#ifdef JCGO_116 /* 1.16 - translator version */
 #define JCGO_VER 110 /* 1.10 - runtime/source version */
 #endif

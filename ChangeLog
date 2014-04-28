@@ -1,4 +1,68 @@
 
+== [1.16] (2014-04-29) ==
+
+* clsp_fix: Add java.lang.reflect.Array with fixed createMultiArray.
+* clsp_fix: jcl.c: Fix pointer conversion GCC warnings in NewRawDataObject/GetRawData.
+
+* goclsp/vm: Class.java (internalGetField): Fix getDeclaredFieldVMField call.
+* goclsp/vm: Fix termination status in VMThread.
+* goclsp/vm: Move VM vendor-specific names from jcgoprop.c to VMVendorInfo.
+* goclsp/vm: Move VMSystemProperties JVM property fields to VMVendorInfo.
+* goclsp/vm: SystemProperties: Add java.vm.vendor.url; change java.vendor to Classpath.
+* goclsp/vm: VMSystemProperties (preInitJavaInfo): Move values to fields.
+* goclsp/vm: VMThread: Check STATE_TERMINATED in detachInner instead of detachThread0X.
+
+* include: Allow to detach main thread from JNI.
+* include: Eliminate GCC 'missing initializer' warning for jcgo_globData.
+* include: Eliminate redundant check of jcgo_newObject result for null.
+* include: Enable nanosecond-precision for VMThread.wait0.
+* include: Fix JCGO_CLINIT_TRIG definition (for JCGO_PARALLEL mode).
+* include: Fix JNI DeleteWeakGlobalRef for the case when invalid argument is passed.
+* include: Fix JNI GetDirectBufferAddress/Capacity for direct buffers.
+* include: Fix JNI GetDirectBufferAddress/Capacity for non-direct-buffer argument.
+* include: Fix JNI GetStringUTFChars for the case of allocation failure.
+* include: Fix POSIX EVENT_TIMEDWAIT to prevent Thread sleep interruption by signal.
+* include: Fix SEGV in JNI NewObjectArray if cannot allocate array.
+* include: Fix VMClass.initialize0 for multi-core targets.
+* include: Fix VMField.get0() implementation.
+* include: Fix VMField.set/get for volatile and final fields.
+* include: Fix VMThrowable.exit0 (do not set jcgo_initialized to -1).
+* include: Fix jcgo_JniFindClass (do not perform class initialization).
+* include: Implement JNI GetObjectRefType.
+* include: JniNewString[UTF]: Fix for null chars argument.
+* include: New macro (JCGO_MONOTWAIT) to use monotonic clock in pthread timed-wait.
+* include: Optimize JNI ReleaseData, Delete[Weak]GlobalRef (for JCGO_PARALLEL mode).
+* include: Speed-up JCGO_CLINIT_TRIG for non-parallel multi-threaded mode.
+* include: Upgrade JNI support to version 1.6.
+* include: Use GCC __builtin_expect.
+* include: Use JCGO_EXPECT_FALSE/TRUE for conditional expressions.
+* include: include/boehmgc: Update to BDWGC v7.4.0.
+
+* jtrsrc: Assignment.java (processOutput): Fix outputFloatCast calls.
+* jtrsrc: ClassDefinition.java (markForInstanceOf): Fix for Cloneable and Serializable.
+* jtrsrc: Names.java (reservCNameArr): Add jobjectRefType; add "JNIEnv_", "JavaVM_".
+
+* native: Eliminate 'unused argument' GCC warnings (define JCGO_UNUSED_VAR macro).
+* native: Eliminate Clang warning in jcgo_lseek and VMFile_length.
+* native: Fix a typo in JCGO prefix of JCGO_CURTIME_x.
+* native: JnuStringSizeOfPlatform: Eliminate GCC warning in case of MB_LEN_MAX is 1.
+* native: JnuStringSizeOfPlatform: Fix cast not to break strict aliasing rules.
+* native: Recognize JCGO_TIMEALLOWNEG (new macro).
+
+* minihdr/win/windef.h: Fix 'LONG' definition (to be visible from included winnt.h).
+
+* vm_str: String (encodeValue): Fix 'hasArray' case condition.
+* vm_str: String (toUpperCase): Remove unused 'ch' variable.
+* vm_str: StringBuffer: Fix append(char[]): add synchronized.
+* vm_str: StringBuilder: Replace append(StringBuilder) with append(StringBuffer sBuf).
+
+* contrib: New folder.
+* examples: Move simple *.java test files to 'simple' subfolder.
+* goclsp: Adjust license terms of some files (change from GPL to Classpath).
+* mkjcgo, sunawt/mklibs: Add .sh scripts to build JCGO Java and C code.
+* tests: Remove .bat scripts.
+
+
 == [1.14] (2012-06-16) ==
 
 * Add "tests" folder containing scripts for JCGO testing.

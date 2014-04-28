@@ -3,7 +3,7 @@
  * a part of the minimalist "Win32" headers for JCGO.
  **
  * Project: JCGO (http://www.ivmaisoft.com/jcgo/)
- * Copyright (C) 2001-2009 Ivan Maidanski <ivmai@ivmaisoft.com>
+ * Copyright (C) 2001-2014 Ivan Maidanski <ivmai@mail.ru>
  * All rights reserved.
  */
 
